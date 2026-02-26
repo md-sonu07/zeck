@@ -1,0 +1,87 @@
+import React from 'react';
+import { Home, ChevronRight, CheckCircle, Heart, Star } from 'lucide-react';
+
+export default function AboutPage() {
+    return (
+        <div className="pb-16 bg-white dark:bg-slate-950 min-h-screen">
+
+            {/* Main Content: Text Left, Image Right */}
+            <div className="max-w-[1200px] mx-auto px-4 py-8 md:py-10">
+                <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+                    {/* Left: Text */}
+                    <div className="flex-1 space-y-8">
+                        <div className="space-y-4">
+                            <h4 className="font-black text-xs uppercase tracking-[0.2em] bg-primary/10 dark:bg-primary/20 text-primary w-fit px-3 py-1.5 rounded-full inline-block">Our Story</h4>
+                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.1]">
+                                Welcome to <br />
+                                <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-600">Zoya Education Center</span>
+                            </h1>
+                            <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed max-w-xl font-medium pt-2">
+                                Hi! We are here to help you easily find the right government jobs, admission updates, and results. We want to make sure you get the best and most honest information without any confusion.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-6 pt-4 max-w-xl">
+                            <div className="p-5 rounded-2xl bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 flex gap-4">
+                                <div className="mt-1">
+                                    <Star className="text-amber-500 fill-amber-500" size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-1">Our Mission</h3>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                                        To share very fast and true updates about new jobs and schools so that students like you can succeed easily.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="p-5 rounded-2xl bg-rose-50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-900/30 flex gap-4">
+                                <div className="mt-1">
+                                    <Heart className="text-rose-500 fill-rose-500" size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-1">Our Promise</h3>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                                        We promise to always give you real, simple information you can trust, whenever you need it to move forward.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right: Image */}
+                    <div className="flex-1 w-full max-w-sm lg:max-w-md relative mt-16 lg:mt-0 mx-auto lg:ml-auto lg:mr-0 z-10">
+                        {/* Premium Portrait Frame */}
+                        <div className="relative rounded-[2.5rem] shadow-2xl overflow-hidden group border border-slate-200/50 dark:border-slate-800/80">
+                            {/* Inner Glow / Overlay */}
+                            <div className="absolute inset-0 rounded-[2.5rem] ring-1 ring-inset ring-black/5 dark:ring-white/10 z-20 pointer-events-none"></div>
+                            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black/60 to-transparent z-10 pointer-events-none"></div>
+
+                            {/* Image */}
+                            <img
+                                src="/logo/about-img.jpeg"
+                                alt="Shop Owner - Zoya Education Center"
+                                className="w-full aspect-3/4 object-cover object-[center_top] transform transition-transform duration-700 group-hover:scale-[1.03]"
+                            />
+
+                            {/* Floating Owner Badge inside the frame's bottom */}
+                            <div className="absolute bottom-6 left-6 right-6 z-30 flex justify-center">
+                                <div className="bg-white/95 text-slate-800 dark:bg-slate-900/95 dark:text-white backdrop-blur-md p-3 px-5 rounded-2xl shadow-xl flex items-center gap-4 w-full max-w-[280px] border border-slate-200/60 dark:border-slate-700/60 transform transition-transform group-hover:-translate-y-1 duration-500">
+                                    <div className="shrink-0 size-11 flex items-center justify-center bg-linear-to-br from-green-400 to-emerald-600 rounded-full shadow-lg text-white">
+                                        <CheckCircle size={22} className="drop-shadow-sm fill-green-500/30" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-0.5 leading-none">Meet the</p>
+                                        <p className="text-base font-black leading-none tracking-tight">Shop Owner</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Decorative background shadow */}
+                        <div className="absolute -inset-1 bg-linear-to-tr from-primary/30 to-blue-500/20 rounded-[3rem] blur-2xl -z-10 opacity-50 dark:opacity-30"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

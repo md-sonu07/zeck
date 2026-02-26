@@ -1,0 +1,215 @@
+@import "tailwindcss";
+
+@theme {
+    --color-primary: #1773cf;
+    --color-primary-dark: #1260b0;
+    --color-accent: #e63946;
+    --color-background-light: #f0f4f8;
+    --color-background-dark: #0d1520;
+
+    --font-display: "Inter", "Public Sans", sans-serif;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+@layer base {
+    * {
+        @apply scroll-smooth;
+    }
+
+    body {
+        @apply font-display bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 min-h-screen antialiased;
+        background-image: radial-gradient(circle at 1px 1px, rgba(23, 115, 207, 0.06) 1px, transparent 0);
+        background-size: 28px 28px;
+    }
+
+    .dark body {
+        background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.03) 1px, transparent 0);
+        background-size: 28px 28px;
+    }
+}
+
+@layer components {
+
+    /* Marquee */
+    @keyframes marquee {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    .marquee-track {
+        @apply flex w-max;
+        animation: marquee 40s linear infinite;
+    }
+
+    .marquee-wrap:hover .marquee-track {
+        animation-play-state: paused;
+    }
+
+    /* NEW badge pulse */
+    @keyframes pulse-badge {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.6;
+        }
+    }
+
+    .badge-new {
+        animation: pulse-badge 2s ease-in-out infinite;
+    }
+
+    /* Live dot ring pulse */
+    @keyframes ring-pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+        }
+
+        70% {
+            box-shadow: 0 0 0 5px rgba(255, 255, 255, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+        }
+    }
+
+    .live-dot-ring {
+        animation: ring-pulse 1.8s ease-out infinite;
+    }
+
+    /* Ticker pulse dot */
+    @keyframes live-pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.5;
+            transform: scale(0.7);
+        }
+    }
+
+    .live-dot {
+        @apply w-[7px] h-[7px] bg-green-400 rounded-full shrink-0;
+        animation: live-pulse 1.4s ease-in-out infinite;
+    }
+
+    /* Card hover lift */
+    .card-lift {
+        @apply transition-all duration-200;
+    }
+
+    .card-lift:hover {
+        @apply -translate-y-[3px] shadow-xl;
+        box-shadow: 0 12px 32px rgba(23, 115, 207, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Section header gradient bar */
+    .sec-bar {
+        background: linear-gradient(100deg, #1773cf 0%, #1565c0 60%, #0d47a1 100%);
+    }
+
+    /* Stats card shimmer on hover */
+    .stat-card {
+        @apply relative overflow-hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        @apply absolute -top-[40%] -left-[60%] w-[60%] h-[200%] transition-all duration-500 ease-in-out;
+        background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.18) 50%, transparent 60%);
+    }
+
+    .stat-card:hover::before {
+        @apply left-[120%];
+    }
+
+    /* Hero banner wave at bottom */
+    .hero-wave {
+        @apply absolute -bottom-[2px] left-0 w-full overflow-hidden leading-0;
+    }
+
+    /* Section divider label */
+    .section-label {
+        @apply flex items-center gap-2 text-[0.65rem] font-extrabold uppercase tracking-[0.14em] text-slate-400;
+    }
+
+    .section-label::after {
+        content: '';
+        @apply flex-1 h-px;
+        background: linear-gradient(to right, #e2e8f0, transparent);
+    }
+
+    .dark .section-label::after {
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.08), transparent);
+    }
+
+    /* ── Nav Link Underline States ── */
+    .nav-link {
+        @apply relative flex items-center gap-1.5 px-4 py-3 text-white/85 text-[13px] font-semibold transition-colors duration-200 whitespace-nowrap;
+    }
+
+    .nav-link::after {
+        content: '';
+        @apply absolute bottom-0 left-1/2 -translate-x-1/2 w-[calc(100%-16px)] h-[3px] bg-white rounded-t-full scale-x-0 transition-transform duration-200 ease-out;
+    }
+
+    .nav-link:hover {
+        @apply text-white;
+    }
+
+    .nav-link:hover::after {
+        @apply scale-x-100;
+    }
+
+    .nav-link.nav-active {
+        @apply text-white;
+    }
+
+    .nav-link.nav-active::after {
+        @apply scale-x-100;
+    }
+
+    /* Hide Scrollbar */
+    .hide-scrollbar {
+        -ms-overflow-style: none;
+        /* IE and Edge */
+        scrollbar-width: none;
+        /* Firefox */
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+        /* Chrome, Safari and Opera */
+    }
+
+    /* Custom Scrollbar for sidebars/menus */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        @apply bg-slate-300 dark:bg-slate-700/80 rounded-full transition-colors;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        @apply bg-slate-400 dark:bg-slate-600;
+    }
+}

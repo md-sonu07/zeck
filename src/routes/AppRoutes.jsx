@@ -1,0 +1,58 @@
+
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import HomePage from '../pages/user/home/HomePage';
+import LoginPage from '../pages/auth/LoginPage';
+import RegisterPage from '../pages/auth/RegisterPage';
+import ProfilePage from '../pages/user/profile/ProfilePage';
+import ContactPage from '../pages/user/contact/ContactPage';
+import LatestJobsPage from '../pages/user/latestJobs/LatestJobsPage';
+import AdmitCardPage from '../pages/user/admitCard/AdmitCardPage';
+import ResultPage from '../pages/user/result/ResultPage';
+import AnswerKeyPage from '../pages/user/answerKey/AnswerKeyPage';
+import SyllabusPage from '../pages/user/syllabus/SyllabusPage';
+import AdmissionPage from '../pages/user/admission/AdmissionPage';
+import UniversityPage from '../pages/user/university/UniversityPage';
+import AboutPage from '../pages/user/about/AboutPage';
+import ServicesPage from '../pages/user/services/ServicesPage';
+import ArticleDetailPage from '../pages/user/article/ArticleDetailPage';
+import ProtectedRoutes from './ProtectedRoutes';
+import AdminRoutes from './AdminRoutes';
+import SavedPostsPage from '../pages/user/savedPosts/SavedPostsPage';
+
+const AppRoutes = () => {
+    return (
+        <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/latest-jobs" element={<LatestJobsPage />} />
+            <Route path="/admit-card" element={<AdmitCardPage />} />
+            <Route path="/result" element={<ResultPage />} />
+            <Route path="/answer-key" element={<AnswerKeyPage />} />
+            <Route path="/syllabus" element={<SyllabusPage />} />
+            <Route path="/admission" element={<AdmissionPage />} />
+            <Route path="/university" element={<UniversityPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/service" element={<ServicesPage />} />
+
+            {/* Admin Panel Routes */}
+            <Route path="/admin/*" element={<AdminRoutes />} />
+
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoutes />}>
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/saved-posts" element={<SavedPostsPage />} />
+            </Route>
+
+            {/* Dynamic Article Detail Page Route */}
+            <Route path="/:category/:slug" element={<ArticleDetailPage />} />
+
+            {/* Catch all 404 */}
+            <Route path="*" element={<HomePage />} />
+        </Routes>
+    );
+};
+
+export default AppRoutes;
