@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getProfile } from '../../../store/thunk/userThunk';
 import {
     User, Mail, Shield, LogOut, BadgeCheck, Bookmark, ChevronRight,
-    Eye, Calendar, Heart, ExternalLink, Send, MessageCircle
+    Send, MessageCircle
 } from 'lucide-react';
 import { logout as logoutUser } from '../../../store/thunk/authThunk';
 import { useNavigate, Link } from 'react-router-dom';
