@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../store/thunk/authThunk';
-import { Mail, Lock, LogIn, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, LogIn, ArrowRight, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -34,9 +35,6 @@ const LoginPage = () => {
             <div className="max-w-md w-full">
                 {/* Brand Logo / Welcome */}
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center size-16 rounded-2xl bg-primary text-white shadow-xl shadow-primary/20 mb-6 group transition-transform hover:scale-110">
-                        <span className="text-2xl font-black">ZO</span>
-                    </div>
                     <h2 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight uppercase">
                         Welcome Back
                     </h2>
@@ -87,22 +85,22 @@ const LoginPage = () => {
                                         <Lock size={18} />
                                     </div>
                                     <input
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         required
-                                        className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:focus:border-primary/50 transition-all placeholder:text-slate-400"
+                                        className="block w-full pl-11 pr-12 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:focus:border-primary/50 transition-all placeholder:text-slate-400"
                                         placeholder="••••••••"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-primary transition-colors cursor-pointer"
+                                    >
+                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
                                 </div>
                             </div>
-                        </div>
-
-                        <div className="flex items-center">
-                            <label className="flex items-center cursor-pointer group">
-                                <input type="checkbox" className="size-4 rounded-md border-slate-300 text-primary focus:ring-primary/20 cursor-pointer" />
-                                <span className="ml-2 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest group-hover:text-slate-600 transition-colors">Trust this device</span>
-                            </label>
                         </div>
 
                         <button
@@ -115,7 +113,7 @@ const LoginPage = () => {
                             ) : (
                                 <>
                                     <LogIn size={18} />
-                                    Authorize Entry
+                                    Login
                                 </>
                             )}
                         </button>

@@ -31,7 +31,7 @@ const AppContent = () => {
       <TopBar />
       {/* Sticky Header & Navbar Wrapper */}
       <div className="sticky top-0 z-50 w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
-        <div className="max-w-[1200px] mx-auto px-4">
+        <div className="max-w-[1200px] mx-auto px-4 sm:pb-2">
           <Header />
           <Navbar />
         </div>

@@ -55,7 +55,7 @@ const Header = () => {
                 {/* Logo Section */}
                 <Link to="/" className="flex items-center gap-3 shrink-0 group">
                     <div className="">
-                        <div className="size-11 sm:size-14 rounded-md flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                        <div className="size-11 sm:size-12 rounded-md flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
                             <img
                                 src={darkMode ? "/logo/crop-logoo.png" : "/logo/light-logo.png"}
                                 alt="Zoya Education Centre"
@@ -135,12 +135,12 @@ const Header = () => {
                 <div className={`absolute top-0 right-0 h-full w-80 bg-white dark:bg-slate-900 shadow-2xl flex flex-col transform transition-transform duration-300 ease-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                     <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                         <div className="flex items-center gap-3 text-primary">
-                            <div className="size-9 rounded-xl bg-linear-to-br from-primary to-primary-dark text-white flex items-center justify-center font-black text-sm uppercase">ZO</div>
+                            <div className="size-9 rounded-xl bg-linear-to-br from-primary to-primary-dark text-white flex items-center justify-center font-black text-sm uppercase">ZC</div>
                             <span className="font-black text-base uppercase tracking-tighter text-slate-800 dark:text-white">Zoya Centre</span>
                         </div>
                         <button
                             onClick={() => setIsOpen(false)}
-                            className="size-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-colors"
+                            className="size-9 cursor-pointer rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-colors"
                         >
                             <X size={18} />
                         </button>
@@ -160,7 +160,7 @@ const Header = () => {
                                 />
                                 <button
                                     type="submit"
-                                    className="bg-primary text-white text-[10px] font-black uppercase px-4 py-2 rounded-lg hover:bg-primary-dark transition-all active:scale-95 shrink-0"
+                                    className="bg-primary cursor-pointer text-white text-[10px] font-black uppercase px-4 py-2 rounded-lg hover:bg-primary-dark transition-all active:scale-95 shrink-0"
                                 >
                                     Go
                                 </button>

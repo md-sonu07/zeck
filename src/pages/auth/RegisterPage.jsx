@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { register } from '../../store/thunk/authThunk';
-import { User, Mail, Lock, UserPlus, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { User, Mail, Lock, UserPlus, ArrowLeft, ShieldCheck, Eye, EyeOff, Phone } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const RegisterPage = () => {
@@ -10,6 +10,9 @@ const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [phone, setPhone] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -29,7 +32,7 @@ const RegisterPage = () => {
             return;
         }
         try {
-            await dispatch(register({ name, email, password })).unwrap();
+            await dispatch(register({ name, email, phone, password })).unwrap();
             navigate('/');
         } catch (err) {
             console.error('Registration failed:', err);
@@ -41,14 +44,11 @@ const RegisterPage = () => {
             <div className="max-w-md w-full">
                 {/* Brand Logo / Welcome */}
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center size-16 rounded-2xl bg-primary text-white shadow-xl shadow-primary/20 mb-6 group transition-transform hover:scale-110">
-                        <span className="text-2xl font-black">ZO</span>
-                    </div>
                     <h2 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight uppercase">
-                        Join the Portal
+                        Create Your Account
                     </h2>
                     <p className="mt-2 text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                        Create Your Member Profile
+                        Create Your Profile
                     </p>
                 </div>
 
@@ -101,39 +101,72 @@ const RegisterPage = () => {
 
                             <div>
                                 <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">
-                                    Security Key
+                                    Phone Number
                                 </label>
                                 <div className="group relative transition-all duration-300">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
-                                        <Lock size={18} />
+                                        <Phone size={18} />
                                     </div>
                                     <input
-                                        type="password"
+                                        type="text"
                                         required
                                         className="block w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:focus:border-primary/50 transition-all placeholder:text-slate-400"
-                                        placeholder="Password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="Phone Number"
+                                        value={phone}
+                                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
                                     />
                                 </div>
                             </div>
 
                             <div>
                                 <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">
-                                    Confirm Security Key
+                                    Password
+                                </label>
+                                <div className="group relative transition-all duration-300">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
+                                        <Lock size={18} />
+                                    </div>
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        required
+                                        className="block w-full pl-11 pr-12 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:focus:border-primary/50 transition-all placeholder:text-slate-400"
+                                        placeholder="Password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-primary transition-colors cursor-pointer"
+                                    >
+                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">
+                                    Confirm Password
                                 </label>
                                 <div className="group relative transition-all duration-300">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">
                                         <ShieldCheck size={18} />
                                     </div>
                                     <input
-                                        type="password"
+                                        type={showConfirmPassword ? "text" : "password"}
                                         required
-                                        className="block w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:focus:border-primary/50 transition-all placeholder:text-slate-400"
+                                        className="block w-full pl-11 pr-12 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:focus:border-primary/50 transition-all placeholder:text-slate-400"
                                         placeholder="Confirm Password"
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-primary transition-colors cursor-pointer"
+                                    >
+                                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -149,7 +182,7 @@ const RegisterPage = () => {
                                 ) : (
                                     <>
                                         <UserPlus size={18} />
-                                        Complete Enrollment
+                                        Register
                                     </>
                                 )}
                             </button>
