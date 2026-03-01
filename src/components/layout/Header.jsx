@@ -63,7 +63,7 @@ const Header = () => {
                             />
                         </div>
                     </div>
-                    <div className="leading-tight">
+                    <div className="leading-tight hidden sm:block">
                         <h1 className="text-lg md:text-[1.35rem] font-black tracking-tighter flex items-center">
                             <span className="text-primary">Zoya</span>
                             <span className="text-slate-800 dark:text-white ml-1">Education Centre</span>

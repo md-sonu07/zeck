@@ -46,7 +46,7 @@ const HeroBanner = () => {
                     </div>
 
                     {/* Stats cards */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-3 md:min-w-[360px] lg:min-w-[420px]">
+                    <div className="hidden sm:grid grid-cols-2 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-4 gap-3 md:min-w-[360px] lg:min-w-[420px]">
                         {[
                             { label: 'News Updates', value: '5000+' },
                             { label: 'Results', value: '1200+' },
