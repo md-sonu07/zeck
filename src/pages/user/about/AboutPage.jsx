@@ -1,7 +1,28 @@
-import React from 'react';
-import { Home, ChevronRight, CheckCircle, Heart, Star } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { CheckCircle, Heart, Star, Loader2 } from 'lucide-react';
+import { fetchAboutSettings } from '../../../store/thunk/aboutThunk';
 
 export default function AboutPage() {
+    const dispatch = useDispatch();
+    const { settings, loading } = useSelector((state) => state.about);
+
+    useEffect(() => {
+        dispatch(fetchAboutSettings());
+    }, [dispatch]);
+
+    const title = settings?.title || 'Welcome to Zoya Education Center';
+    const description = settings?.description || 'Hi! We are here to help you easily find the right government jobs, admission updates, and results. We want to make sure you get the best and most honest information without any confusion.';
+    const imageUrl = settings?.imageUrl || '/logo/about-img.jpeg';
+
+    if (loading && !settings) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 className="animate-spin text-primary" size={32} />
+            </div>
+        );
+    }
+
     return (
         <div className="pb-16 bg-white dark:bg-slate-950 min-h-screen">
 
@@ -13,12 +34,13 @@ export default function AboutPage() {
                         <div className="space-y-4">
                             <h4 className="font-black text-xs uppercase tracking-[0.2em] bg-primary/10 dark:bg-primary/20 text-primary w-fit px-3 py-1.5 rounded-full inline-block">Our Story</h4>
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.1]">
-                                Welcome to <br />
-                                <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-600">Zoya Education Center</span>
+                                <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-600">{title}</span>
                             </h1>
-                            <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed max-w-xl font-medium pt-2">
-                                Hi! We are here to help you easily find the right government jobs, admission updates, and results. We want to make sure you get the best and most honest information without any confusion.
-                            </p>
+                            <div className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed max-w-xl font-medium pt-2 space-y-3">
+                                {description.split('\n').map((para, idx) => (
+                                    <p key={idx}>{para}</p>
+                                ))}
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-1 gap-6 pt-4 max-w-xl">
@@ -58,12 +80,12 @@ export default function AboutPage() {
 
                             {/* Image */}
                             <img
-                                src="/logo/about-img.jpeg"
-                                alt="Shop Owner - Zoya Education Center"
+                                src={imageUrl}
+                                alt="About - Zoya Education Center"
                                 className="w-full aspect-3/4 object-cover object-[center_top] transform transition-transform duration-700 group-hover:scale-[1.03]"
                             />
 
-                            {/* Floating Owner Badge inside the frame's bottom */}
+                            {/* Floating Badge inside the frame's bottom */}
                             <div className="absolute bottom-6 left-6 right-6 z-30 flex justify-center">
                                 <div className="bg-white/95 text-slate-800 dark:bg-slate-900/95 dark:text-white backdrop-blur-md p-3 px-5 rounded-2xl shadow-xl flex items-center gap-4 w-full max-w-[280px] border border-slate-200/60 dark:border-slate-700/60 transform transition-transform group-hover:-translate-y-1 duration-500">
                                     <div className="shrink-0 size-11 flex items-center justify-center bg-linear-to-br from-green-400 to-emerald-600 rounded-full shadow-lg text-white">

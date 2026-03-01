@@ -20,9 +20,6 @@ const NoticeMarquee = () => {
         ? activeMarquees.map(m => m.text)
         : defaultUpdates;
 
-    if (loading && activeMarquees.length === 0) {
-        return null; // Or a skeleton
-    }
 
     return (
         <div className="max-w-[1200px] mx-auto mt-4 px-4 overflow-hidden">
@@ -44,20 +41,21 @@ const NoticeMarquee = () => {
 
                 <div className="marquee-wrap flex-1 overflow-hidden h-full flex items-center bg-slate-50/30 dark:bg-transparent">
                     <div className="marquee-track whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 font-bold">
-                        {[...displayUpdates, ...displayUpdates].map((text, idx) => (
-                            <React.Fragment key={idx}>
-                                {activeMarquees[idx % displayUpdates.length]?.link ? (
-                                    <a href={activeMarquees[idx % displayUpdates.length].link} target="_blank" rel="noopener noreferrer" className={`mx-4 hover:underline transition-colors ${idx % 2 === 1 ? 'text-accent' : 'hover:text-primary'}`}>
-                                        {text}
-                                    </a>
-                                ) : (
-                                    <span className={`mx-4 cursor-pointer transition-colors ${idx % 2 === 1 ? 'text-accent' : 'hover:text-primary'}`}>
-                                        {text}
-                                    </span>
-                                )}
-                                <span className="ticker-sep opacity-30">◆</span>
-                            </React.Fragment>
-                        ))}
+                        {/* Duplicate the array 4 times to ensure it covers wide screens and loops perfectly without gaps */
+                            [...displayUpdates, ...displayUpdates, ...displayUpdates, ...displayUpdates].map((text, idx) => (
+                                <React.Fragment key={idx}>
+                                    {activeMarquees.length > 0 && activeMarquees[idx % displayUpdates.length]?.link ? (
+                                        <a href={activeMarquees[idx % displayUpdates.length].link} target="_blank" rel="noopener noreferrer" className={`mx-4 hover:underline transition-colors ${idx % 2 === 1 ? 'text-accent' : 'hover:text-primary'}`}>
+                                            {text}
+                                        </a>
+                                    ) : (
+                                        <span className={`mx-4 cursor-pointer transition-colors ${idx % 2 === 1 ? 'text-accent' : 'hover:text-primary'}`}>
+                                            {text}
+                                        </span>
+                                    )}
+                                    <span className="ticker-sep opacity-30">◆</span>
+                                </React.Fragment>
+                            ))}
                     </div>
                 </div>
             </div>

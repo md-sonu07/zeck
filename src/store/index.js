@@ -8,6 +8,9 @@ import importantServiceReducer from './slice/importantServiceSlice';
 import contactReducer from './slice/contactSlice';
 
 import marqueeReducer from './slice/marqueeSlice';
+import pageSectionReducer from './slice/pageSectionSlice';
+import searchReducer from './slice/searchSlice';
+import aboutReducer from './slice/aboutSlice';
 
 const store = configureStore({
     reducer: {
@@ -19,6 +22,9 @@ const store = configureStore({
         importantServices: importantServiceReducer,
         contact: contactReducer,
         marquee: marqueeReducer,
+        pageSections: pageSectionReducer,
+        search: searchReducer,
+        about: aboutReducer,
     },
 });
 

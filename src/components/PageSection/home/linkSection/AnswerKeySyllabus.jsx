@@ -1,24 +1,45 @@
-import { Key, ArrowRight, ChevronRight, BookOpen } from 'lucide-react';
-
-const answerKeys = [
-    { title: 'RRB Group D Answer Key 2026' },
-    { title: 'CG Vyapam TET Answer Key 2026' },
-    { title: 'SSC CGL Tier II Answer Key 2026' },
-    { title: 'AFCAT Exam Answer Key 2026' },
-    { title: 'MP Police SI Answer Key 2026' },
-    { title: 'SSC Delhi Police Constable Answer Key 2026' },
-];
-
-const syllabi = [
-    { title: 'Railway Group D Syllabus 2026' },
-    { title: 'JSSC Kakshpal Syllabus 2026' },
-    { title: 'UP Police Constable Syllabus 2026' },
-    { title: 'MP Police Constable Syllabus 2025' },
-    { title: 'Bihar STET Syllabus 2025' },
-    { title: 'RRB ALP Syllabus 2025' },
-];
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { Key, ArrowRight, ChevronRight, BookOpen, Loader2 } from 'lucide-react';
+import { fetchArticles } from '../../../../store/thunk/articleThunk';
+import { Link } from 'react-router-dom';
 
 const AnswerKeySyllabus = () => {
+    const dispatch = useDispatch();
+    const [answerKeys, setAnswerKeys] = useState([]);
+    const [syllabi, setSyllabi] = useState([]);
+    const [loadingKeys, setLoadingKeys] = useState(true);
+    const [loadingSyllabi, setLoadingSyllabi] = useState(true);
+
+    useEffect(() => {
+        const getAnswerKeys = async () => {
+            try {
+                setLoadingKeys(true);
+                const result = await dispatch(fetchArticles({ mainCategory: 'Answer Key', limit: 8 })).unwrap();
+                setAnswerKeys(result || []);
+            } catch (error) {
+                console.error('Failed to fetch answer keys:', error);
+            } finally {
+                setLoadingKeys(false);
+            }
+        };
+
+        const getSyllabi = async () => {
+            try {
+                setLoadingSyllabi(true);
+                const result = await dispatch(fetchArticles({ mainCategory: 'Syllabus', limit: 8 })).unwrap();
+                setSyllabi(result || []);
+            } catch (error) {
+                console.error('Failed to fetch syllabi:', error);
+            } finally {
+                setLoadingSyllabi(false);
+            }
+        };
+
+        getAnswerKeys();
+        getSyllabi();
+    }, [dispatch]);
+
     return (
         <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-md shadow-slate-200/60 dark:shadow-black/20 card-lift">
 
@@ -34,76 +55,98 @@ const AnswerKeySyllabus = () => {
 
                 {/* Answer Key Column */}
                 <div>
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 dark:border-slate-700 pb-2">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 dark:border-slate-700 pb-2 flex items-center justify-between">
                         Answer Key
+                        {loadingKeys && <Loader2 size={10} className="animate-spin text-primary" />}
                     </p>
                     <ul className="text-sm space-y-1">
-                        {answerKeys.map((item, index) => (
-                            <li
-                                key={index}
-                                className="group relative border-l-2 border-transparent hover:border-primary transition-all duration-200"
-                            >
-                                <span className="absolute inset-0 bg-linear-to-r from-blue-50 to-transparent dark:from-primary/5 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-r-md" />
-                                <a
-                                    href="#"
-                                    className="relative flex items-start gap-2 px-2 py-2.5"
+                        {loadingKeys ? (
+                            <div className="flex items-center justify-center py-10 opacity-50">
+                                <Loader2 className="animate-spin text-primary" size={20} />
+                            </div>
+                        ) : answerKeys.length > 0 ? (
+                            answerKeys.map((item, index) => (
+                                <li
+                                    key={item._id}
+                                    className="group relative border-l-2 border-transparent hover:border-primary transition-all duration-200"
                                 >
-                                    <ChevronRight
-                                        size={13}
-                                        className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-primary group-hover:translate-x-0.5 mt-0.5 transition-all duration-200"
-                                    />
-                                    <span className="text-slate-600 dark:text-slate-300 group-hover:text-primary group-hover:font-medium transition-all duration-200 leading-snug">
-                                        {item.title}
-                                    </span>
-                                </a>
-                            </li>
-                        ))}
-                        <li className="pt-1 px-2">
-                            <a
-                                href="#"
+                                    <span className="absolute inset-0 bg-linear-to-r from-blue-50 to-transparent dark:from-primary/5 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-r-md" />
+                                    <Link
+                                        to={`/${item.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${item.slug}`}
+                                        className="relative flex items-start gap-2 px-2 py-2.5"
+                                    >
+                                        <ChevronRight
+                                            size={13}
+                                            className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-primary group-hover:translate-x-0.5 mt-0.5 transition-all duration-200"
+                                        />
+                                        <span className="text-[14px] font-semibold text-slate-700 dark:text-slate-200 group-hover:text-primary transition-all duration-200 leading-snug truncate block w-full">
+                                            {item.title}
+                                        </span>
+                                    </Link>
+                                </li>
+                            ))
+                        ) : (
+                            <div className="py-8 text-center text-slate-400 text-[11px] font-medium">
+                                No answer keys found.
+                            </div>
+                        )}
+                        <li className="pt-2 px-2">
+                            <Link
+                                to="/answer-key"
                                 className="group/link text-xs font-bold text-primary hover:text-primary/80 inline-flex items-center gap-1.5 no-underline transition-colors duration-200"
                             >
                                 View All Answer Keys
                                 <ArrowRight size={11} className="transition-transform duration-200 group-hover/link:translate-x-1" />
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                 </div>
 
                 {/* Syllabus Column */}
                 <div>
-                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 dark:border-slate-700 pb-2">
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 dark:border-slate-700 pb-2 flex items-center justify-between">
                         Syllabus
+                        {loadingSyllabi && <Loader2 size={10} className="animate-spin text-primary" />}
                     </p>
                     <ul className="text-sm space-y-1">
-                        {syllabi.map((item, index) => (
-                            <li
-                                key={index}
-                                className="group relative border-l-2 border-transparent hover:border-primary transition-all duration-200"
-                            >
-                                <span className="absolute inset-0 bg-linear-to-r from-blue-50 to-transparent dark:from-primary/5 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-r-md" />
-                                <a
-                                    href="#"
-                                    className="relative flex items-start gap-2 px-2 py-2.5"
+                        {loadingSyllabi ? (
+                            <div className="flex items-center justify-center py-10 opacity-50">
+                                <Loader2 className="animate-spin text-primary" size={20} />
+                            </div>
+                        ) : syllabi.length > 0 ? (
+                            syllabi.map((item, index) => (
+                                <li
+                                    key={item._id}
+                                    className="group relative border-l-2 border-transparent hover:border-primary transition-all duration-200"
                                 >
-                                    <BookOpen
-                                        size={13}
-                                        className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-primary mt-0.5 transition-colors duration-200"
-                                    />
-                                    <span className="text-slate-600 dark:text-slate-300 group-hover:text-primary group-hover:font-medium transition-all duration-200 leading-snug">
-                                        {item.title}
-                                    </span>
-                                </a>
-                            </li>
-                        ))}
-                        <li className="pt-1 px-2">
-                            <a
-                                href="#"
+                                    <span className="absolute inset-0 bg-linear-to-r from-blue-50 to-transparent dark:from-primary/5 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-r-md" />
+                                    <Link
+                                        to={`/${item.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${item.slug}`}
+                                        className="relative flex items-start gap-2 px-2 py-2.5"
+                                    >
+                                        <BookOpen
+                                            size={13}
+                                            className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-primary mt-0.5 transition-colors duration-200"
+                                        />
+                                        <span className="text-[14px] font-semibold text-slate-700 dark:text-slate-200 group-hover:text-primary transition-all duration-200 leading-snug truncate block w-full">
+                                            {item.title}
+                                        </span>
+                                    </Link>
+                                </li>
+                            ))
+                        ) : (
+                            <div className="py-8 text-center text-slate-400 text-[11px] font-medium">
+                                No syllabi found.
+                            </div>
+                        )}
+                        <li className="pt-2 px-2">
+                            <Link
+                                to="/syllabus"
                                 className="group/link text-xs font-bold text-primary hover:text-primary/80 inline-flex items-center gap-1.5 no-underline transition-colors duration-200"
                             >
                                 View All Syllabi
                                 <ArrowRight size={11} className="transition-transform duration-200 group-hover/link:translate-x-1" />
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                 </div>

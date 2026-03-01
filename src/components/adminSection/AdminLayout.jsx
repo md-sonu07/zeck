@@ -50,7 +50,7 @@ const AdminLayout = () => {
         '/admin/results': 'Result Management',
         '/admin/syllabus': 'Syllabus Management',
         '/admin/answer-key': 'Answer Key Management',
-        '/admin/latest-jobs': 'Latest Job Management',
+        '/admin/latest-news': 'Latest News Management',
     };
 
     let currentSubPageTitle = subPageNames[location.pathname];

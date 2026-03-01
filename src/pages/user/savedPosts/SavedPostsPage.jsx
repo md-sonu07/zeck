@@ -235,7 +235,7 @@ const SavedPostsPage = () => {
                             </div>
                             <ul>
                                 {[
-                                    { label: 'Latest Jobs', to: '/latest-jobs', color: 'text-blue-500' },
+                                    { label: 'Latest News', to: '/latest-news', color: 'text-blue-500' },
                                     { label: 'Admit Card', to: '/admit-card', color: 'text-orange-500' },
                                     { label: 'Results', to: '/result', color: 'text-green-500' },
                                     { label: 'Answer Key', to: '/answer-key', color: 'text-purple-500' },

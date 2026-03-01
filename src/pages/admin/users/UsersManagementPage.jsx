@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, Plus, MoreVertical, Edit, Trash2, Shield, ShieldAlert, CheckCircle, XCircle, Clock, Eye, X, AlertOctagon, ChevronDown, Filter, ArrowUpDown, Check } from 'lucide-react';
 import { getAllUsersApi, deleteUserApi, makeUserAdminApi, removeUserAdminApi } from '../../../api/user.api';
+import toast from 'react-hot-toast';
 
 const UsersManagementPage = () => {
     const [users, setUsers] = useState([]);
@@ -117,7 +118,7 @@ const UsersManagementPage = () => {
                     setUsers(users.filter((u) => u._id !== id));
                     closeConfirmModal();
                 } catch (error) {
-                    alert(error.response?.data?.message || "Failed to delete user");
+                    toast.error(error.response?.data?.message || "Failed to delete user");
                 }
             }
         });
@@ -135,7 +136,7 @@ const UsersManagementPage = () => {
                     setUsers(users.map((u) => (u._id === id ? { ...u, isAdmin: true } : u)));
                     closeConfirmModal();
                 } catch (error) {
-                    alert(error.response?.data?.message || "Failed to make user admin");
+                    toast.error(error.response?.data?.message || "Failed to make user admin");
                 }
             }
         });
@@ -153,7 +154,7 @@ const UsersManagementPage = () => {
                     setUsers(users.map((u) => (u._id === id ? { ...u, isAdmin: false } : u)));
                     closeConfirmModal();
                 } catch (error) {
-                    alert(error.response?.data?.message || "Failed to remove user admin");
+                    toast.error(error.response?.data?.message || "Failed to remove user admin");
                 }
             }
         });

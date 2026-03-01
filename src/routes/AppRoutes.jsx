@@ -6,7 +6,8 @@ import LoginPage from '../pages/auth/LoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
 import ProfilePage from '../pages/user/profile/ProfilePage';
 import ContactPage from '../pages/user/contact/ContactPage';
-import LatestJobsPage from '../pages/user/latestJobs/LatestJobsPage';
+// import LatestJobsPage from '../pages/user/latestJobs/LatestJobsPage'; // Removed as per user request
+import LatestNewsPage from '../pages/user/latestNews/LatestNewsPage';
 import AdmitCardPage from '../pages/user/admitCard/AdmitCardPage';
 import ResultPage from '../pages/user/result/ResultPage';
 import AnswerKeyPage from '../pages/user/answerKey/AnswerKeyPage';
@@ -19,6 +20,7 @@ import ArticleDetailPage from '../pages/user/article/ArticleDetailPage';
 import ProtectedRoutes from './ProtectedRoutes';
 import AdminRoutes from './AdminRoutes';
 import SavedPostsPage from '../pages/user/savedPosts/SavedPostsPage';
+import SearchResultsPage from '../pages/user/search/SearchResultsPage';
 
 const AppRoutes = () => {
     return (
@@ -27,7 +29,7 @@ const AppRoutes = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/contact" element={<ContactPage />} />
-            <Route path="/latest-jobs" element={<LatestJobsPage />} />
+            <Route path="/latest-news" element={<LatestNewsPage />} />
             <Route path="/admit-card" element={<AdmitCardPage />} />
             <Route path="/result" element={<ResultPage />} />
             <Route path="/answer-key" element={<AnswerKeyPage />} />
@@ -36,6 +38,7 @@ const AppRoutes = () => {
             <Route path="/university" element={<UniversityPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/service" element={<ServicesPage />} />
+            <Route path="/search" element={<SearchResultsPage />} />
 
             {/* Admin Panel Routes */}
             <Route path="/admin/*" element={<AdminRoutes />} />

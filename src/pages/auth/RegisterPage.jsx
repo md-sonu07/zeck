@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { register } from '../../store/thunk/authThunk';
 import { User, Mail, Lock, UserPlus, ArrowLeft, ShieldCheck } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const RegisterPage = () => {
     const [name, setName] = useState('');
@@ -24,7 +25,7 @@ const RegisterPage = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            alert('Passwords do not match');
+            toast.error('Passwords do not match');
             return;
         }
         try {

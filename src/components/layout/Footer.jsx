@@ -12,7 +12,7 @@ import {
 const Footer = () => {
     const quickLinks = [
         { label: 'About Agency', path: '/about' },
-        { label: 'Latest Vacancy', path: '/latest-jobs' },
+        { label: 'Latest Vacancy', path: '/latest-news' },
         { label: 'Download Admit Card', path: '/admit-card' },
         { label: 'Checked Results', path: '/result' },
         { label: 'Syllabus Updates', path: '/syllabus' },

@@ -9,36 +9,36 @@ const ContactManagementPage = () => {
     const { settings, loading } = useSelector((state) => state.contact);
 
     // Info Cards State
-    const [phoneNo, setPhoneNo] = useState('+91 98765 43210');
-    const [phoneSub, setPhoneSub] = useState('Mon – Sat, 9 AM – 6 PM');
+    const [phoneNo, setPhoneNo] = useState('');
+    const [phoneSub, setPhoneSub] = useState('');
 
-    const [email, setEmail] = useState('support@zoyacenter.in');
-    const [emailSub, setEmailSub] = useState('Reply within 24 hours');
+    const [email, setEmail] = useState('');
+    const [emailSub, setEmailSub] = useState('');
 
-    const [address, setAddress] = useState('Patna, Bihar – 800001');
-    const [addressSub, setAddressSub] = useState('Near Gandhi Maidan');
+    const [address, setAddress] = useState('');
+    const [addressSub, setAddressSub] = useState('');
 
-    const [workingHours, setWorkingHours] = useState('9:00 AM – 6:00 PM');
-    const [workingHoursSub, setWorkingHoursSub] = useState('Monday to Saturday');
+    const [workingHours, setWorkingHours] = useState('');
+    const [workingHoursSub, setWorkingHoursSub] = useState('');
 
     // Quick Connect Links
-    const [telegramLink, setTelegramLink] = useState('https://t.me/zoyacenter');
-    const [telegramSub, setTelegramSub] = useState('Get instant job alerts');
+    const [telegramLink, setTelegramLink] = useState('');
+    const [telegramSub, setTelegramSub] = useState('');
 
-    const [whatsappLink, setWhatsappLink] = useState('https://wa.me/919876543210');
-    const [whatsappSub, setWhatsappSub] = useState('Daily updates & notifications');
+    const [whatsappLink, setWhatsappLink] = useState('');
+    const [whatsappSub, setWhatsappSub] = useState('');
 
-    const [facebookLink, setFacebookLink] = useState('https://facebook.com/zoyacenter');
-    const [facebookSub, setFacebookSub] = useState('Like & follow our page');
+    const [facebookLink, setFacebookLink] = useState('');
+    const [facebookSub, setFacebookSub] = useState('');
 
-    const [youtubeLink, setYoutubeLink] = useState('https://youtube.com/zoyacenter');
-    const [youtubeSub, setYoutubeSub] = useState('Watch guidance videos');
+    const [youtubeLink, setYoutubeLink] = useState('');
+    const [youtubeSub, setYoutubeSub] = useState('');
 
-    const [instagramLink, setInstagramLink] = useState('https://instagram.com/zoyacenter');
-    const [instagramSub, setInstagramSub] = useState('Follow our latest updates');
+    const [instagramLink, setInstagramLink] = useState('');
+    const [instagramSub, setInstagramSub] = useState('');
 
     // Map Coordinates / Embed URL
-    const [mapEmbedSrc, setMapEmbedSrc] = useState('https://www.google.com/maps/embed?pb=...');
+    const [mapEmbedSrc, setMapEmbedSrc] = useState('');
 
     useEffect(() => {
         dispatch(fetchContactSettings());

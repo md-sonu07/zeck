@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
     Briefcase,
@@ -12,36 +13,30 @@ import {
     Plus,
     Trash2,
     X,
-    Layout
+    Layout,
+    Newspaper,
+    Loader2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { fetchPageSections, createPageSection, deletePageSection } from '../../../store/thunk/pageSectionThunk';
 
 const defaultSections = [
-    { id: '1', title: 'Latest Jobs', path: '/admin/latest-jobs', iconName: 'Briefcase', color: 'bg-blue-500', description: 'Manage new and recent job postings' },
-    { id: '2', title: 'Admit Card', path: '/admin/admit-cards', iconName: 'FileText', color: 'bg-amber-500', description: 'Update examination admit card releases' },
-    { id: '3', title: 'Result', path: '/admin/results', iconName: 'CheckCircle', color: 'bg-green-500', description: 'Publish final or preliminary exam results' },
-    { id: '4', title: 'Answer Key', path: '/admin/answer-key', iconName: 'Key', color: 'bg-teal-500', description: 'Upload official answer keys and objections' },
-    { id: '5', title: 'Syllabus', path: '/admin/syllabus', iconName: 'BookOpen', color: 'bg-purple-500', description: 'Manage detailed exam syllabi and patterns' },
-    { id: '6', title: 'Admission', path: '/admin/admission', iconName: 'GraduationCap', color: 'bg-indigo-500', description: 'Update college and entrance admissions' },
-    { id: '7', title: 'University', path: '/admin/university', iconName: 'School', color: 'bg-rose-500', description: 'Handle university-specific updates' },
+    { id: '1', title: 'Latest News', path: '/admin/latest-news', iconName: 'Newspaper', color: 'bg-blue-500', description: 'Manage new and recent updates', isDefault: true },
+    { id: '2', title: 'Admit Card', path: '/admin/admit-cards', iconName: 'FileText', color: 'bg-amber-500', description: 'Update examination admit card releases', isDefault: true },
+    { id: '3', title: 'Result', path: '/admin/results', iconName: 'CheckCircle', color: 'bg-green-500', description: 'Publish final or preliminary exam results', isDefault: true },
+    { id: '4', title: 'Answer Key', path: '/admin/answer-key', iconName: 'Key', color: 'bg-teal-500', description: 'Upload official answer keys and objections', isDefault: true },
+    { id: '5', title: 'Syllabus', path: '/admin/syllabus', iconName: 'BookOpen', color: 'bg-purple-500', description: 'Manage detailed exam syllabi and patterns', isDefault: true },
+    { id: '6', title: 'Admission', path: '/admin/admission', iconName: 'GraduationCap', color: 'bg-indigo-500', description: 'Update college and entrance admissions', isDefault: true },
+    { id: '7', title: 'University', path: '/admin/university', iconName: 'School', color: 'bg-rose-500', description: 'Handle university-specific updates', isDefault: true },
 ];
 
 const iconMap = {
-    Briefcase, School, GraduationCap, FileText, CheckCircle, BookOpen, Key, Layout
+    Briefcase, School, GraduationCap, FileText, CheckCircle, BookOpen, Key, Layout, Newspaper
 };
 
 const PageArticleManagement = () => {
-    const [sections, setSections] = useState(() => {
-        const saved = localStorage.getItem('pageArticlesSections');
-        if (saved) {
-            try {
-                return JSON.parse(saved);
-            } catch (e) {
-                return defaultSections;
-            }
-        }
-        return defaultSections;
-    });
+    const dispatch = useDispatch();
+    const { sections: customSections, loading } = useSelector((state) => state.pageSections);
 
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [newTitle, setNewTitle] = useState('');
@@ -50,15 +45,15 @@ const PageArticleManagement = () => {
     const [sectionToDelete, setSectionToDelete] = useState(null);
 
     useEffect(() => {
-        localStorage.setItem('pageArticlesSections', JSON.stringify(sections));
-    }, [sections]);
+        dispatch(fetchPageSections());
+    }, [dispatch]);
 
     const handleAddClick = () => {
         setNewTitle('');
         setIsAddModalOpen(true);
     };
 
-    const confirmAdd = (e) => {
+    const confirmAdd = async (e) => {
         e.preventDefault();
         if (!newTitle.trim()) {
             toast.error('Please enter a section name');
@@ -66,17 +61,21 @@ const PageArticleManagement = () => {
         }
 
         const newSection = {
-            id: Date.now().toString(),
             title: newTitle.trim(),
             path: `/admin/custom/${encodeURIComponent(newTitle.trim())}`,
             iconName: 'Layout',
             color: 'bg-primary',
-            description: `Manage content for ${newTitle.trim()}`
+            description: `Manage content for ${newTitle.trim()}`,
+            isDefault: false
         };
 
-        setSections(prev => [newSection, ...prev]);
-        setIsAddModalOpen(false);
-        toast.success('New section created');
+        try {
+            await dispatch(createPageSection(newSection)).unwrap();
+            setIsAddModalOpen(false);
+            toast.success('New section created');
+        } catch (error) {
+            toast.error(error || 'Failed to create section');
+        }
     };
 
     const handleDeleteClick = (e, id) => {
@@ -85,14 +84,21 @@ const PageArticleManagement = () => {
         setIsDeleteModalOpen(true);
     };
 
-    const confirmDelete = () => {
+    const confirmDelete = async () => {
         if (sectionToDelete) {
-            setSections(prev => prev.filter(s => s.id !== sectionToDelete));
-            setIsDeleteModalOpen(false);
-            setSectionToDelete(null);
-            toast.success('Section deleted');
+            try {
+                await dispatch(deletePageSection(sectionToDelete)).unwrap();
+                setIsDeleteModalOpen(false);
+                setSectionToDelete(null);
+                toast.success('Section deleted');
+            } catch (error) {
+                toast.error(error || 'Failed to delete section');
+            }
         }
     };
+
+    // Combine hardcoded defaults with backend custom sections
+    const allSections = [...defaultSections, ...customSections];
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">
@@ -123,21 +129,23 @@ const PageArticleManagement = () => {
                     </div>
                 </button>
 
-                {sections.map((section) => {
+                {allSections.map((section) => {
                     const IconComp = iconMap[section.iconName] || Layout;
                     return (
                         <Link
-                            key={section.id}
+                            key={section._id || section.id}
                             to={section.path}
                             className="group relative bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 shadow-sm shadow-slate-200/50 dark:shadow-none hover:-translate-y-1 hover:shadow-md hover:shadow-slate-200/80 dark:hover:border-slate-600 transition-all duration-300 flex flex-col items-start gap-4"
                         >
-                            <button
-                                onClick={(e) => handleDeleteClick(e, section.id)}
-                                className="absolute top-4 right-4 p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors opacity-0 group-hover:opacity-100 z-10"
-                                title="Delete section"
-                            >
-                                <Trash2 size={18} />
-                            </button>
+                            {!section.isDefault && (
+                                <button
+                                    onClick={(e) => handleDeleteClick(e, section._id)}
+                                    className="absolute top-4 right-4 p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors opacity-0 group-hover:opacity-100 z-10"
+                                    title="Delete section"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            )}
 
                             <div className={`size-12 rounded-xl text-white flex items-center justify-center shadow-lg ${section.color} group-hover:scale-110 transition-transform duration-300`}>
                                 <IconComp size={24} />
@@ -181,7 +189,7 @@ const PageArticleManagement = () => {
                                     type="text"
                                     value={newTitle}
                                     onChange={(e) => setNewTitle(e.target.value)}
-                                    placeholder="e.g. Latest Job"
+                                    placeholder="e.g. Special Updates"
                                     className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-sm font-medium"
                                     autoFocus
                                 />
@@ -219,6 +227,13 @@ const PageArticleManagement = () => {
                             </button>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {loading && (
+                <div className="fixed bottom-6 right-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 shadow-xl flex items-center gap-3 animate-in slide-in-from-right-10">
+                    <Loader2 size={18} className="animate-spin text-primary" />
+                    <span className="text-xs font-bold text-slate-600 dark:text-slate-300 tracking-tight">Syncing with server...</span>
                 </div>
             )}
         </div>

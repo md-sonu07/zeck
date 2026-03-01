@@ -3,7 +3,7 @@ import { Flame, GraduationCap, IdCard, Key } from 'lucide-react';
 import HeroBanner from '../../../components/PageSection/home/HeroBanner';
 import NoticeMarquee from '../../../components/PageSection/home/NoticeMarquee';
 import FilterStrip from '../../../components/PageSection/home/FilterStrip';
-import LatestJobsSection from '../../../components/PageSection/home/linkSection/LatestJobsSection';
+import LatestNewsSection from '../../../components/PageSection/home/linkSection/LatestNewsSection';
 import AdmitCardSection from '../../../components/PageSection/home/linkSection/AdmitCardSection';
 import ResultsSection from '../../../components/PageSection/home/linkSection/ResultsSection';
 import AnswerKeySyllabus from '../../../components/PageSection/home/linkSection/AnswerKeySyllabus';
@@ -22,11 +22,11 @@ const HomePage = () => {
                     {/* Left Column */}
                     <div className="lg:col-span-8 space-y-8">
                         <div className="section-label">
-                            <Flame className="text-accent" size={10} /> Breaking &amp; Latest
+                            <Flame className="text-accent" size={10} /> Latest News & Updates
                         </div>
 
-                        {/* Latest Jobs */}
-                        <LatestJobsSection />
+                        {/* Latest News */}
+                        <LatestNewsSection />
 
                         <div className="section-label mt-4">
                             <IdCard className="text-blue-500" size={10} /> Examination Portal

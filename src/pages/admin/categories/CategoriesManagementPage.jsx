@@ -4,6 +4,7 @@ import { fetchCategories, addCategoryValue, updateCategory } from '../../../stor
 import {
     Plus, Building2, BookOpen, MapPin, X, LayoutGrid, Trash2
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const CategoriesManagementPage = () => {
     const dispatch = useDispatch();
@@ -38,16 +39,18 @@ const CategoriesManagementPage = () => {
             currentValues = availableLocs.filter(i => i !== item);
         }
 
+        const loadingToast = toast.loading('Deleting category value...');
         try {
             await dispatch(updateCategory({
                 type: endpointType,
                 values: currentValues
             })).unwrap();
 
+            toast.success('Category value deleted successfully', { id: loadingToast });
             setDeleteModal({ isOpen: false, item: null, type: null });
         } catch (error) {
             console.error('Error deleting category value:', error);
-            alert('Failed to delete. Please try again.');
+            toast.error('Failed to delete. Please try again.', { id: loadingToast });
         }
     };
 
@@ -59,16 +62,18 @@ const CategoriesManagementPage = () => {
         else if (type === 'res') endpointType = 'resources';
         else if (type === 'loc') endpointType = 'locations';
 
+        const loadingToast = toast.loading('Adding category value...');
         try {
             await dispatch(addCategoryValue({
                 type: endpointType,
                 value: value.trim()
             })).unwrap();
 
+            toast.success('Category value added successfully', { id: loadingToast });
             inputRef.value = '';
         } catch (error) {
             console.error('Error adding category value:', error);
-            alert('Failed to add. Maybe it already exists?');
+            toast.error('Failed to add. Maybe it already exists?', { id: loadingToast });
         }
     };
 

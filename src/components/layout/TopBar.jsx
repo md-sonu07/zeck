@@ -1,7 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Mail, Clock, Megaphone } from 'lucide-react';
+import { fetchContactSettings } from '../../store/thunk/contactThunk';
 
 const TopBar = () => {
+    const dispatch = useDispatch();
+    const { settings: contactSettings } = useSelector((state) => state.contact);
+
+    useEffect(() => {
+        if (!contactSettings) {
+            dispatch(fetchContactSettings());
+        }
+    }, [dispatch, contactSettings]);
+
+    const email = contactSettings?.email || 'zoyaeductioncenter@gmail.com';
+    const workingHours = contactSettings?.workingHours || '9AM – 6PM';
+
     return (
         <div className="bg-primary text-white/90 text-[11px] py-1.5 px-4 border-b border-primary-dark/20">
             <div className="max-w-[1200px] mx-auto flex justify-between items-center font-medium tracking-wide">
@@ -13,11 +27,11 @@ const TopBar = () => {
                 <div className="flex items-center gap-6">
                     <div className="hidden sm:flex items-center gap-1.5 opacity-85">
                         <Clock size={13} />
-                        <span>9AM – 6PM</span>
+                        <span>{workingHours}</span>
                     </div>
-                    <a href="mailto:zoyaeductioncenter@gmail.com" className="flex items-center gap-1.5 hover:text-white transition-colors">
+                    <a href={`mailto:${email}`} className="flex items-center gap-1.5 hover:text-white transition-colors">
                         <Mail size={13} className="opacity-80" />
-                        <span>zoyaeductioncenter@gmail.com</span>
+                        <span>{email}</span>
                     </a>
                 </div>
             </div>

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import {
     Send,
     Facebook,
@@ -16,7 +17,11 @@ import {
     LinkIcon,
     ArrowRight,
     Phone,
+    Instagram,
 } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchImportantServices } from '../../../store/thunk/importantServiceThunk';
+import { fetchContactSettings } from '../../../store/thunk/contactThunk';
 
 // Official WhatsApp brand icon — Lucide doesn't include one
 const WhatsAppIcon = ({ size = 20 }) => (
@@ -26,21 +31,86 @@ const WhatsAppIcon = ({ size = 20 }) => (
 );
 
 const Sidebar = () => {
-    const categories = [
-        { name: 'Join Telegram Channel', icon: Send, color: 'bg-[#2CA5E0]', glow: 'group-hover:shadow-[#2CA5E0]/30', sub: 'Get instant job alerts' },
-        { name: 'Join WhatsApp Channel', icon: WhatsAppIcon, color: 'bg-[#25D366]', glow: 'group-hover:shadow-[#25D366]/30', sub: 'Daily updates & notifications' },
-        { name: 'Facebook Page', icon: Facebook, color: 'bg-[#1877F2]', glow: 'group-hover:shadow-[#1877F2]/30', sub: 'Like & follow our page' },
-        { name: 'YouTube Channel', icon: Youtube, color: 'bg-[#FF0000]', glow: 'group-hover:shadow-[#FF0000]/30', sub: 'Watch guidance videos' },
-    ];
+    const dispatch = useDispatch();
+    const { data: allServices, loading: servicesLoading } = useSelector((state) => state.importantServices);
+    const { settings: contactSettings } = useSelector((state) => state.contact);
 
-    const quickLinks = [
-        { name: 'Aadhar Card Download', icon: IdCard },
-        { name: 'Voter ID Card Download', icon: UserRound },
-        { name: 'RTPS Bihar Services', icon: FileText },
-        { name: 'Ayushman Card Apply', icon: HeartPulse },
-        { name: 'Post Matric Scholarship', icon: GraduationCap },
-        { name: 'e-Shram Card Download', icon: Contact },
-    ];
+    useEffect(() => {
+        dispatch(fetchImportantServices());
+        dispatch(fetchContactSettings());
+    }, [dispatch]);
+
+    const activeServices = allServices?.filter(s => s.status === 'active') || [];
+
+    // Build social links dynamically from contact settings
+    const socialLinks = useMemo(() => {
+        if (!contactSettings) return [];
+        const links = [];
+        if (contactSettings.telegramLink) {
+            links.push({
+                name: 'Join Telegram Channel',
+                icon: Send,
+                color: 'bg-[#2CA5E0]',
+                glow: 'group-hover:shadow-[#2CA5E0]/30',
+                sub: contactSettings.telegramSub || 'Get instant job alerts',
+                href: contactSettings.telegramLink,
+            });
+        }
+        if (contactSettings.whatsappLink) {
+            links.push({
+                name: 'Join WhatsApp Channel',
+                icon: WhatsAppIcon,
+                color: 'bg-[#25D366]',
+                glow: 'group-hover:shadow-[#25D366]/30',
+                sub: contactSettings.whatsappSub || 'Daily updates & notifications',
+                href: contactSettings.whatsappLink,
+            });
+        }
+        if (contactSettings.facebookLink) {
+            links.push({
+                name: 'Facebook Page',
+                icon: Facebook,
+                color: 'bg-[#1877F2]',
+                glow: 'group-hover:shadow-[#1877F2]/30',
+                sub: contactSettings.facebookSub || 'Like & follow our page',
+                href: contactSettings.facebookLink,
+            });
+        }
+        if (contactSettings.youtubeLink) {
+            links.push({
+                name: 'YouTube Channel',
+                icon: Youtube,
+                color: 'bg-[#FF0000]',
+                glow: 'group-hover:shadow-[#FF0000]/30',
+                sub: contactSettings.youtubeSub || 'Watch guidance videos',
+                href: contactSettings.youtubeLink,
+            });
+        }
+        if (contactSettings.instagramLink) {
+            links.push({
+                name: 'Instagram',
+                icon: Instagram,
+                color: 'bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737]',
+                glow: 'group-hover:shadow-[#833AB4]/30',
+                sub: contactSettings.instagramSub || 'Follow us on Instagram',
+                href: contactSettings.instagramLink,
+            });
+        }
+        return links;
+    }, [contactSettings]);
+
+    const quickLinks = activeServices.length > 0
+        ? activeServices.map(s => ({ name: s.title, icon: FileText, isDynamic: true }))
+        : [
+            { name: 'Aadhar Card Download', icon: IdCard },
+            { name: 'Voter ID Card Download', icon: UserRound },
+            { name: 'RTPS Bihar Services', icon: FileText },
+            { name: 'Ayushman Card Apply', icon: HeartPulse },
+            { name: 'Post Matric Scholarship', icon: GraduationCap },
+            { name: 'e-Shram Card Download', icon: Contact },
+        ];
+
+    const helplineNumber = contactSettings?.phoneNo || '123456789';
 
     return (
         <aside className="space-y-6">
@@ -57,33 +127,38 @@ const Sidebar = () => {
                 </div>
 
                 <ul className="">
-                    {quickLinks.map((link, idx) => (
-                        <li
-                            key={idx}
-                            className="group relative border-l-[3px] border-transparent hover:border-primary transition-all duration-200"
-                        >
-                            {/* Glow strip */}
-                            <span className="absolute inset-0 bg-linear-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
-
-                            <a href="#" className="relative flex items-center gap-3 px-4 py-3.5">
-                                {/* Icon box */}
-                                <div className="size-9 rounded-xl bg-primary/8 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white group-hover:shadow-lg group-hover:shadow-primary/25 transition-all duration-200 shrink-0">
-                                    <link.icon size={16} />
-                                </div>
-
-                                {/* Label */}
-                                <span className="flex-1 text-[13px] font-semibold text-slate-600 dark:text-slate-300 group-hover:text-primary transition-colors duration-200 leading-snug">
-                                    {link.name}
-                                </span>
-
-                                {/* Arrow */}
-                                <ArrowRight
-                                    size={13}
-                                    className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-primary group-hover:translate-x-0.5 opacity-0 group-hover:opacity-100 transition-all duration-200"
-                                />
-                            </a>
-                        </li>
-                    ))}
+                    {servicesLoading ? (
+                        <div className="p-4 text-center">
+                            <Bolt className="animate-spin text-primary inline-block" size={20} />
+                        </div>
+                    ) : (
+                        quickLinks.map((link, idx) => (
+                            <li key={idx} className="group relative border-l-2 border-transparent hover:border-primary transition-all duration-200">
+                                <span className="absolute inset-0 bg-linear-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                                {link.isDynamic ? (
+                                    <Link to="/service" className="relative flex items-center gap-3 px-4 py-3.5 no-underline">
+                                        <div className="size-8 rounded-lg bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-200">
+                                            <link.icon size={16} />
+                                        </div>
+                                        <span className="text-[13px] font-bold text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors truncate">
+                                            {link.name}
+                                        </span>
+                                        <ChevronRight size={14} className="ml-auto text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all opacity-0 group-hover:opacity-100" />
+                                    </Link>
+                                ) : (
+                                    <a href="#" className="relative flex items-center gap-3 px-4 py-3.5 no-underline">
+                                        <div className="size-8 rounded-lg bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center text-slate-400 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-200">
+                                            <link.icon size={16} />
+                                        </div>
+                                        <span className="text-[13px] font-bold text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors truncate">
+                                            {link.name}
+                                        </span>
+                                        <ChevronRight size={14} className="ml-auto text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all opacity-0 group-hover:opacity-100" />
+                                    </a>
+                                )}
+                            </li>
+                        ))
+                    )}
                 </ul>
             </section>
 
@@ -98,15 +173,18 @@ const Sidebar = () => {
                     </h2>
                 </div>
                 <div className="p-4">
-                    <div className="flex items-center gap-4 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 group hover:border-emerald-500 transition-colors duration-300">
+                    <a
+                        href={`tel:${helplineNumber}`}
+                        className="flex items-center gap-4 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 group hover:border-emerald-500 transition-colors duration-300 no-underline"
+                    >
                         <div className="size-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform duration-300">
                             <Phone size={22} />
                         </div>
                         <div>
                             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Helpline Number</p>
-                            <p className="text-xl font-black text-slate-800 dark:text-white group-hover:text-emerald-500 transition-colors">123456789</p>
+                            <p className="text-xl font-black text-slate-800 dark:text-white group-hover:text-emerald-500 transition-colors">{helplineNumber}</p>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </section>
 
@@ -122,34 +200,42 @@ const Sidebar = () => {
                 </div>
 
                 <div className="p-2 space-y-1">
-                    {categories.map((social, idx) => (
-                        <a
-                            key={idx}
-                            href="#"
-                            className="group flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-all duration-200"
-                        >
-                            {/* Brand icon */}
-                            <div className={`size-10 rounded-xl ${social.color} ${social.glow} flex items-center justify-center text-white shadow-md group-hover:shadow-xl group-hover:scale-110 transition-all duration-200 shrink-0`}>
-                                <social.icon size={20} />
-                            </div>
+                    {socialLinks.length > 0 ? (
+                        socialLinks.map((social, idx) => (
+                            <a
+                                key={idx}
+                                href={social.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-all duration-200 no-underline"
+                            >
+                                {/* Brand icon */}
+                                <div className={`size-10 rounded-xl ${social.color} ${social.glow} flex items-center justify-center text-white shadow-md group-hover:shadow-xl group-hover:scale-110 transition-all duration-200 shrink-0`}>
+                                    <social.icon size={20} />
+                                </div>
 
-                            {/* Text */}
-                            <div className="flex-1 min-w-0">
-                                <p className="text-[13px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-primary transition-colors duration-200 leading-snug">
-                                    {social.name}
-                                </p>
-                                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-0.5">
-                                    {social.sub}
-                                </p>
-                            </div>
+                                {/* Text */}
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-[13px] font-bold text-slate-700 dark:text-slate-200 group-hover:text-primary transition-colors duration-200 leading-snug">
+                                        {social.name}
+                                    </p>
+                                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-0.5">
+                                        {social.sub}
+                                    </p>
+                                </div>
 
-                            {/* Chevron */}
-                            <ChevronRight
-                                size={14}
-                                className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-primary group-hover:translate-x-1 transition-all duration-200"
-                            />
-                        </a>
-                    ))}
+                                {/* Chevron */}
+                                <ChevronRight
+                                    size={14}
+                                    className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-primary group-hover:translate-x-1 transition-all duration-200"
+                                />
+                            </a>
+                        ))
+                    ) : (
+                        <div className="py-6 text-center text-slate-400 text-xs font-medium">
+                            No social links configured yet.
+                        </div>
+                    )}
                 </div>
             </section>
 
@@ -158,4 +244,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-

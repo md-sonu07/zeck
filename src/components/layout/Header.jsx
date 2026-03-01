@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../../store/slice/themeSlice';
 import {
@@ -10,24 +10,26 @@ import {
     Moon,
     User,
     House,
-    Briefcase,
     FileText,
     CheckCircle,
     Key,
     Book,
     GraduationCap,
-    Mail
+    Mail,
+    Newspaper
 } from 'lucide-react';
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const { userInfo } = useSelector((state) => state.auth);
     const { darkMode } = useSelector((state) => state.theme);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const navLinks = [
         { name: 'Home', path: '/', icon: House },
-        { name: 'Latest Job', path: '/latest-jobs', icon: Briefcase },
+        { name: 'Latest News', path: '/latest-news', icon: Newspaper },
         { name: 'Admit Card', path: '/admit-card', icon: FileText },
         { name: 'Result', path: '/result', icon: CheckCircle },
         { name: 'Answer Key', path: '/answer-key', icon: Key },
@@ -35,6 +37,16 @@ const Header = () => {
         { name: 'Admission', path: '/admission', icon: GraduationCap },
         { name: 'Contact Us', path: '/contact', icon: Mail },
     ];
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        const trimmed = searchQuery.trim();
+        if (trimmed) {
+            navigate(`/search?q=${encodeURIComponent(trimmed)}`);
+            setSearchQuery('');
+            setIsOpen(false);
+        }
+    };
 
     return (
         <>
@@ -57,7 +69,7 @@ const Header = () => {
                             <span className="text-slate-800 dark:text-white ml-1">Education Centre</span>
                         </h1>
                         <p className="hidden sm:block text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-[0.15em] mt-0.5">
-                            Govt. Job · Results · Admit Cards
+                            Recent Updates · Results · Admit Cards
                         </p>
                     </div>
                 </Link>
@@ -65,15 +77,22 @@ const Header = () => {
                 {/* Right Actions Section */}
                 <div className="flex items-center gap-3">
                     {/* Desktop Search Bar */}
-                    <div className="hidden md:flex items-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-4 pr-1 py-1 gap-2 focus-within:border-primary focus-within:bg-white dark:focus-within:bg-slate-900 focus-within:shadow-[0_0_0_4px_rgba(23,115,207,0.08)] transition-all w-72 lg:w-96">
+                    <form onSubmit={handleSearch} className="hidden md:flex items-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-4 pr-1 py-1 gap-2 focus-within:border-primary focus-within:bg-white dark:focus-within:bg-slate-900 focus-within:shadow-[0_0_0_4px_rgba(23,115,207,0.08)] transition-all w-72 lg:w-96">
                         <Search className="text-slate-400 shrink-0" size={16} />
                         <input
                             type="text"
-                            placeholder="Search jobs, results, admit cards..."
+                            placeholder="Search news, results, admit cards..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             className="bg-transparent border-none outline-none focus:ring-0 text-sm font-semibold text-slate-700 dark:text-slate-200 placeholder-slate-400 w-full px-2"
                         />
-                        <button className="bg-primary text-white text-[10px] font-black uppercase px-4 py-2 rounded-lg hover:bg-primary-dark transition-all active:scale-95 shrink-0">Search</button>
-                    </div>
+                        <button
+                            type="submit"
+                            className="bg-primary text-white text-[10px] font-black uppercase px-4 py-2 rounded-lg hover:bg-primary-dark transition-all active:scale-95 shrink-0"
+                        >
+                            Search
+                        </button>
+                    </form>
 
                     <div className="flex items-center gap-2">
                         {/* Theme Toggle */}
@@ -128,6 +147,26 @@ const Header = () => {
                     </div>
 
                     <div className="flex-1 overflow-y-auto py-6 px-4 hide-scrollbar">
+                        {/* Mobile Search Bar */}
+                        <form onSubmit={handleSearch} className="mb-6">
+                            <div className="flex items-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-4 pr-1 py-1 gap-2 focus-within:border-primary focus-within:bg-white dark:focus-within:bg-slate-900 transition-all">
+                                <Search className="text-slate-400 shrink-0" size={16} />
+                                <input
+                                    type="text"
+                                    placeholder="Search..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="bg-transparent border-none outline-none focus:ring-0 text-sm font-semibold text-slate-700 dark:text-slate-200 placeholder-slate-400 w-full px-2"
+                                />
+                                <button
+                                    type="submit"
+                                    className="bg-primary text-white text-[10px] font-black uppercase px-4 py-2 rounded-lg hover:bg-primary-dark transition-all active:scale-95 shrink-0"
+                                >
+                                    Go
+                                </button>
+                            </div>
+                        </form>
+
                         <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 pl-3 flex items-center gap-2">
                             <div className="w-1 h-3 bg-primary rounded-full"></div>
                             Main Navigation

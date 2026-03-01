@@ -34,7 +34,7 @@ const AdminRoutes = () => {
                 <Route path="results" element={<PostManagementPage categoryTitle="Result" />} />
                 <Route path="syllabus" element={<PostManagementPage categoryTitle="Syllabus" />} />
                 <Route path="answer-key" element={<PostManagementPage categoryTitle="Answer Key" />} />
-                <Route path="latest-jobs" element={<PostManagementPage categoryTitle="Latest Job" />} />
+                <Route path="latest-news" element={<PostManagementPage categoryTitle="Latest News" />} />
                 <Route path="custom/:slug" element={<DynamicCustomRoute />} />
 
                 {/* Specific Management Pages */}
