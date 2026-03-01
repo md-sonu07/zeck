@@ -51,11 +51,11 @@ const Header = () => {
     return (
         <>
             {/* Header Content (Logo Row) */}
-            <header className="flex items-center justify-between py-3 md:py-4 gap-4">
+            <header className="flex items-center justify-between py-2 md:py-4 gap-4">
                 {/* Logo Section */}
                 <Link to="/" className="flex items-center gap-3 shrink-0 group">
                     <div className="">
-                        <div className="size-14 rounded-md flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                        <div className="size-11 sm:size-14 rounded-md flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
                             <img
                                 src={darkMode ? "/logo/crop-logoo.png" : "/logo/light-logo.png"}
                                 alt="Zoya Education Centre"

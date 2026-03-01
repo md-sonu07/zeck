@@ -23,24 +23,24 @@ const HeroBanner = () => {
                             </span>
                         </div>
                         <h2 className="text-2xl md:text-4xl font-black text-white leading-[1.15]">
-                            India's Most Trusted<br className="hidden sm:block" />
+                            India's Most Trusted {" "}<br className="hidden sm:block" />
                             <span className="text-yellow-300 drop-shadow-sm">Latest News & Recruitment Portal</span>
                         </h2>
                         <p className="text-white/70 text-sm mt-3 max-w-lg leading-relaxed font-medium">
                             Get instant access to Latest News, Results, Admit Cards & Syllabus — specifically curated for dedicated candidates.
                         </p>
-                        <div className="flex flex-wrap gap-3 mt-6">
+                        <div className="flex flex-nowrap gap-2 sm:gap-3 mt-6">
                             <a href="/latest-news"
-                                className="inline-flex items-center gap-2 bg-white text-primary font-bold text-[11px] px-5 py-2.5 rounded-full shadow-lg shadow-black/10 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
-                                <Newspaper size={12} /> LATEST NEWS
+                                className="flex-1 flex items-center justify-center gap-2 bg-white text-primary font-bold text-[10px] sm:text-[11px] px-2 sm:px-5 py-2.5 rounded-2xl shadow-lg shadow-black/10 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 whitespace-nowrap">
+                                <Newspaper size={12} className="shrink-0" /> LATEST NEWS
                             </a>
                             <a href="/result"
-                                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] px-5 py-2.5 rounded-full border border-white/20 backdrop-blur-sm transition-all duration-200">
-                                <CheckCircle size={12} /> RESULTS
+                                className="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] sm:text-[11px] px-2 sm:px-5 py-2.5 rounded-2xl border border-white/20 backdrop-blur-sm transition-all duration-200 whitespace-nowrap">
+                                <CheckCircle size={12} className="shrink-0" /> RESULTS
                             </a>
                             <a href="/admit-card"
-                                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold text-[11px] px-5 py-2.5 rounded-full border border-white/20 backdrop-blur-sm transition-all duration-200">
-                                <IdCard size={12} /> ADMIT CARDS
+                                className="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] sm:text-[11px] px-2 sm:px-5 py-2.5 rounded-2xl border border-white/20 backdrop-blur-sm transition-all duration-200 whitespace-nowrap">
+                                <IdCard size={12} className="shrink-0" /> ADMIT CARDS
                             </a>
                         </div>
                     </div>

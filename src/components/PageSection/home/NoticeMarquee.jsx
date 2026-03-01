@@ -30,7 +30,7 @@ const NoticeMarquee = () => {
                         <span className="text-white font-black text-[10px] tracking-[0.2em] uppercase leading-tight">LIVE</span>
                         <span className="text-white/60 font-medium text-[8px] tracking-widest uppercase">UPDATES</span>
                     </div>
-                    <span className="live-dot live-dot-ring bg-white!"></span>
+                    <span className="live-dot live-dot-ring bg-white! hidden sm:block"></span>
 
                     {/* Decorative slice */}
                     <div className="absolute right-0 top-0 h-full w-3 overflow-hidden pointer-events-none">

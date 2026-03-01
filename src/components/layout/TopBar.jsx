@@ -29,7 +29,7 @@ const TopBar = () => {
                         <Clock size={13} />
                         <span>{workingHours}</span>
                     </div>
-                    <a href={`mailto:${email}`} className="flex items-center gap-1.5 hover:text-white transition-colors">
+                    <a href={`mailto:${email}`} className="hidden sm:flex items-center gap-1.5 hover:text-white transition-colors">
                         <Mail size={13} className="opacity-80" />
                         <span>{email}</span>
                     </a>
