@@ -22,7 +22,8 @@ import {
     Sparkles,
     Megaphone,
     History,
-    CreditCard
+    CreditCard,
+    MessageSquare
 } from 'lucide-react';
 
 
@@ -47,7 +48,8 @@ const AdminLayout = () => {
         { path: '/admin/marquee', label: 'Announcement Bar', icon: Megaphone },
         { path: '/admin/important-services', label: 'Important Services', icon: Sparkles },
         { path: '/admin/about-us', label: 'About Us', icon: Info },
-        { path: '/admin/contact-us', label: 'Contact Us', icon: PhoneCall },
+        { path: '/admin/contact-messages', label: 'User Messages', icon: MessageSquare },
+        { path: '/admin/contact-us', label: 'Contact Settings', icon: PhoneCall },
         { path: '/admin/settings', label: 'Settings', icon: Settings },
     ];
 

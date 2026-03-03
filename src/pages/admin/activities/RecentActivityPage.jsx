@@ -11,7 +11,8 @@ import {
     Search,
     CreditCard,
     ArrowLeft,
-    Loader2
+    Loader2,
+    MessageSquare
 } from 'lucide-react';
 import { getActivities } from '../../../store/thunk/dashboardThunk';
 import { fetchCategories } from '../../../store/thunk/categoryThunk';
@@ -91,7 +92,7 @@ const RecentActivityPage = () => {
     const [filters, setFilters] = useState({
         type: '',
         resourceType: '',
-        mainCategory: '',
+        subCategory: '',
         hasPayment: false
     });
 
@@ -107,24 +108,19 @@ const RecentActivityPage = () => {
     const ACTIVITY_TYPES = [
         { label: 'All Activities', value: '' },
         { label: 'Posts (Articles)', value: 'article' },
-        { label: 'User Registrations', value: 'user' }
+        { label: 'User Registrations', value: 'user' },
+        { label: 'Payments', value: 'payment' },
+        { label: 'Contact Messages', value: 'contact' }
     ];
 
     const RESOURCE_TYPES = React.useMemo(() => {
-        // These are usually the core resource types
-        const core = [
-            { label: 'Latest Jobs', value: 'Latest Jobs' },
-            { label: 'Admit Card', value: 'Admit Card' },
-            { label: 'Result', value: 'Result' },
-            { label: 'Latest News', value: 'Latest News' },
-            { label: 'Answer Key', value: 'Answer Key' },
-            { label: 'Syllabus', value: 'Syllabus' }
-        ];
-        return [{ label: 'All Resources', value: '' }, ...core];
-    }, []);
+        const res = categories?.find(c => c.type === 'resources');
+        const items = (res?.values || []).map(v => ({ label: v, value: v }));
+        return [{ label: 'All Resources', value: '' }, ...items];
+    }, [categories]);
 
     const MAIN_CATEGORIES = React.useMemo(() => {
-        const res = categories?.find(c => c.type === 'resources');
+        const res = categories?.find(c => c.type === 'subcategories');
         const items = (res?.values || []).map(v => ({ label: v, value: v }));
         return [{ label: 'All Categories', value: '' }, ...items];
     }, [categories]);
@@ -146,6 +142,8 @@ const RecentActivityPage = () => {
             case 'Admit Card': return FileText;
             case 'Result': return CheckCircle;
             case 'User': return Users;
+            case 'Payment': return CreditCard;
+            case 'Contact': return MessageSquare;
             default: return FileText;
         }
     };
@@ -156,6 +154,8 @@ const RecentActivityPage = () => {
             case 'Admit Card': return "text-amber-500 bg-amber-50 dark:bg-amber-500/10";
             case 'Result': return "text-purple-500 bg-purple-50 dark:bg-purple-500/10";
             case 'User': return "text-green-500 bg-green-50 dark:bg-green-500/10";
+            case 'Payment': return "text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10";
+            case 'Contact': return "text-indigo-500 bg-indigo-50 dark:bg-indigo-500/10";
             default: return "text-slate-500 bg-slate-50 dark:bg-slate-500/10";
         }
     };
@@ -178,6 +178,8 @@ const RecentActivityPage = () => {
 
     const getAdminPath = (activity) => {
         if (activity.type === 'user') return '/admin/users';
+        if (activity.type === 'payment') return '/admin/payments';
+        if (activity.type === 'contact') return '/admin/contact-messages';
 
         // Map iconType/resource to admin routes
         const rt = activity.iconType;
@@ -216,35 +218,39 @@ const RecentActivityPage = () => {
                         onChange={(val) => handleFilterUpdate('type', val)}
                     />
 
-                    <CustomSelect
-                        label="Resource Type"
-                        options={RESOURCE_TYPES}
-                        value={filters.resourceType}
-                        onChange={(val) => handleFilterUpdate('resourceType', val)}
-                    />
-
-                    <CustomSelect
-                        label="Main Category"
-                        options={MAIN_CATEGORIES}
-                        value={filters.mainCategory}
-                        onChange={(val) => handleFilterUpdate('mainCategory', val)}
-                    />
-
-                    <div className="flex items-center gap-2 pb-2 h-[42px]">
-                        <label className="relative inline-flex items-center cursor-pointer group">
-                            <input
-                                type="checkbox"
-                                name="hasPayment"
-                                checked={filters.hasPayment}
-                                onChange={handleCheckboxChange}
-                                className="sr-only peer"
+                    {(!filters.type || filters.type === 'article') && (
+                        <>
+                            <CustomSelect
+                                label="Resource Type"
+                                options={RESOURCE_TYPES}
+                                value={filters.resourceType}
+                                onChange={(val) => handleFilterUpdate('resourceType', val)}
                             />
-                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
-                            <span className="ml-3 text-sm font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1 group-hover:text-primary transition-colors">
-                                <CreditCard size={14} /> Paid Only
-                            </span>
-                        </label>
-                    </div>
+
+                            <CustomSelect
+                                label="Main Category"
+                                options={MAIN_CATEGORIES}
+                                value={filters.subCategory}
+                                onChange={(val) => handleFilterUpdate('subCategory', val)}
+                            />
+
+                            <div className="flex items-center gap-2 pb-2 h-[42px]">
+                                <label className="relative inline-flex items-center cursor-pointer group">
+                                    <input
+                                        type="checkbox"
+                                        name="hasPayment"
+                                        checked={filters.hasPayment}
+                                        onChange={handleCheckboxChange}
+                                        className="sr-only peer"
+                                    />
+                                    <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                                    <span className="ml-3 text-sm font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1 group-hover:text-primary transition-colors">
+                                        <CreditCard size={14} /> Paid Only
+                                    </span>
+                                </label>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
 

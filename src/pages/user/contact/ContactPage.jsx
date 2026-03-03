@@ -4,6 +4,8 @@ import {
     Clock, CheckCircle2, ChevronDown, ExternalLink,
     Home, ChevronRight as Chevron,
 } from 'lucide-react';
+import { submitContactMessageApi } from '../../../api/contact.api';
+import toast from 'react-hot-toast';
 
 /* ── WhatsApp SVG ─────────────────────────────────────── */
 const WhatsAppIcon = ({ size = 20 }) => (
@@ -88,10 +90,17 @@ const ContactPage = () => {
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setTimeout(() => { setLoading(false); setSubmitted(true); }, 1500);
+        try {
+            await submitContactMessageApi(form);
+            setSubmitted(true);
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to send message. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const inputBase = 'w-full bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200';

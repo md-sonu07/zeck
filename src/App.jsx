@@ -22,6 +22,11 @@ const AppContent = () => {
     }
   }, [darkMode]);
 
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   if (isAdminRoute) {
     return <AppRoutes />;
   }

@@ -6,6 +6,7 @@ import CategoriesManagementPage from '../pages/admin/categories/CategoriesManage
 import PostManagementPage from '../pages/admin/post/PostManagementPage';
 import AboutManagementPage from '../pages/admin/about/AboutManagementPage';
 import ContactManagementPage from '../pages/admin/contact/ContactManagementPage';
+import ContactMessagesPage from '../pages/admin/contact/ContactMessagesPage';
 import PageArticleManagement from '../pages/admin/pageArticle/PageArticleManagement';
 import ImportantServicesManagementPage from '../pages/admin/importantServices/ImportantServicesManagementPage';
 import MarqueeManagementPage from '../pages/admin/marquee/MarqueeManagementPage';
@@ -48,6 +49,7 @@ const AdminRoutes = () => {
 
                 {/* Specific Management Pages */}
                 <Route path="about-us" element={<AboutManagementPage />} />
+                <Route path="contact-messages" element={<ContactMessagesPage />} />
                 <Route path="contact-us" element={<ContactManagementPage />} />
                 <Route path="important-services" element={<ImportantServicesManagementPage />} />
                 <Route path="marquee" element={<MarqueeManagementPage />} />

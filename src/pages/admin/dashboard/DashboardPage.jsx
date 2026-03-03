@@ -11,7 +11,9 @@ import {
     Clock,
     Loader2,
     AlertCircle,
-    Files
+    Files,
+    CreditCard,
+    MessageSquare
 } from 'lucide-react';
 
 import { getDashboardStats } from '../../../store/thunk/dashboardThunk';
@@ -66,6 +68,8 @@ const DashboardPage = () => {
             case 'Admit Card': return FileText;
             case 'Result': return CheckCircle;
             case 'User': return Users;
+            case 'Payment': return CreditCard;
+            case 'Contact': return MessageSquare;
             default: return FileText;
         }
     };
@@ -76,6 +80,8 @@ const DashboardPage = () => {
             case 'Admit Card': return "text-amber-500 bg-amber-50 dark:bg-amber-500/10";
             case 'Result': return "text-purple-500 bg-purple-50 dark:bg-purple-500/10";
             case 'User': return "text-green-500 bg-green-50 dark:bg-green-500/10";
+            case 'Payment': return "text-emerald-500 bg-emerald-50 dark:bg-emerald-500/10";
+            case 'Contact': return "text-indigo-500 bg-indigo-50 dark:bg-indigo-500/10";
             default: return "text-slate-500 bg-slate-50 dark:bg-slate-500/10";
         }
     };
