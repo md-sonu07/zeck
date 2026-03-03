@@ -33,11 +33,14 @@ const RegisterPage = () => {
         }
         try {
             await dispatch(register({ name, email, phone, password })).unwrap();
+            toast.success('Registration Successful');
             navigate('/');
         } catch (err) {
+            toast.error(err || 'Registration failed');
             console.error('Registration failed:', err);
         }
     };
+
 
     return (
         <div className="min-h-[90vh] flex items-center justify-center bg-slate-50 dark:bg-slate-950 py-12 px-4 transition-colors duration-300">
@@ -54,11 +57,6 @@ const RegisterPage = () => {
 
                 <div className="bg-white dark:bg-slate-900 p-10 rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-black/40 border border-slate-100 dark:border-slate-800 transition-all duration-300">
                     <form className="space-y-5" onSubmit={submitHandler}>
-                        {error && (
-                            <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 p-4 rounded-xl text-red-600 dark:text-red-400 text-xs font-bold uppercase tracking-wider text-center">
-                                {typeof error === 'string' ? error : 'Registration Failed'}
-                            </div>
-                        )}
 
                         <div className="space-y-4">
                             <div>

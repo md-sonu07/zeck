@@ -51,19 +51,20 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
     const isLoading = activeFilters ? searchLoading : loading;
 
     const themeClasses = {
-        primary: 'from-primary to-blue-700 text-primary',
-        green: 'from-green-600 to-teal-700 text-green-600',
-        blue: 'from-blue-600 to-indigo-700 text-blue-600',
-        indigo: 'from-indigo-600 to-purple-700 text-indigo-600',
-        amber: 'from-amber-500 to-orange-600 text-amber-600',
+        primary: 'bg-primary text-primary',
+        green: 'bg-green-600 text-green-600',
+        blue: 'bg-blue-600 text-blue-600',
+        indigo: 'bg-indigo-600 text-indigo-600',
+        amber: 'bg-amber-600 text-amber-600',
     };
 
     const currentTheme = themeClasses[theme] || themeClasses.primary;
-    const [bgGradient, textColor] = currentTheme.split(' ');
+    const [bgClass, textColor] = currentTheme.split(' ');
 
     return (
         <div className="pb-16 bg-slate-50 dark:bg-slate-900 min-h-screen">
-            <div className={`bg-linear-to-r ${bgGradient} px-4 py-6`}>
+            <div className={`${bgClass} px-4 py-6`}>
+
                 <div className="max-w-[1200px] mx-auto">
                     <nav className="flex items-center gap-1.5 text-white/70 text-[10px] font-bold uppercase tracking-widest mb-2">
                         <Home size={10} /> <ChevronRight size={10} /> <span className="text-white">{category || 'News'}</span>
@@ -133,7 +134,8 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
 
                     <aside className="w-full lg:w-80 shrink-0 space-y-6">
                         <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm">
-                            <div className={`bg-linear-to-r ${bgGradient} px-4 py-3 flex items-center gap-2`}>
+                            <div className={`${bgClass} px-4 py-3 flex items-center gap-2`}>
+
                                 <Icon size={14} className="text-white" />
                                 <h3 className="text-[10px] font-black text-white uppercase tracking-widest">Community</h3>
                             </div>

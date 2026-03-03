@@ -72,7 +72,7 @@ const ArticleDetailPage = () => {
             dispatch(setCredentials({ ...userInfo, savedPosts: res.savedPosts }));
             toast.success(res.saved ? 'Post saved!' : 'Post removed from saved');
         } catch (error) {
-                toast.error('Failed to save post');
+            toast.error('Failed to save post');
         } finally {
             setSavingPost(false);
         }
@@ -211,10 +211,14 @@ const ArticleDetailPage = () => {
                                             <span className="text-sm font-bold text-slate-600 dark:text-slate-300">You Pay</span>
                                             <span className="text-2xl font-extrabold text-primary">₹{finalPrice}</span>
                                         </div>
-                                        <button className="w-full mt-2 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg shadow-primary/25">
+                                        <button
+                                            onClick={() => navigate(`/apply/${article.slug}`)}
+                                            className="w-full mt-2 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg shadow-primary/25"
+                                        >
                                             <CheckCircle2 size={16} />
                                             Apply Now
                                         </button>
+
                                     </div>
                                 </div>
                             )}

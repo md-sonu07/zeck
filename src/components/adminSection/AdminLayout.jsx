@@ -20,8 +20,13 @@ import {
     ChevronRight,
     ArrowLeft,
     Sparkles,
-    Megaphone
+    Megaphone,
+    History,
+    CreditCard
 } from 'lucide-react';
+
+
+
 
 const AdminLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -35,7 +40,10 @@ const AdminLayout = () => {
         { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
         { path: '/admin/users', label: 'Users', icon: Users },
         { path: '/admin/categories', label: 'Categories', icon: ListTree },
+        { path: '/admin/activities', label: 'Activities', icon: History },
+        { path: '/admin/payments', label: 'Payments', icon: CreditCard },
         { path: '/admin/page-articles', label: 'Page Articles', icon: FileText },
+
         { path: '/admin/marquee', label: 'Announcement Bar', icon: Megaphone },
         { path: '/admin/important-services', label: 'Important Services', icon: Sparkles },
         { path: '/admin/about-us', label: 'About Us', icon: Info },

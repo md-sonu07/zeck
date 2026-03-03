@@ -104,16 +104,24 @@ const Header = () => {
                             {darkMode ? <Sun size={18} /> : <Moon size={18} />}
                         </button>
 
-                        {/* Profile Button */}
+                        {/* Profile/Login Button */}
                         <Link
-                            to="/profile"
-                            className="flex size-10 items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary group transition-all"
-                            title="Account"
+                            to={userInfo ? "/profile" : "/login"}
+                            className={`flex size-10 items-center justify-center rounded-xl border transition-all active:scale-95 ${userInfo
+                                    ? 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-primary'
+                                    : 'bg-primary border-primary text-white shadow-lg shadow-primary/20'
+                                }`}
+                            title={userInfo ? "My Profile" : "Sign In to your account"}
                         >
-                            <div className="size-8 rounded-full bg-linear-to-br from-primary to-primary-dark text-white flex items-center justify-center text-[10px] font-black shadow-md uppercase">
-                                {userInfo?.name ? userInfo.name.split(' ').map(n => n[0]).join('').slice(0, 2) : <User size={16} />}
-                            </div>
+                            {userInfo ? (
+                                <div className="size-8 rounded-full bg-linear-to-br from-primary to-primary-dark text-white flex items-center justify-center text-[10px] font-black shadow-md uppercase animate-in fade-in duration-500">
+                                    {userInfo.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                                </div>
+                            ) : (
+                                <User size={18} />
+                            )}
                         </Link>
+
 
                         {/* Mobile Menu Toggle */}
                         <button

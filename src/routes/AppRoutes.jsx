@@ -6,7 +6,6 @@ import LoginPage from '../pages/auth/LoginPage';
 import RegisterPage from '../pages/auth/RegisterPage';
 import ProfilePage from '../pages/user/profile/ProfilePage';
 import ContactPage from '../pages/user/contact/ContactPage';
-// import LatestJobsPage from '../pages/user/latestJobs/LatestJobsPage'; // Removed as per user request
 import LatestNewsPage from '../pages/user/latestNews/LatestNewsPage';
 import AdmitCardPage from '../pages/user/admitCard/AdmitCardPage';
 import ResultPage from '../pages/user/result/ResultPage';
@@ -18,9 +17,13 @@ import AboutPage from '../pages/user/about/AboutPage';
 import ServicesPage from '../pages/user/services/ServicesPage';
 import ArticleDetailPage from '../pages/user/article/ArticleDetailPage';
 import ProtectedRoutes from './ProtectedRoutes';
+import AdminRoute from './AdminRoute';
 import AdminRoutes from './AdminRoutes';
+
 import SavedPostsPage from '../pages/user/savedPosts/SavedPostsPage';
 import SearchResultsPage from '../pages/user/search/SearchResultsPage';
+import ApplicationPage from '../pages/user/apply/ApplicationPage';
+
 
 const AppRoutes = () => {
     return (
@@ -39,9 +42,14 @@ const AppRoutes = () => {
             <Route path="/about" element={<AboutPage />} />
             <Route path="/service" element={<ServicesPage />} />
             <Route path="/search" element={<SearchResultsPage />} />
+            <Route path="/apply/:slug" element={<ApplicationPage />} />
+
 
             {/* Admin Panel Routes */}
-            <Route path="/admin/*" element={<AdminRoutes />} />
+            <Route element={<AdminRoute />}>
+                <Route path="/admin/*" element={<AdminRoutes />} />
+            </Route>
+
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoutes />}>

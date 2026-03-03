@@ -11,6 +11,12 @@ import marqueeReducer from './slice/marqueeSlice';
 import pageSectionReducer from './slice/pageSectionSlice';
 import searchReducer from './slice/searchSlice';
 import aboutReducer from './slice/aboutSlice';
+import dashboardReducer from './slice/dashboardSlice';
+import paymentReducer from './slice/paymentSlice';
+import applicationReducer from './slice/applicationSlice';
+
+
+
 
 const store = configureStore({
     reducer: {
@@ -25,7 +31,13 @@ const store = configureStore({
         pageSections: pageSectionReducer,
         search: searchReducer,
         about: aboutReducer,
+        dashboard: dashboardReducer,
+        payment: paymentReducer,
+        applications: applicationReducer,
     },
+
+
+
 });
 
 export default store;

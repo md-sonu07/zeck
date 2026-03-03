@@ -9,7 +9,6 @@ const LatestNewsPage = () => {
             icon={Newspaper}
             title="Latest News & Updates 2026"
             description="Stay updated with the latest notifications and educational news."
-            filter={(a) => a.mainCategory === 'Latest News'}
             limit={100}
         />
     );

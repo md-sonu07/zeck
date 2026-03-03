@@ -7,11 +7,12 @@ import {
     PlusCircle,
     Trash2,
     Edit,
+    Clock,
+    Upload,
+    Loader2,
     Sparkles,
     Search,
-    Clock,
-    CheckCircle,
-    Upload
+    ChevronLeft
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,6 +28,7 @@ const ImportantServicesManagementPage = () => {
     const [activeTab, setActiveTab] = useState('manage'); // 'add' or 'manage'
     const [editingId, setEditingId] = useState(null);
     const [itemToDelete, setItemToDelete] = useState(null);
+    const [saving, setSaving] = useState(false);
 
     // Form state
     const [title, setTitle] = useState('');
@@ -34,12 +36,21 @@ const ImportantServicesManagementPage = () => {
     const [summary, setSummary] = useState('');
     const [selectedFile, setSelectedFile] = useState(null);
 
+    // Search state
+    const [searchTerm, setSearchTerm] = useState('');
+
     const dispatch = useDispatch();
     const { data: services, loading } = useSelector((state) => state.importantServices);
+
+    const filteredServices = services?.filter(service =>
+        service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        service.summary.toLowerCase().includes(searchTerm.toLowerCase())
+    ) || [];
 
     useEffect(() => {
         dispatch(fetchImportantServices());
     }, [dispatch]);
+
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -70,6 +81,7 @@ const ImportantServicesManagementPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSaving(true);
         const loadingToast = toast.loading(editingId ? 'Updating service...' : 'Adding service...');
         try {
             const serviceData = {
@@ -97,6 +109,8 @@ const ImportantServicesManagementPage = () => {
             setActiveTab('manage');
         } catch (error) {
             toast.error(`Failed to ${editingId ? 'update' : 'add'} service`, { id: loadingToast });
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -126,239 +140,253 @@ const ImportantServicesManagementPage = () => {
 
     return (
         <div className="space-y-6">
-            {/* Header & Tabs */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Important Services</h1>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">Manage core services displayed on the website.</p>
+                    <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                        <Sparkles className="text-primary" /> Important Services
+                    </h1>
+                    <p className="text-slate-500 text-sm mt-1">Manage core services displayed on the website.</p>
                 </div>
 
-                {/* Tab Switcher */}
-                <div className="flex w-full sm:w-auto items-center p-1.5 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/60">
+                <div className="flex items-center p-1 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
                     <button
                         onClick={() => setActiveTab('manage')}
-                        className={`flex-1 sm:flex-none flex justify-center items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${activeTab === 'manage'
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === 'manage'
                             ? 'bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm'
-                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-                            }`}
+                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
                     >
-                        <List size={16} />
-                        Manage View
+                        <List size={16} /> Manage
                     </button>
                     <button
                         onClick={startAdd}
-                        className={`flex-1 sm:flex-none flex justify-center items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${activeTab === 'add'
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === 'add'
                             ? 'bg-primary text-white shadow-md shadow-primary/20'
-                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-                            }`}
+                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
                     >
-                        <PlusCircle size={16} />
-                        Add New
+                        <PlusCircle size={16} /> Add New
                     </button>
                 </div>
             </div>
 
-            {/* Content Area */}
             {activeTab === 'add' ? (
-                <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/60 overflow-hidden animate-in fade-in zoom-in-95 duration-200 p-6 md:p-8">
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            {/* Left Column: Text Content */}
-                            <div className="lg:col-span-2 space-y-6">
-                                <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-700 pb-2">
-                                    <FileText className="text-primary" size={20} />
-                                    <h2 className="text-lg font-bold text-slate-800 dark:text-white">Service Information</h2>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Service Title</label>
-                                    <input
-                                        type="text"
-                                        required
-                                        placeholder="Enter service title..."
-                                        value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
-                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-slate-800 dark:text-white font-medium transition-all"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Detailed Summary</label>
-                                    <textarea
-                                        required
-                                        rows="10"
-                                        placeholder="Provide a detailed description of the service..."
-                                        value={summary}
-                                        onChange={(e) => setSummary(e.target.value)}
-                                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-slate-800 dark:text-white font-medium transition-all resize-none"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Right Column: Image Upload */}
-                            <div className="flex flex-col space-y-6">
-                                <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-700 pb-2">
-                                    <ImageIcon className="text-amber-500" size={20} />
-                                    <h2 className="text-lg font-bold text-slate-800 dark:text-white">Service Image</h2>
-                                </div>
-
-                                <div className="flex-1 flex flex-col space-y-4 pt-1">
-                                    <label className="text-sm font-bold text-slate-700 dark:text-slate-300">Select Thumbnail</label>
-                                    <div className="relative flex-1 min-h-[300px]">
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleFileChange}
-                                            className="hidden"
-                                            id="service-image-upload"
-                                        />
-                                        <label
-                                            htmlFor="service-image-upload"
-                                            className={`absolute inset-0 flex flex-col items-center justify-center gap-4 w-full h-full border-2 border-dashed rounded-2xl cursor-pointer transition-all duration-200 overflow-hidden group
-                                                ${imageUrl
-                                                    ? 'border-transparent bg-slate-900 border-none'
-                                                    : 'border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800'
-                                                }`}
-                                        >
-                                            {imageUrl ? (
-                                                <>
-                                                    <img src={imageUrl} alt="Preview" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white transition-opacity duration-200">
-                                                        <Upload size={32} className="mb-2" />
-                                                        <span className="font-bold text-sm tracking-widest uppercase">Replace Image</span>
-                                                    </div>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <div className="size-16 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                                                        <Upload className="text-slate-400 group-hover:text-primary transition-colors" size={28} />
-                                                    </div>
-                                                    <div className="text-center px-6">
-                                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-200">Click to upload image</p>
-                                                        <p className="text-xs text-slate-500 mt-2">Recommended: 1200x800px</p>
-                                                    </div>
-                                                </>
-                                            )}
-                                        </label>
-                                    </div>
-                                    {selectedFile && (
-                                        <p className="text-xs text-center font-semibold text-primary truncate px-2">
-                                            {selectedFile.name}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Submit Button */}
-                        <div className="pt-6 mt-6 border-t border-slate-100 dark:border-slate-700 flex justify-end">
-                            <button
-                                type="submit"
-                                className="flex items-center gap-2 px-8 py-3.5 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl shadow-lg shadow-primary/30 transition-all hover:-translate-y-0.5"
-                            >
-                                <Save size={18} />
-                                {editingId ? 'Update Service' : 'Publish Service'}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in zoom-in-95 duration-200">
+                    {/* Form Section */}
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+                        <div className="flex items-center gap-2 mb-6 text-slate-400">
+                            <button onClick={() => setActiveTab('manage')} className="hover:text-primary transition-colors pr-2 border-r border-slate-100 dark:border-slate-700">
+                                <ChevronLeft size={20} />
                             </button>
+                            <span className="text-xs font-bold uppercase tracking-widest">
+                                {editingId ? 'Edit Service' : 'Configure New Service'}
+                            </span>
                         </div>
-                    </form>
-                </div>
-            ) : (
-                <div className="space-y-4">
-                    {/* Management Table / Grid */}
-                    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/60 overflow-hidden relative">
-                        {loading && (
-                            <div className="absolute inset-0 bg-white/50 dark:bg-slate-800/50 z-10 flex items-center justify-center backdrop-blur-sm">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                            </div>
-                        )}
-                        <div className="p-4 border-b border-slate-100 dark:border-slate-700 flex flex-col md:flex-row gap-4 justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
-                            <div className="relative w-full md:w-80">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
+                                    Service Title
+                                </label>
                                 <input
                                     type="text"
-                                    placeholder="Search services..."
-                                    className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-primary text-sm font-medium"
+                                    required
+                                    placeholder="e.g. Overseas Admissions"
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-slate-800 dark:text-white font-medium"
                                 />
                             </div>
-                            <button onClick={startAdd} className="w-full md:w-auto flex items-center justify-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary hover:text-white transition-all">
-                                <PlusCircle size={16} />
-                                Add Service
-                            </button>
+
+                            <div className="space-y-2">
+                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
+                                    Summary / Description
+                                </label>
+                                <textarea
+                                    required
+                                    rows="6"
+                                    placeholder="Enter a brief summary of the service..."
+                                    value={summary}
+                                    onChange={(e) => setSummary(e.target.value)}
+                                    className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary text-slate-800 dark:text-white font-medium resize-none"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
+                                    Service Thumbnail
+                                </label>
+                                <label className="flex flex-col items-center justify-center gap-2 w-full px-4 py-8 bg-slate-50 dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl hover:border-primary/50 cursor-pointer transition-all">
+                                    <Upload size={24} className="text-slate-400" />
+                                    <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
+                                        {selectedFile ? selectedFile.name : 'Click to upload image'}
+                                    </span>
+                                    <input
+                                        type="file"
+                                        className="hidden"
+                                        accept="image/*"
+                                        onChange={handleFileChange}
+                                    />
+                                </label>
+                            </div>
+
+                            <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setActiveTab('manage')}
+                                    className="px-6 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold hover:bg-slate-200 transition-all text-sm"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={saving}
+                                    className="flex items-center gap-2 px-8 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold transition-all shadow-md disabled:opacity-50 text-sm"
+                                >
+                                    {saving ? <Loader2 className="animate-spin size-4" /> : <Save className="size-4" />}
+                                    {editingId ? 'Update Service' : 'Publish Service'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* Preview Section */}
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden">
+                        <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
+                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Live Preview</h3>
                         </div>
 
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
-                                <thead>
-                                    <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
-                                        <th className="p-4 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Service Information</th>
-                                        <th className="p-4 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Status</th>
-                                        <th className="p-4 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Date Added</th>
-                                        <th className="p-4 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest text-right">Actions</th>
+                        <div className="flex-1 p-6 flex flex-col items-center justify-center bg-slate-50/30 dark:bg-slate-900/10">
+                            <div className="w-full max-w-[340px] bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-xl overflow-hidden group">
+                                <div className="aspect-[4/3] bg-slate-100 dark:bg-slate-900 relative">
+                                    {imageUrl ? (
+                                        <img src={imageUrl} alt="Preview" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                    ) : (
+                                        <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-700 opacity-20">
+                                            <ImageIcon size={48} />
+                                            <p className="text-[10px] font-bold uppercase tracking-widest mt-2">No Image</p>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="p-5 space-y-3">
+                                    <h3 className="text-lg font-bold text-slate-800 dark:text-white leading-tight">
+                                        {title || 'Service Title Placeholder'}
+                                    </h3>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed">
+                                        {summary || 'The service description will appear here. This provides users with a brief overview of the value proposition.'}
+                                    </p>
+                                    <div className="pt-2 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                        <span className="flex items-center gap-1.5"><Clock size={12} /> Just Now</span>
+                                        <span className="text-primary group-hover:underline cursor-pointer">Learn More →</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-700 text-center">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Public Website Mockup</span>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col md:flex-row gap-4 justify-between items-center">
+                        <div className="relative w-full md:w-80">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                            <input
+                                type="text"
+                                placeholder="Search services..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary text-sm font-medium"
+                            />
+                        </div>
+                        <button onClick={startAdd} className="w-full md:w-auto flex items-center justify-center gap-2 bg-primary text-white px-5 py-2 rounded-xl text-sm font-bold shadow-md shadow-primary/20 hover:bg-primary/90 transition-all">
+                            <PlusCircle size={16} /> Add Service
+                        </button>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+                                    <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest uppercase">Service Details</th>
+                                    <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest uppercase">Status</th>
+                                    <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest uppercase text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                                {loading && filteredServices.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="3" className="p-10 text-center">
+                                            <Loader2 className="animate-spin text-primary inline-block mb-2" />
+                                            <p className="text-sm font-medium text-slate-400 uppercase tracking-widest">Loading Records...</p>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
-                                    {services.length > 0 ? services.map((service) => (
+                                ) : filteredServices.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="3" className="p-20 text-center">
+                                            <div className="flex flex-col items-center gap-3">
+                                                <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-full text-slate-300">
+                                                    <Sparkles size={32} />
+                                                </div>
+                                                <p className="text-sm font-bold text-slate-400">No services found.</p>
+                                                <button onClick={startAdd} className="text-primary text-xs font-bold hover:underline uppercase tracking-widest">Add your first service</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filteredServices.map((service) => (
                                         <tr key={service._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors group">
                                             <td className="p-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="size-12 rounded-xl overflow-hidden shrink-0 border border-slate-100 dark:border-slate-700 shadow-xs">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="size-14 rounded-xl overflow-hidden shrink-0 border border-slate-100 dark:border-slate-700 shadow-sm bg-slate-100">
                                                         <img src={service.image} alt={service.title} className="w-full h-full object-cover" />
                                                     </div>
                                                     <div>
-                                                        <p className="font-bold text-slate-800 dark:text-white line-clamp-1 group-hover:text-primary transition-colors">{service.title}</p>
-                                                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 font-medium mt-0.5">{service.summary}</p>
+                                                        <p className="font-bold text-slate-800 dark:text-white group-hover:text-primary transition-colors text-[14px]">{service.title}</p>
+                                                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 font-medium mt-1">{service.summary}</p>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="p-4">
-                                                <div className="flex items-center gap-3">
-                                                    <button
-                                                        onClick={() => toggleStatus(service._id, service.status)}
-                                                        className={`relative w-11 h-6 rounded-full p-1 transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary/20 ${service.status === 'active' ? 'bg-green-500' : 'bg-slate-300 dark:bg-slate-600'}`}
-                                                    >
-                                                        <div className={`size-4 bg-white rounded-full shadow-md transition-transform duration-300 ease-in-out ${service.status === 'active' ? 'translate-x-5' : 'translate-x-0'}`} />
-                                                    </button>
-                                                    <span className={`text-[10px] font-black uppercase tracking-widest ${service.status === 'active' ? 'text-green-600 dark:text-green-400' : 'text-slate-500 dark:text-slate-400'}`}>
-                                                        {service.status === 'active' ? 'Active' : 'Draft'}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="p-4">
-                                                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 dark:text-slate-400">
-                                                    <Clock size={14} className="text-slate-400" />
-                                                    {service.date}
-                                                </div>
+                                                <button
+                                                    onClick={() => toggleStatus(service._id, service.status)}
+                                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${service.status === 'active'
+                                                            ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20 shadow-xs'
+                                                            : 'bg-slate-100 text-slate-500 border border-slate-200 dark:bg-slate-700 dark:text-slate-400 dark:border-slate-600'
+                                                        }`}
+                                                >
+                                                    <span className={`size-1.5 rounded-full ${service.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`}></span>
+                                                    {service.status === 'active' ? 'Active' : 'Draft'}
+                                                </button>
                                             </td>
                                             <td className="p-4 text-right">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    <button onClick={() => startEdit(service)} className="p-2 text-slate-400 hover:text-primary bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors" title="Edit Content">
+                                                    <button
+                                                        onClick={() => startEdit(service)}
+                                                        className="p-2.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-xl transition-all"
+                                                        title="Edit Service"
+                                                    >
                                                         <Edit size={16} />
                                                     </button>
-                                                    <button onClick={() => setItemToDelete(service._id)} className="p-2 text-slate-400 hover:text-red-500 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors" title="Delete">
+                                                    <button
+                                                        onClick={() => setItemToDelete(service._id)}
+                                                        className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                                        title="Delete Service"
+                                                    >
                                                         <Trash2 size={16} />
                                                     </button>
                                                 </div>
                                             </td>
                                         </tr>
-                                    )) : (
-                                        <tr>
-                                            <td colSpan="4" className="p-12 text-center">
-                                                <div className="flex flex-col items-center justify-center space-y-3">
-                                                    <div className="size-16 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center text-slate-300">
-                                                        <Sparkles size={32} />
-                                                    </div>
-                                                    <p className="text-slate-500 font-bold">No services found. Add your first service to get started.</p>
-                                                    <button onClick={() => setActiveTab('add')} className="text-primary font-bold hover:underline">Click here to add</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             )}
+
             {/* Delete Confirmation Modal */}
             {itemToDelete && (
                 <div className="fixed inset-0 z-100 flex items-center justify-center p-4">

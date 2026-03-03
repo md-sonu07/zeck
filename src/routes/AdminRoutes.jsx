@@ -9,6 +9,11 @@ import ContactManagementPage from '../pages/admin/contact/ContactManagementPage'
 import PageArticleManagement from '../pages/admin/pageArticle/PageArticleManagement';
 import ImportantServicesManagementPage from '../pages/admin/importantServices/ImportantServicesManagementPage';
 import MarqueeManagementPage from '../pages/admin/marquee/MarqueeManagementPage';
+import RecentActivityPage from '../pages/admin/activities/RecentActivityPage';
+import PaymentManagementPage from '../pages/admin/payment/PaymentManagementPage';
+
+
+
 
 const DynamicCustomRoute = () => {
     const { slug } = useParams();
@@ -21,7 +26,11 @@ const AdminRoutes = () => {
         <Routes>
             <Route path="/" element={<AdminLayout />}>
                 <Route index element={<DashboardPage />} />
+                <Route path="activities" element={<RecentActivityPage />} />
                 <Route path="users" element={<UsersManagementPage />} />
+
+
+
                 <Route path="categories" element={<CategoriesManagementPage />} />
 
                 {/* Master Page Articles Navigation */}
@@ -42,8 +51,10 @@ const AdminRoutes = () => {
                 <Route path="contact-us" element={<ContactManagementPage />} />
                 <Route path="important-services" element={<ImportantServicesManagementPage />} />
                 <Route path="marquee" element={<MarqueeManagementPage />} />
+                <Route path="payments" element={<PaymentManagementPage />} />
 
-                <Route path="settings" element={<DashboardPage />} /> {/* Placeholder */}
+                <Route path="settings" element={<DashboardPage />} />
+
             </Route>
         </Routes>
     );

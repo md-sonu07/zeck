@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../store/thunk/authThunk';
 import { Mail, Lock, LogIn, ArrowRight, ShieldCheck, Eye, EyeOff } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -11,24 +12,32 @@ const LoginPage = () => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const { userInfo, loading, error } = useSelector((state) => state.auth);
 
+    // Get the redirect path from location state, default to /profile
+    const redirect = location.state?.from?.pathname || '/profile';
+
     useEffect(() => {
         if (userInfo) {
-            navigate('/');
+            navigate(redirect, { replace: true });
         }
-    }, [navigate, userInfo]);
+    }, [navigate, userInfo, redirect]);
 
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
             await dispatch(login({ email, password })).unwrap();
-            navigate('/');
+            toast.success('Login Successful');
+            // The useEffect will handle the navigation upon success
         } catch (err) {
+            toast.error(err || 'Login failed');
             console.error('Login failed:', err);
         }
     };
+
+
 
     return (
         <div className="min-h-[90vh] flex items-center justify-center bg-slate-50 dark:bg-slate-950 py-12 px-4 transition-colors duration-300">
@@ -45,12 +54,6 @@ const LoginPage = () => {
 
                 <div className="bg-white dark:bg-slate-900 p-10 rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-black/40 border border-slate-100 dark:border-slate-800">
                     <form className="space-y-6" onSubmit={submitHandler}>
-                        {error && (
-                            <div className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 p-4 rounded-xl text-red-600 dark:text-red-400 text-xs font-bold uppercase tracking-wider text-center">
-                                {typeof error === 'string' ? error : 'Invalid Credentials'}
-                            </div>
-                        )}
-
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">
