@@ -14,6 +14,8 @@ import RecentActivityPage from '../pages/admin/activities/RecentActivityPage';
 import PaymentManagementPage from '../pages/admin/payment/PaymentManagementPage';
 
 
+import PaymentSlipsPage from '../pages/admin/paymentSlip/PaymentSlipsPage';
+import CreatePaymentSlipPage from '../pages/admin/paymentSlip/CreatePaymentSlipPage';
 
 
 const DynamicCustomRoute = () => {
@@ -53,6 +55,10 @@ const AdminRoutes = () => {
                 <Route path="contact-us" element={<ContactManagementPage />} />
                 <Route path="important-services" element={<ImportantServicesManagementPage />} />
                 <Route path="marquee" element={<MarqueeManagementPage />} />
+
+                <Route path="payment-slips" element={<PaymentSlipsPage />} />
+                <Route path="payment-slips/create" element={<CreatePaymentSlipPage />} />
+
                 <Route path="payments" element={<PaymentManagementPage />} />
 
                 <Route path="settings" element={<DashboardPage />} />
@@ -61,5 +67,6 @@ const AdminRoutes = () => {
         </Routes>
     );
 };
+
 
 export default AdminRoutes;

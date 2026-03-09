@@ -1,12 +1,21 @@
-import React, { useRef } from 'react';
-import { X, Download, Printer, Share2, Phone, Mail, MapPin, GraduationCap, Calendar, FileText } from 'lucide-react';
+import React, { useRef, useEffect } from 'react';
+import { X, Printer, CheckCircle2, FileText } from 'lucide-react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchContactSettings } from '../store/thunk/contactThunk';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
 const InvoiceModal = ({ application, onClose }) => {
     const invoiceRef = useRef(null);
+    const dispatch = useDispatch();
+    const { settings: contactSettings } = useSelector((state) => state.contact);
 
-    // Add this style object outside render properly wrapped later inline
+    useEffect(() => {
+        if (!contactSettings) {
+            dispatch(fetchContactSettings());
+        }
+    }, [dispatch, contactSettings]);
+
     if (!application) return null;
 
     // Generate invoice number from ID
@@ -20,68 +29,37 @@ const InvoiceModal = ({ application, onClose }) => {
 
     const currentStatus = statusStyles[application.status] || statusStyles.pending;
 
-    const handleDownloadPDF = async () => {
-        const element = invoiceRef.current;
-        if (!element) return;
-
-        try {
-            // Apply a small reset to fix responsive bug in html2canvas
-            const originalWidth = element.style.width;
-            element.style.width = '794px';
-            element.style.height = '1123px'; // A4 proportional strictness
-
-            const canvas = await html2canvas(element, {
-                scale: 2,
-                useCORS: true,
-                backgroundColor: '#ffffff',
-                logging: false,
-                windowWidth: 794,
-                width: 794
-            });
-
-            // recover
-            element.style.width = originalWidth;
-            element.style.height = 'auto';
-
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4',
-            });
-
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-            pdf.save(`${invoiceNumber}.pdf`);
-        } catch (error) {
-            console.error('Error generating PDF:', error);
-        }
-    };
-
     const handlePrint = () => {
-        const element = invoiceRef.current;
-        if (!element) return;
+        const printContent = invoiceRef.current;
+        if (!printContent) return;
 
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
+            <!DOCTYPE html>
             <html>
                 <head>
                     <title>${invoiceNumber} - Zoya Education Center</title>
+                    <script src="https://cdn.tailwindcss.com"></script>
                     <style>
-                        body { margin: 0; padding: 20px; font-family: 'Inter', 'Segoe UI', sans-serif; background: #fff;}
-                        * { box-sizing: border-box; }
-                        @media print {
-                            body { padding: 0; }
-                            @page { margin: 0.5cm; }
+                        /* Zero-out browser margins to hide default header/footer completely */
+                        @page { 
+                            margin: 0; 
+                            size: portrait;
+                        }
+                        body {
+                            margin: 0;
+                            padding: 10mm 15mm; /* Apply padding internally so content isn't flush against paper edge */
+                            -webkit-print-color-adjust: exact; 
+                            print-color-adjust: exact; 
+                            background-color: white !important;
                         }
                     </style>
                 </head>
                 <body>
-                   <div style="max-width: 794px; width: 100%; margin: 0 auto; overflow: hidden;">
-                      ${element.innerHTML}
-                   </div>
+                    <!-- Removed mx-auto w-full as it's full paper width anyway -->
+                    <div class="max-w-[800px] mx-auto text-nowrap">
+                        ${printContent.innerHTML}
+                    </div>
                 </body>
             </html>
         `);
@@ -90,253 +68,160 @@ const InvoiceModal = ({ application, onClose }) => {
         setTimeout(() => {
             printWindow.print();
             printWindow.close();
-        }, 500);
+        }, 1000);
     };
 
-    const handleWhatsAppShare = () => {
-        const message = `🧾 *Payment Receipt - Zoya Education Center*\n\n📋 Invoice: ${invoiceNumber}\n�� Date: ${new Date(application.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}\n\n👤 Student: ${application.user?.name || 'N/A'}\n📧 Email: ${application.user?.email || 'N/A'}\n\n📚 Service: ${application.article?.title || 'N/A'}\n💳 Type: ${application.paymentType === 'payment' ? 'Full Payment' : 'Documents Only'}\n💰 Amount: ₹${application.amount?.toLocaleString()}\n\n✅ Status: ${application.status?.toUpperCase()}\n\n🙏 Thank you for choosing Zoya Education Center!`;
-
-        const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
-        window.open(url, '_blank');
-    };
 
     return (
         <div className="fixed w-full h-full inset-0 z-[100] flex items-center justify-center p-4">
             <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose}></div>
 
             <div className="relative w-full max-w-[850px] max-h-[90vh] overflow-y-auto overflow-x-hidden hide-scrollbar rounded-3xl bg-slate-50 dark:bg-slate-900 animate-in zoom-in-95 fade-in duration-300">
-                {/* Close Button */}
-                <button
-                    onClick={onClose}
-                    className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white shadow-md transition-all"
-                >
-                    <X size={18} />
-                </button>
+                <div className="flex justify-between items-center bg-white dark:bg-slate-800 p-4 rounded-t-3xl border-b border-slate-200 dark:border-slate-700/60 sticky top-0 z-20">
+                    <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300 font-bold text-sm">
+                        <FileText size={18} className="text-primary" />
+                        Receipt Preview
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={handlePrint}
+                            className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm border border-slate-200 dark:border-slate-700"
+                        >
+                            <Printer size={16} />
+                            Print / Save PDF
+                        </button>
+                        <button
+                            onClick={onClose}
+                            className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-800 dark:hover:text-white transition-all border border-slate-200 dark:border-slate-700"
+                        >
+                            <X size={18} />
+                        </button>
+                    </div>
+                </div>
 
                 {/* ===== INVOICE CARD ===== */}
-                <div style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '20px 0' }}>
-                    <div ref={invoiceRef} style={{ boxSizing: 'border-box', width: '100%', maxWidth: '794px', background: '#ffffff', color: '#0f172a', fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>
-                        <div style={{ padding: '40px', position: 'relative', overflow: 'hidden' }}>
+                <div className="flex justify-center w-full py-8 text-black">
+                    {/* THE ACTUAL SLIP TEMPLATE TO PRINT */}
+                    <div className="bg-white overflow-hidden p-8 print:p-4 print:pt-0 relative w-full max-w-[800px]" ref={invoiceRef}>
 
-                            {/* Watermark */}
-                            <div style={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%) rotate(-35deg)',
-                                fontSize: '60px',
-                                fontWeight: '900',
-                                color: 'rgba(0,0,0,0.03)',
-                                whiteSpace: 'nowrap',
-                                pointerEvents: 'none',
-                                letterSpacing: '8px',
-                                zIndex: 0,
-                            }}>
-                                ZOYA EDUCATION
-                            </div>
+                        {/* Visual Timestamp header (Matches what would be printed if it were still enabled) */}
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-[10px] sm:text-xs font-bold text-slate-400 mb-4 border-b border-slate-100 pb-2 uppercase tracking-wider gap-2 sm:gap-0">
+                            <span>Document: {invoiceNumber}</span>
+                            <span>PRINTED: {new Date().toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}</span>
+                        </div>
 
-                            {/* Content */}
-                            <div style={{ position: 'relative', zIndex: 1, boxSizing: 'border-box' }}>
-
-                                {/* Header */}
-                                <table style={{ width: '100%', marginBottom: '32px', borderCollapse: 'collapse' }}>
-                                    <tbody>
-                                        <tr>
-                                            <td style={{ verticalAlign: 'top' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                                    <div style={{
-                                                        width: '48px', height: '48px', borderRadius: '12px',
-                                                        background: 'linear-gradient(135deg, #1e293b, #334155)',
-                                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                    }}>
-                                                        <span style={{ fontSize: '24px' }}>🎓</span>
-                                                    </div>
-                                                    <div>
-                                                        <h1 style={{ fontSize: '18px', fontWeight: '900', margin: 0, color: '#1e293b', letterSpacing: '-0.5px' }}>ZOYA EDUCATION</h1>
-                                                        <p style={{ fontSize: '13px', fontWeight: '700', margin: 0, color: '#1e293b' }}>CENTER</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td style={{ verticalAlign: 'top', textAlign: 'right' }}>
-                                                <span style={{
-                                                    padding: '6px 16px', borderRadius: '20px', fontSize: '11px', fontWeight: '800',
-                                                    letterSpacing: '1px',
-                                                    background: application.status === 'approved' ? '#d1fae5' : application.status === 'rejected' ? '#fee2e2' : '#fef3c7',
-                                                    color: application.status === 'approved' ? '#065f46' : application.status === 'rejected' ? '#991b1b' : '#92400e',
-                                                    display: 'inline-block'
-                                                }}>
-                                                    ✅ {currentStatus.label}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                                {/* Invoice Meta */}
-                                <table style={{ width: '100%', marginBottom: '24px', paddingBottom: '16px', borderBottom: '2px dashed #e2e8f0', borderCollapse: 'collapse' }}>
-                                    <tbody>
-                                        <tr>
-                                            <td style={{ width: '50%', verticalAlign: 'top' }}>
-                                                <p style={{ fontSize: '11px', fontWeight: '600', color: '#94a3b8', margin: '0 0 2px 0', textTransform: 'uppercase', letterSpacing: '1px' }}>Invoice Number</p>
-                                                <p style={{ fontSize: '15px', fontWeight: '800', color: '#1e293b', margin: 0 }}>{invoiceNumber}</p>
-                                            </td>
-                                            <td style={{ width: '50%', verticalAlign: 'top', textAlign: 'right' }}>
-                                                <p style={{ fontSize: '11px', fontWeight: '600', color: '#94a3b8', margin: '0 0 2px 0', textTransform: 'uppercase', letterSpacing: '1px' }}>Date</p>
-                                                <p style={{ fontSize: '15px', fontWeight: '800', color: '#1e293b', margin: 0 }}>
-                                                    {new Date(application.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                                </p>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                                {/* Contact Info */}
-                                <div style={{
-                                    background: '#f8fafc', borderRadius: '16px', padding: '20px', marginBottom: '24px',
-                                    border: '1px solid #e2e8f0'
-                                }}>
-                                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                        <tbody>
-                                            <tr>
-                                                <td style={{ width: '50%', verticalAlign: 'middle' }}>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                        <span style={{ fontSize: '14px' }}>📞</span>
-                                                        <span style={{ fontSize: '13px', fontWeight: '700', color: '#475569' }}>+91 98765 43210</span>
-                                                    </div>
-                                                </td>
-                                                <td style={{ width: '50%', verticalAlign: 'middle' }}>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                        <span style={{ fontSize: '14px' }}>📧</span>
-                                                        <span style={{ fontSize: '13px', fontWeight: '700', color: '#475569' }}>zoyaeducation@gmail.com</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                {/* Student Details */}
-                                <div style={{ marginBottom: '24px' }}>
-                                    <h3 style={{
-                                        fontSize: '11px', fontWeight: '800', color: '#94a3b8', margin: '0 0 12px 0',
-                                        textTransform: 'uppercase', letterSpacing: '2px',
-                                    }}>Student Details</h3>
-                                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                        <tbody>
-                                            <tr>
-                                                <td style={{ padding: '4px 0', fontSize: '13px', fontWeight: '600', color: '#94a3b8', width: '30%' }}>Name</td>
-                                                <td style={{ padding: '4px 0', fontSize: '14px', fontWeight: '700', color: '#1e293b', width: '70%', textAlign: 'right' }}>{application.user?.name || 'N/A'}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style={{ padding: '4px 0', fontSize: '13px', fontWeight: '600', color: '#94a3b8', width: '30%' }}>Email</td>
-                                                <td style={{ padding: '4px 0', fontSize: '14px', fontWeight: '700', color: '#1e293b', width: '70%', textAlign: 'right' }}>{application.user?.email || 'N/A'}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                {/* Divider */}
-                                <div style={{ borderBottom: '1px solid #e2e8f0', marginBottom: '24px' }}></div>
-
-                                {/* Service Details */}
-                                <div style={{ marginBottom: '24px' }}>
-                                    <h3 style={{
-                                        fontSize: '11px', fontWeight: '800', color: '#94a3b8', margin: '0 0 12px 0',
-                                        textTransform: 'uppercase', letterSpacing: '2px',
-                                    }}>Service Details</h3>
-                                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                        <tbody>
-                                            <tr>
-                                                <td style={{ padding: '6px 0', fontSize: '13px', fontWeight: '600', color: '#94a3b8', width: '30%' }}>Service</td>
-                                                <td style={{ padding: '6px 0', fontSize: '14px', fontWeight: '700', color: '#1e293b', width: '70%', textAlign: 'right' }}>{application.article?.title || 'N/A'}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style={{ padding: '6px 0', fontSize: '13px', fontWeight: '600', color: '#94a3b8', width: '30%' }}>Type</td>
-                                                <td style={{ padding: '6px 0', width: '70%', textAlign: 'right' }}>
-                                                    <span style={{
-                                                        fontSize: '11px', fontWeight: '800', padding: '4px 12px', borderRadius: '8px',
-                                                        background: application.paymentType === 'payment' ? '#d1fae5' : '#dbeafe',
-                                                        color: application.paymentType === 'payment' ? '#065f46' : '#1e40af',
-                                                        letterSpacing: '0.5px',
-                                                        display: 'inline-block'
-                                                    }}>
-                                                        {application.paymentType === 'payment' ? 'Full Payment' : 'Documents Only'}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td style={{ padding: '6px 0', fontSize: '13px', fontWeight: '600', color: '#94a3b8', width: '30%' }}>Applied Date</td>
-                                                <td style={{ padding: '6px 0', fontSize: '14px', fontWeight: '700', color: '#1e293b', width: '70%', textAlign: 'right' }}>
-                                                    {new Date(application.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                {/* Payment Summary Box */}
-                                <div style={{
-                                    background: '#f0fdf4', borderRadius: '16px', padding: '24px',
-                                    border: '1px solid #bbf7d0', marginTop: '40px',
-                                }}>
-                                    <h3 style={{
-                                        fontSize: '14px', fontWeight: '900', color: '#1e293b', margin: '0 0 16px 0',
-                                    }}>Payment Summary</h3>
-
-                                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                        <tbody>
-                                            <tr>
-                                                <td style={{ padding: '4px 0', fontSize: '13px', fontWeight: '600', color: '#64748b' }}>Subtotal</td>
-                                                <td style={{ padding: '4px 0', fontSize: '14px', fontWeight: '700', color: '#1e293b', textAlign: 'right' }}>₹{application.amount?.toLocaleString()}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style={{ padding: '4px 0', fontSize: '13px', fontWeight: '600', color: '#64748b' }}>Processing Fee</td>
-                                                <td style={{ padding: '4px 0', fontSize: '14px', fontWeight: '700', color: '#1e293b', textAlign: 'right' }}>₹0</td>
-                                            </tr>
-                                            <tr>
-                                                <td colSpan="2" style={{ padding: '12px 0 0 0' }}>
-                                                    <div style={{ borderTop: '2px dashed #86efac', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                        <span style={{ fontSize: '16px', fontWeight: '900', color: '#1e293b' }}>Total</span>
-                                                        <span style={{ fontSize: '28px', fontWeight: '900', color: '#059669' }}>₹{application.amount?.toLocaleString()}</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                {/* Footer */}
-                                <div style={{ textAlign: 'center', paddingTop: '20px', borderTop: '1px solid #e2e8f0' }}>
-                                    <p style={{ fontSize: '13px', fontWeight: '600', color: '#94a3b8', margin: 0 }}>
-                                        Thank you for choosing Zoya Education Center! 🙏
-                                    </p>
+                        {/* Header */}
+                        <div className="flex justify-between items-start mb-10 print:mb-4 border-b border-slate-100 pb-8 print:pb-3">
+                            <div className="flex items-center gap-3">
+                                {/* Use Logo if available, fallback to icon */}
+                                <div className="text-3xl text-amber-500">🎓</div>
+                                <div>
+                                    <h1 className="font-extrabold text-xl tracking-tight text-slate-800 uppercase leading-none">ZOYA EDUCATION</h1>
+                                    <h2 className="font-bold text-sm tracking-widest text-slate-500 uppercase">CENTER</h2>
                                 </div>
                             </div>
+                            <div className={`flex items-center gap-1.5 font-bold px-3 py-1 rounded-full text-sm ${application.status === 'approved' ? 'text-emerald-600 bg-emerald-50' : application.status === 'rejected' ? 'text-red-600 bg-red-50' : 'text-amber-600 bg-amber-50'}`}>
+                                <CheckCircle2 size={16} />
+                                {currentStatus.label}
+                            </div>
+                        </div>
+
+                        {/* Invoice & Date Info */}
+                        <div className="flex justify-between items-end mb-8 print:mb-4">
+                            <div>
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Invoice Number</p>
+                                <p className="font-bold text-lg text-slate-800">{invoiceNumber}</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Date</p>
+                                <p className="font-bold text-lg text-slate-800">
+                                    {new Date(application.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Contact info banner */}
+                        <div className="flex justify-between items-center border border-slate-200 rounded-xl p-4 print:py-2 print:px-3 mb-10 print:mb-4 text-sm font-medium text-slate-600">
+                            <div className="flex items-center gap-2">
+                                <span>📞</span> {contactSettings?.phoneNo || '+91 98765 43210'}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span>✉️</span> {contactSettings?.email || 'zoyaeducation@gmail.com'}
+                            </div>
+                        </div>
+
+                        {/* Details Grid */}
+                        <div className="mb-12 print:mb-4 space-y-8 print:space-y-3 relative">
+                            {/* Watermark effect under details */}
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5">
+                                <span className="text-6xl font-black transform -rotate-45 block whitespace-nowrap text-slate-900">ZOYA EDUCATION</span>
+                            </div>
+
+                            {/* Student Details block */}
+                            <div>
+                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 print:mb-2">Student Details</h3>
+                                <div className="grid grid-cols-[100px_1fr] gap-y-2 text-sm font-medium">
+                                    <div className="text-slate-500">Name</div>
+                                    <div className="text-right text-slate-800 text-base">{application.user?.name || '—'}</div>
+
+                                    <div className="text-slate-500">Email</div>
+                                    <div className="text-right text-slate-800">{application.user?.email || '—'}</div>
+
+                                    {application.user?.phone && (
+                                        <>
+                                            <div className="text-slate-500">Phone</div>
+                                            <div className="text-right text-slate-800">{application.user.phone}</div>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Service Details block */}
+                            <div>
+                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 print:mb-2 mt-8 print:mt-4">Service Details</h3>
+                                <div className="grid grid-cols-[100px_1fr] gap-y-2 text-sm font-medium">
+                                    <div className="text-slate-500">Service</div>
+                                    <div className="text-right text-slate-800 text-base font-semibold">{application.article?.title || '—'}</div>
+
+                                    <div className="text-slate-500">Type</div>
+                                    <div className="text-right text-blue-600 font-semibold">{application.paymentType === 'payment' ? 'Full Payment' : 'Documents Only'}</div>
+
+                                    <div className="text-slate-500">Applied Date</div>
+                                    <div className="text-right text-slate-800">
+                                        {new Date(application.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Payment Summary Box */}
+                        <div className="border border-emerald-100 bg-emerald-50/30 rounded-2xl p-6 print:p-3 mb-8 print:mb-2 mt-12 print:mt-4">
+                            <h3 className="text-sm font-bold text-slate-800 mb-4 print:mb-1.5">Payment Summary</h3>
+
+                            <div className="space-y-3 print:space-y-1 text-sm font-medium border-b border-dashed border-emerald-200 pb-4 print:pb-2 mb-4 print:mb-2">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-slate-600">Subtotal</span>
+                                    <span className="text-slate-800">₹{application.amount?.toLocaleString() || 0}</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                    <span className="text-slate-600">Processing Fee</span>
+                                    <span className="text-slate-800">₹0</span>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-between items-end">
+                                <span className="text-base font-bold text-slate-800">Total</span>
+                                <span className="text-3xl print:text-2xl font-black text-emerald-600 tracking-tight">₹{application.amount?.toLocaleString() || 0}</span>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="text-center text-xs font-medium text-slate-500 mt-16 print:mt-4 pb-4 print:pb-0">
+                            Thank you for choosing Zoya Education Center! 🙏
                         </div>
                     </div>
                 </div>
 
-                {/* ===== ACTION BUTTONS ===== */}
-                <div className="p-6 pt-0 bg-slate-50 dark:bg-slate-900 flex gap-3">
-                    <button
-                        onClick={handleDownloadPDF}
-                        className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-primary text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-primary/30 hover:shadow-xl hover:-translate-y-0.5 transition-all"
-                    >
-                        <Download size={16} /> Download PDF
-                    </button>
-                    <button
-                        onClick={handlePrint}
-                        className="flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-700 transition-all"
-                    >
-                        <Printer size={16} /> Print
-                    </button>
-                    <button
-                        onClick={handleWhatsAppShare}
-                        className="flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-emerald-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-emerald-500/30 hover:bg-emerald-600 hover:-translate-y-0.5 transition-all"
-                    >
-                        <Share2 size={16} /> Share
-                    </button>
-                </div>
             </div>
         </div>
     );

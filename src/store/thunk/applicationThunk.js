@@ -45,3 +45,13 @@ export const deleteApplication = createAsyncThunk(
         }
     }
 );
+export const removeApplicationDocument = createAsyncThunk(
+    'applications/removeDocument',
+    async ({ id, documentUrl }, { rejectWithValue }) => {
+        try {
+            return await applicationApi.removeApplicationDocumentApi(id, documentUrl);
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || 'Failed to remove document');
+        }
+    }
+);

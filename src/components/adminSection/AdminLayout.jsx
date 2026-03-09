@@ -42,7 +42,8 @@ const AdminLayout = () => {
         { path: '/admin/users', label: 'Users', icon: Users },
         { path: '/admin/categories', label: 'Categories', icon: ListTree },
         { path: '/admin/activities', label: 'Activities', icon: History },
-        { path: '/admin/payments', label: 'Payments', icon: CreditCard },
+        { path: '/admin/payment-slips', label: 'Payment Slips', icon: FileText },
+        { path: '/admin/payments', label: 'Payments Settings', icon: CreditCard },
         { path: '/admin/page-articles', label: 'Page Articles', icon: FileText },
 
         { path: '/admin/marquee', label: 'Announcement Bar', icon: Megaphone },

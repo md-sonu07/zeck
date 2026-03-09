@@ -4,6 +4,8 @@ import { fetchCategories } from '../../../store/thunk/categoryThunk';
 import { fetchArticles, createArticle, deleteArticle, updateArticle } from '../../../store/thunk/articleThunk';
 import { Save, Image as ImageIcon, Link as LinkIcon, Type, X, FileText, List, PlusCircle, ListTree, ChevronDown, Layers, MapPin, AlignLeft, AlignCenter, AlignRight, ListOrdered, Minus, Table, Eraser, Calendar, Clock, Upload, Trash2, MoreVertical, ExternalLink, CheckCircle, CircleDashed, PlayCircle, ChevronLeft, ChevronRight, Edit } from 'lucide-react';
 import toast from 'react-hot-toast';
+import ConfirmationModal from '../../../components/common/ConfirmationModal';
+
 import { Link } from 'react-router-dom';
 import slug from 'slug';
 
@@ -15,6 +17,8 @@ const PostManagementPage = ({ categoryTitle }) => {
     const [activeTab, setActiveTab] = useState('manage');
     const [openDropdownId, setOpenDropdownId] = useState(null);
     const [editArticleId, setEditArticleId] = useState(null);
+    const [articleToDelete, setArticleToDelete] = useState(null);
+
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -306,16 +310,18 @@ const PostManagementPage = ({ categoryTitle }) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    const handleDeleteArticle = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this article?")) return;
+    const confirmDeleteArticle = async () => {
+        if (!articleToDelete) return;
         const loadingToast = toast.loading('Deleting article...');
         try {
-            await dispatch(deleteArticle(id)).unwrap();
+            await dispatch(deleteArticle(articleToDelete)).unwrap();
             toast.success('Article deleted successfully', { id: loadingToast });
             setOpenDropdownId(null);
         } catch (error) {
             console.error('Error deleting:', error);
             toast.error(error || 'Failed to delete article', { id: loadingToast });
+        } finally {
+            setArticleToDelete(null);
         }
     };
 
@@ -1019,7 +1025,7 @@ const PostManagementPage = ({ categoryTitle }) => {
                                                                     ))}
                                                                     <div className="h-px bg-slate-100 dark:bg-slate-700/50 my-1"></div>
                                                                     <button
-                                                                        onClick={() => handleDeleteArticle(art._id)}
+                                                                        onClick={() => setArticleToDelete(art._id)}
                                                                         className="flex items-center gap-2 w-full px-3 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                                                                     >
                                                                         <Trash2 size={14} />
@@ -1434,7 +1440,27 @@ const PostManagementPage = ({ categoryTitle }) => {
                     </div>
                 )
             }
-        </div >
+            {/* Confirmation Modals */}
+            <ConfirmationModal
+                isOpen={!!articleToDelete}
+                onClose={() => setArticleToDelete(null)}
+                onConfirm={confirmDeleteArticle}
+                title="Delete Article"
+                message="Are you sure you want to delete this article? This action cannot be undone."
+                confirmText="Delete"
+                type="danger"
+            />
+
+            <ConfirmationModal
+                isOpen={isResetPopupOpen}
+                onClose={() => setIsResetPopupOpen(false)}
+                onConfirm={confirmClearEditor}
+                title="Clear Editor Content"
+                message="This will completely wipe all the content you've written. Are you sure you want to reset?"
+                confirmText="Reset Now"
+                type="warning"
+            />
+        </div>
     );
 };
 

@@ -7,12 +7,16 @@ import {
     getMarqueesApi, createMarqueeApi, updateMarqueeApi, deleteMarqueeApi
 } from '../../../api/marquee.api';
 import toast from 'react-hot-toast';
+import ConfirmationModal from '../../../components/common/ConfirmationModal';
+
 
 const MarqueeManagementPage = () => {
     const [marquees, setMarquees] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
+    const [itemToDelete, setItemToDelete] = useState(null);
+
 
     // Form state
     const [formData, setFormData] = useState({
@@ -66,16 +70,18 @@ const MarqueeManagementPage = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Delete this announcement?')) return;
+    const confirmDelete = async () => {
+        if (!itemToDelete) return;
         const loadingToast = toast.loading('Deleting announcement...');
         try {
-            await deleteMarqueeApi(id);
-            setMarquees(marquees.filter(m => m._id !== id));
+            await deleteMarqueeApi(itemToDelete);
+            setMarquees(marquees.filter(m => m._id !== itemToDelete));
             toast.success('Announcement deleted successfully', { id: loadingToast });
         } catch (error) {
             console.error(error);
             toast.error('Failed to delete announcement', { id: loadingToast });
+        } finally {
+            setItemToDelete(null);
         }
     };
 
@@ -184,7 +190,7 @@ const MarqueeManagementPage = () => {
                                                 <Edit3 size={16} />
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(item._id)}
+                                                onClick={() => setItemToDelete(item._id)}
                                                 className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-all"
                                             >
                                                 <Trash2 size={16} />
@@ -298,6 +304,17 @@ const MarqueeManagementPage = () => {
                     </div>
                 </div>
             )}
+
+            {/* Reusable Delete Confirmation Modal */}
+            <ConfirmationModal
+                isOpen={!!itemToDelete}
+                onClose={() => setItemToDelete(null)}
+                onConfirm={confirmDelete}
+                title="Delete Announcement"
+                message="Are you sure you want to delete this announcement? This action cannot be undone."
+                confirmText="Delete"
+                type="danger"
+            />
         </div>
     );
 };

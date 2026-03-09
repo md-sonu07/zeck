@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchApplications, updateApplicationStatus, fetchMyApplications, deleteApplication } from '../thunk/applicationThunk';
+import { fetchApplications, updateApplicationStatus, fetchMyApplications, deleteApplication, removeApplicationDocument } from '../thunk/applicationThunk';
 import { logout } from '../thunk/authThunk';
 
 
@@ -51,6 +51,16 @@ const applicationSlice = createSlice({
                 const index = state.applications.findIndex(app => app._id === updatedApp._id);
                 if (index !== -1) {
                     state.applications[index] = updatedApp;
+                }
+            })
+
+            // Remove Document
+            .addCase(removeApplicationDocument.fulfilled, (state, action) => {
+                const { documents } = action.payload;
+                const appId = action.meta.arg.id;
+                const index = state.applications.findIndex(app => app._id === appId);
+                if (index !== -1) {
+                    state.applications[index].documents = documents;
                 }
             })
 

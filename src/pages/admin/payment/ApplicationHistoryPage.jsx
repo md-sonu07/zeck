@@ -2,18 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { CreditCard, FileText, Loader2, Eye, X, Image as ImageIcon, History, Check, Search, Filter, Trash2, Receipt, MoreVertical } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchApplications, updateApplicationStatus, deleteApplication } from '../../../store/thunk/applicationThunk';
+import { fetchApplications, updateApplicationStatus, deleteApplication, removeApplicationDocument } from '../../../store/thunk/applicationThunk';
 import { apiBaseUrl } from '../../../api/axios';
 import InvoiceModal from '../../../components/InvoiceModal';
+import ConfirmationModal from '../../../components/common/ConfirmationModal';
 
 const ApplicationHistoryPage = ({ isComponent = false }) => {
     const dispatch = useDispatch();
     const { applications, loading } = useSelector((state) => state.applications);
-    const [selectedDocs, setSelectedDocs] = useState(null);
+    const [selectedAppForDocs, setSelectedAppForDocs] = useState(null);
     const [openDropdown, setOpenDropdown] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [itemToDelete, setItemToDelete] = useState(null);
+    const [itemToRemoveDoc, setItemToRemoveDoc] = useState(null);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
 
     const filteredApplications = applications.filter((app) => {
@@ -55,6 +57,22 @@ const ApplicationHistoryPage = ({ isComponent = false }) => {
             toast.error(error || 'Failed to delete application', { id: loadingToast });
         } finally {
             setItemToDelete(null);
+        }
+    };
+
+    const handleRemoveDoc = async () => {
+        if (!itemToRemoveDoc) return;
+        const loadingToast = toast.loading('Removing asset...');
+        try {
+            await dispatch(removeApplicationDocument({
+                id: itemToRemoveDoc.appId,
+                documentUrl: itemToRemoveDoc.url
+            })).unwrap();
+            toast.success('Asset removed successfully', { id: loadingToast });
+        } catch (error) {
+            toast.error(error || 'Failed to remove asset', { id: loadingToast });
+        } finally {
+            setItemToRemoveDoc(null);
         }
     };
 
@@ -122,17 +140,16 @@ const ApplicationHistoryPage = ({ isComponent = false }) => {
                             <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                                 <th className="p-4">User Details</th>
                                 <th className="p-4">Service</th>
-                                <th className="p-4">Type</th>
+                                <th className="p-4">Type & Verification</th>
                                 <th className="p-4">Amount</th>
                                 <th className="p-4">Applied Date</th>
-                                <th className="p-4">Verification Docs</th>
                                 <th className="p-4 text-right">Status Action</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                             {filteredApplications.length === 0 ? (
                                 <tr>
-                                    <td colSpan="7" className="p-20 text-center">
+                                    <td colSpan="6" className="p-20 text-center">
                                         <div className="flex flex-col items-center gap-3">
                                             <div className="size-16 rounded-full bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-300">
                                                 <CreditCard size={32} />
@@ -159,9 +176,23 @@ const ApplicationHistoryPage = ({ isComponent = false }) => {
                                             <p className="font-bold text-slate-700 dark:text-slate-300 text-sm">{app.article?.title || 'Unknown'}</p>
                                         </td>
                                         <td className="p-4">
-                                            <span className={`px-2.5 py-1 text-nowrap rounded-lg text-[10px] font-black uppercase tracking-widest ${app.paymentType === 'payment' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20' : 'bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20'}`}>
-                                                {app.paymentType === 'payment' ? 'Full Payment' : 'Documents Only'}
-                                            </span>
+                                            <div className="flex flex-col gap-2 items-start">
+                                                <span className={`px-2.5 py-1 text-nowrap rounded-lg text-[10px] font-black uppercase tracking-widest ${app.paymentType === 'payment' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20' : 'bg-blue-50 text-blue-600 border border-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20'}`}>
+                                                    {app.paymentType === 'payment' ? 'Full Payment' : 'Documents Only'}
+                                                </span>
+
+                                                {app.documents && app.documents.length > 0 ? (
+                                                    <button
+                                                        onClick={() => setSelectedAppForDocs(app)}
+                                                        className="flex items-center gap-2 px-2 py-1 bg-slate-100 dark:bg-slate-700 hover:bg-primary hover:text-white dark:hover:bg-primary text-slate-700 dark:text-slate-200 rounded-lg text-[10px] font-bold transition-all shadow-sm"
+                                                    >
+                                                        <FileText size={12} />
+                                                        <span>Assets ({app.documents.length})</span>
+                                                    </button>
+                                                ) : (
+                                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">No Documents</span>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="p-4">
                                             <p className="font-black text-slate-800 dark:text-white text-sm">₹{app.amount.toLocaleString()}</p>
@@ -171,19 +202,6 @@ const ApplicationHistoryPage = ({ isComponent = false }) => {
                                                 <span className="text-xs font-bold text-slate-700 dark:text-slate-300">{new Date(app.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                                 <span className="text-[10px] text-slate-500 font-medium">{new Date(app.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                             </div>
-                                        </td>
-                                        <td className="p-4">
-                                            {app.documents && app.documents.length > 0 ? (
-                                                <button
-                                                    onClick={() => setSelectedDocs(app.documents)}
-                                                    className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-primary hover:text-white dark:hover:bg-primary text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition-all shadow-sm"
-                                                >
-                                                    <FileText size={14} />
-                                                    <span>Assets ({app.documents.length})</span>
-                                                </button>
-                                            ) : (
-                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No Documents</span>
-                                            )}
                                         </td>
                                         <td className="p-4 text-right">
                                             <div className="flex items-center justify-end gap-3">
@@ -205,11 +223,19 @@ const ApplicationHistoryPage = ({ isComponent = false }) => {
                                                     {openDropdown === app._id && (
                                                         <>
                                                             <div className="fixed inset-0 z-40" onClick={() => setOpenDropdown(null)}></div>
-                                                            <div className="fixed z-50 w-48 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200"
+                                                            <div className="fixed z-50 w-48 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-2xl overflow-y-auto max-h-[80vh] animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-200 custom-scrollbar"
                                                                 style={(() => {
                                                                     const btn = document.querySelector(`[data-dropdown-id="${app._id}"]`);
                                                                     if (!btn) return {};
                                                                     const rect = btn.getBoundingClientRect();
+                                                                    const dropdownHeight = 280; // Estimated max height
+                                                                    const spaceBelow = window.innerHeight - rect.bottom;
+
+                                                                    if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+                                                                        // Show above if not enough space below but enough space above
+                                                                        return { bottom: window.innerHeight - rect.top + 8, right: window.innerWidth - rect.right };
+                                                                    }
+                                                                    // Default: show below
                                                                     return { top: rect.bottom + 8, right: window.innerWidth - rect.right };
                                                                 })()}
                                                             >
@@ -272,37 +298,53 @@ const ApplicationHistoryPage = ({ isComponent = false }) => {
             </div>
 
             {/* Asset Modal */}
-            {selectedDocs && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm shadow-sm" onClick={() => setSelectedDocs(null)}>
+            {selectedAppForDocs && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm shadow-sm" onClick={() => setSelectedAppForDocs(null)}>
                     <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 max-w-4xl w-full max-h-[85vh] flex flex-col shadow-2xl relative" onClick={e => e.stopPropagation()}>
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                                 <FileText className="text-primary" /> Submitted Assets
                             </h2>
-                            <button onClick={() => setSelectedDocs(null)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
+                            <button onClick={() => setSelectedAppForDocs(null)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
                                 <X size={20} />
                             </button>
                         </div>
 
                         <div className="flex-1 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-2 custom-scrollbar">
-                            {selectedDocs.map((doc, idx) => {
+                            {selectedAppForDocs.documents.map((doc, idx) => {
                                 const fullUrl = doc.startsWith('http') ? doc : `${apiBaseUrl}${doc}`;
                                 const isImage = doc.match(/\.(jpeg|jpg|gif|png|webp)$/i);
                                 return (
-                                    <div key={idx} className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex flex-col gap-3">
+                                    <div key={idx} className="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex flex-col gap-3 group/asset">
                                         {isImage ? (
                                             <div className="relative aspect-square rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 bg-white">
                                                 <img src={fullUrl} alt="doc" className="w-full h-full object-cover" />
-                                                <a href={fullUrl} target="_blank" rel="noopener noreferrer" className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 flex items-center justify-center text-white transition-opacity font-bold text-xs gap-2">
-                                                    <Eye size={16} /> View Full
-                                                </a>
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/asset:opacity-100 flex flex-col items-center justify-center text-white transition-opacity font-bold text-xs gap-3">
+                                                    <a href={fullUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-lg transition-all">
+                                                        <Eye size={16} /> View Full
+                                                    </a>
+                                                    <button
+                                                        onClick={() => setItemToRemoveDoc({ appId: selectedAppForDocs._id, url: doc })}
+                                                        className="flex items-center gap-2 px-4 py-2 bg-red-500/80 hover:bg-red-600 rounded-lg transition-all"
+                                                    >
+                                                        <Trash2 size={16} /> Remove
+                                                    </button>
+                                                </div>
                                             </div>
                                         ) : (
-                                            <div className="aspect-square flex flex-col items-center justify-center bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                                            <div className="relative aspect-square flex flex-col items-center justify-center bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 group/file">
                                                 <FileText className="text-slate-300 size-12 mb-4" />
-                                                <a href={fullUrl} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-primary/10 text-primary text-xs font-bold rounded-lg hover:bg-primary/20 transition-all">
-                                                    Open Document
-                                                </a>
+                                                <div className="flex flex-col gap-2 w-full px-4">
+                                                    <a href={fullUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 px-4 py-2 bg-primary/10 text-primary text-xs font-bold rounded-lg hover:bg-primary/20 transition-all">
+                                                        <Eye size={14} /> Open
+                                                    </a>
+                                                    <button
+                                                        onClick={() => setItemToRemoveDoc({ appId: selectedAppForDocs._id, url: doc })}
+                                                        className="flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 text-xs font-bold rounded-lg hover:bg-red-100 transition-all"
+                                                    >
+                                                        <Trash2 size={14} /> Remove
+                                                    </button>
+                                                </div>
                                             </div>
                                         )}
                                         <p className="text-[10px] font-bold text-slate-500 text-center uppercase tracking-widest">Asset #{idx + 1}</p>
@@ -314,36 +356,27 @@ const ApplicationHistoryPage = ({ isComponent = false }) => {
                 </div>
             )}
 
-            {/* Delete Confirmation Modal */}
-            {itemToDelete && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setItemToDelete(null)}></div>
-                    <div className="relative bg-white dark:bg-slate-800 w-full max-w-sm rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-700 overflow-hidden animate-in zoom-in-95 duration-200">
-                        <div className="p-8 text-center flex flex-col items-center">
-                            <div className="size-16 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center mb-6">
-                                <Trash2 className="text-red-500" size={32} />
-                            </div>
-                            <h3 className="text-xl font-black text-slate-800 dark:text-white">Delete Application</h3>
-                            <p className="text-sm font-medium text-slate-500 mt-2">Are you sure? This will permanently remove this application record and cannot be undone.</p>
+            {/* Application Delete Modal */}
+            <ConfirmationModal
+                isOpen={!!itemToDelete}
+                onClose={() => setItemToDelete(null)}
+                onConfirm={handleDelete}
+                title="Delete Application"
+                message="Are you sure? This will permanently remove this application record and cannot be undone."
+                confirmText="Delete Record"
+                type="danger"
+            />
 
-                            <div className="grid grid-cols-2 gap-3 w-full mt-8">
-                                <button
-                                    onClick={() => setItemToDelete(null)}
-                                    className="py-3.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-600 transition-all"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleDelete}
-                                    className="py-3.5 bg-red-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-red-500/30 hover:bg-red-600 hover:-translate-y-0.5 transition-all"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* Asset Remove Modal */}
+            <ConfirmationModal
+                isOpen={!!itemToRemoveDoc}
+                onClose={() => setItemToRemoveDoc(null)}
+                onConfirm={handleRemoveDoc}
+                title="Remove Asset"
+                message="Are you sure you want to remove this specific document from the record? This cannot be undone."
+                confirmText="Remove Asset"
+                type="warning"
+            />
 
             {/* Invoice Modal */}
             {selectedInvoice && (

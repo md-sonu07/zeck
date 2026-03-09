@@ -11,7 +11,7 @@ const PaymentManagementPage = () => {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
-                        <CreditCard className="text-primary" /> Payment Management
+                        <CreditCard className="text-primary" /> Payment By Users
                     </h1>
                     <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">Manage payment settings and view application history.</p>
                 </div>

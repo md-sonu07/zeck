@@ -14,6 +14,7 @@ import aboutReducer from './slice/aboutSlice';
 import dashboardReducer from './slice/dashboardSlice';
 import paymentReducer from './slice/paymentSlice';
 import applicationReducer from './slice/applicationSlice';
+import paymentSlipReducer from './slice/paymentSlipSlice';
 
 
 
@@ -34,10 +35,17 @@ const store = configureStore({
         dashboard: dashboardReducer,
         payment: paymentReducer,
         applications: applicationReducer,
+        paymentSlips: paymentSlipReducer,
     },
-
-
-
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                warnAfter: 1000,
+            },
+            immutableCheck: {
+                warnAfter: 1000,
+            },
+        }),
 });
 
 export default store;

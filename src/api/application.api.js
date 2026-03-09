@@ -35,3 +35,8 @@ export const deleteApplicationApi = async (id) => {
     const response = await API.delete(`/applications/${id}`);
     return response.data;
 };
+// Remove a specific document (Admin)
+export const removeApplicationDocumentApi = async (id, documentUrl) => {
+    const response = await API.patch(`/applications/${id}/remove-document`, { documentUrl });
+    return response.data;
+};

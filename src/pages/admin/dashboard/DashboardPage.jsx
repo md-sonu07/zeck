@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
     Users,
@@ -45,11 +45,37 @@ const StatCard = ({ title, value, icon: Icon, color, trend, isLoading }) => {
 
 const DashboardPage = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { stats, recentActivity, isLoading, error } = useSelector((state) => state.dashboard);
 
     useEffect(() => {
         dispatch(getDashboardStats());
     }, [dispatch]);
+
+    const handleActivityClick = (activity) => {
+        switch (activity.type) {
+            case 'user':
+                navigate('/admin/users');
+                break;
+            case 'payment':
+                navigate('/admin/payments');
+                break;
+            case 'contact':
+                navigate('/admin/contact-messages');
+                break;
+            case 'admin_log':
+                if (activity.action.toLowerCase().includes('payment slip')) {
+                    navigate('/admin/payment-slips');
+                } else {
+                    navigate('/admin/activities');
+                }
+                break;
+            case 'article':
+            default:
+                navigate('/admin/activities');
+                break;
+        }
+    };
 
     const formatTime = (dateString) => {
         const date = new Date(dateString);
@@ -169,27 +195,39 @@ const DashboardPage = () => {
                                 ))}
                             </div>
                         ) : recentActivity.length > 0 ? (
-                            <div className="space-y-6">
-                                {recentActivity.map((activity, index) => (
-                                    <div key={activity.id + index} className="flex gap-4 relative">
-                                        {/* Timeline line */}
-                                        {index !== recentActivity.length - 1 && (
-                                            <div className="absolute top-10 left-[19px] bottom-[-24px] w-px bg-slate-200 dark:bg-slate-700"></div>
-                                        )}
-                                        <div className={`size-10 rounded-full flex items-center justify-center shrink-0 z-10 ${getColor(activity.iconType)}`}>
-                                            {React.createElement(getIcon(activity.iconType), { size: 18 })}
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-slate-800 dark:text-white">{activity.action}</p>
-                                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-0.5">{activity.details}</p>
-                                            <div className="flex items-center gap-1 mt-1 text-xs font-semibold text-slate-400">
-                                                <Clock size={12} />
-                                                {formatTime(activity.time)}
+                            <>
+                                <div className="space-y-6">
+                                    {recentActivity.map((activity, index) => (
+                                        <div
+                                            key={activity.id + index}
+                                            onClick={() => handleActivityClick(activity)}
+                                            className="flex gap-4 relative group cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-3 -mx-3 -my-1 rounded-xl transition-all"
+                                        >
+                                            {/* Timeline line */}
+                                            {index !== recentActivity.length - 1 && (
+                                                <div className="absolute top-[44px] left-[31px] bottom-[-28px] w-px bg-slate-200 dark:bg-slate-700"></div>
+                                            )}
+                                            <div className={`size-10 rounded-full flex items-center justify-center shrink-0 z-10 ${getColor(activity.iconType)} group-hover:scale-110 transition-transform`}>
+                                                {React.createElement(getIcon(activity.iconType), { size: 18 })}
+                                            </div>
+                                            <div className="flex-1 mt-0.5">
+                                                <p className="font-bold text-slate-800 dark:text-white group-hover:text-primary transition-colors">{activity.action}</p>
+                                                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-0.5">{activity.details}</p>
+                                                <div className="flex items-center gap-1 mt-1 text-xs font-semibold text-slate-400">
+                                                    <Clock size={12} />
+                                                    {formatTime(activity.time)}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                                <Link
+                                    to="/admin/activities"
+                                    className="mt-6 -mx-6 -mb-6 p-4 block text-center border-t border-slate-100 dark:border-slate-700/60 text-sm font-bold text-slate-500 hover:text-primary hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all rounded-b-2xl"
+                                >
+                                    View All Activity
+                                </Link>
+                            </>
                         ) : (
                             <div className="text-center py-12">
                                 <p className="text-slate-500 dark:text-slate-400 font-medium">No recent activity found.</p>
@@ -204,16 +242,22 @@ const DashboardPage = () => {
                         <h2 className="text-lg font-bold text-slate-800 dark:text-white">Quick Actions</h2>
                     </div>
                     <div className="p-4 space-y-2">
-                        <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors text-left group">
+                        <button
+                            onClick={() => navigate('/admin/latest-news')}
+                            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors text-left group"
+                        >
                             <div className="size-10 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform">
                                 <Briefcase size={20} />
                             </div>
                             <div>
-                                <p className="font-bold text-slate-800 dark:text-white">Post a Job</p>
-                                <p className="text-xs text-slate-500 font-medium tracking-wide border border-transparent">Create a new job listing</p>
+                                <p className="font-bold text-slate-800 dark:text-white">Post a Job / News</p>
+                                <p className="text-xs text-slate-500 font-medium tracking-wide border border-transparent">Create a new listing</p>
                             </div>
                         </button>
-                        <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors text-left group">
+                        <button
+                            onClick={() => navigate('/admin/admit-cards')}
+                            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors text-left group"
+                        >
                             <div className="size-10 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-500 flex items-center justify-center group-hover:scale-110 transition-transform">
                                 <FileText size={20} />
                             </div>
@@ -222,13 +266,28 @@ const DashboardPage = () => {
                                 <p className="text-xs text-slate-500 tracking-wide font-medium">Publish new admit card link</p>
                             </div>
                         </button>
-                        <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors text-left group">
+                        <button
+                            onClick={() => navigate('/admin/results')}
+                            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors text-left group"
+                        >
                             <div className="size-10 rounded-lg bg-purple-50 dark:bg-purple-500/10 text-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform">
                                 <CheckCircle size={20} />
                             </div>
                             <div>
                                 <p className="font-bold text-slate-800 dark:text-white">Declare Result</p>
                                 <p className="text-xs text-slate-500 tracking-wide font-medium">Add new exam results</p>
+                            </div>
+                        </button>
+                        <button
+                            onClick={() => navigate('/admin/payment-slips/create')}
+                            className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors text-left group"
+                        >
+                            <div className="size-10 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <CreditCard size={20} />
+                            </div>
+                            <div>
+                                <p className="font-bold text-slate-800 dark:text-white">Generate Payment Slip</p>
+                                <p className="text-xs text-slate-500 tracking-wide font-medium">Create and print a new invoice</p>
                             </div>
                         </button>
                     </div>

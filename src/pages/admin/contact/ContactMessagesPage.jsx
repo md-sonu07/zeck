@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { MessageSquare, Search, Trash2, CheckCircle2, ChevronRight, Mail, Clock, ShieldAlert } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getAllContactMessagesApi, updateContactMessageStatusApi, deleteContactMessageApi } from '../../../api/contact.api';
+import ConfirmationModal from '../../../components/common/ConfirmationModal';
+
 
 const ContactMessagesPage = () => {
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedMessage, setSelectedMessage] = useState(null);
+    const [messageToDelete, setMessageToDelete] = useState(null);
+
 
     const fetchMessages = async () => {
         try {
@@ -37,17 +41,23 @@ const ContactMessagesPage = () => {
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this message?')) return;
+    const handleDeleteClick = (id) => {
+        setMessageToDelete(id);
+    };
+
+    const confirmDelete = async () => {
+        if (!messageToDelete) return;
 
         const loadingToast = toast.loading('Deleting message...');
         try {
-            await deleteContactMessageApi(id);
-            setMessages(messages.filter(msg => msg._id !== id));
-            if (selectedMessage?._id === id) setSelectedMessage(null);
+            await deleteContactMessageApi(messageToDelete);
+            setMessages(messages.filter(msg => msg._id !== messageToDelete));
+            if (selectedMessage?._id === messageToDelete) setSelectedMessage(null);
             toast.success('Message deleted successfully', { id: loadingToast });
         } catch (error) {
             toast.error('Failed to delete message', { id: loadingToast });
+        } finally {
+            setMessageToDelete(null);
         }
     };
 
@@ -204,7 +214,7 @@ const ContactMessagesPage = () => {
                                             </button>
                                         )}
                                         <button
-                                            onClick={() => handleDelete(selectedMessage._id)}
+                                            onClick={() => handleDeleteClick(selectedMessage._id)}
                                             className="p-3 bg-red-50 hover:bg-red-500 text-red-500 hover:text-white dark:bg-red-500/10 dark:hover:bg-red-600 rounded-xl transition-all ml-auto"
                                             title="Delete Message"
                                         >
@@ -223,6 +233,17 @@ const ContactMessagesPage = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Reusable Delete Confirmation Modal */}
+            <ConfirmationModal
+                isOpen={!!messageToDelete}
+                onClose={() => setMessageToDelete(null)}
+                onConfirm={confirmDelete}
+                title="Delete Message"
+                message="Are you sure you want to delete this message? This action cannot be undone."
+                confirmText="Delete"
+                type="danger"
+            />
         </div>
     );
 };
