@@ -63,12 +63,21 @@ const Header = () => {
                             />
                         </div>
                     </div>
+                    {/* Mobile Title View */}
+                    <div className="leading-none sm:hidden">
+                        <h1 className="font-black tracking-tighter flex flex-col">
+                            <span className="text-primary text-xl leading-none uppercase">Zoya</span>
+                            <span className="text-slate-800 dark:text-white text-[10px] uppercase tracking-[0.1em] font-bold">Education Centre</span>
+                        </h1>
+                    </div>
+
+                    {/* Desktop Title View */}
                     <div className="leading-tight hidden sm:block">
                         <h1 className="text-lg md:text-[1.35rem] font-black tracking-tighter flex items-center">
                             <span className="text-primary">Zoya</span>
                             <span className="text-slate-800 dark:text-white ml-1">Education Centre</span>
                         </h1>
-                        <p className="hidden sm:block text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-[0.15em] mt-0.5">
+                        <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-[0.15em] mt-0.5">
                             Recent Updates · Results · Admit Cards
                         </p>
                     </div>
@@ -98,7 +107,7 @@ const Header = () => {
                         {/* Theme Toggle */}
                         <button
                             onClick={() => dispatch(toggleTheme())}
-                            className="size-10 flex items-center justify-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-all active:scale-95"
+                            className="size-10 cursor-pointer flex items-center justify-center bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-all active:scale-95"
                             title={darkMode ? 'Light Mode' : 'Dark Mode'}
                         >
                             {darkMode ? <Sun size={18} /> : <Moon size={18} />}
@@ -107,16 +116,13 @@ const Header = () => {
                         {/* Profile/Login Button */}
                         <Link
                             to={userInfo ? "/profile" : "/login"}
-                            className={`flex size-10 items-center justify-center rounded-xl border transition-all active:scale-95 ${userInfo
-                                    ? 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-primary'
-                                    : 'bg-primary border-primary text-white shadow-lg shadow-primary/20'
-                                }`}
+                            className="flex size-10 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-primary/20 transition-all active:scale-95 cursor-pointer hover:bg-primary-dark border border-white/10"
                             title={userInfo ? "My Profile" : "Sign In to your account"}
                         >
                             {userInfo ? (
-                                <div className="size-8 rounded-full bg-linear-to-br from-primary to-primary-dark text-white flex items-center justify-center text-[10px] font-black shadow-md uppercase animate-in fade-in duration-500">
+                                <span className="text-[13px] font-black uppercase select-none">
                                     {userInfo.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                                </div>
+                                </span>
                             ) : (
                                 <User size={18} />
                             )}

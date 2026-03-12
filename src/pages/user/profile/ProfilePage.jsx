@@ -123,23 +123,23 @@ const ProfilePage = () => {
                                 <div className="flex md:hidden items-center justify-between px-6 md:px-8 py-4">
                                     <div className="flex items-center gap-3">
                                         <User size={15} className="text-primary" />
-                                        <span className="text-xs font-semibold text-slate-500">Name</span>
+                                        <span className="text-xs font-black text-slate-500">Name</span>
                                     </div>
-                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{userDetails?.name}</span>
+                                    <span className="text-sm font-black text-slate-700 dark:text-slate-200">{userDetails?.name}</span>
                                 </div>
                                 <div className="flex items-center justify-between px-6 md:px-8 py-4">
                                     <div className="flex items-center gap-3">
                                         <Mail size={15} className="text-primary" />
-                                        <span className="text-xs font-semibold text-slate-500">Email</span>
+                                        <span className="text-xs font-black text-slate-500">Email</span>
                                     </div>
-                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{userDetails?.email}</span>
+                                    <span className="text-sm font-black text-slate-700 dark:text-slate-200">{userDetails?.email}</span>
                                 </div>
                                 <div className="flex items-center justify-between px-6 md:px-8 py-4">
                                     <div className="flex items-center gap-3">
                                         <Shield size={15} className="text-orange-500" />
-                                        <span className="text-xs font-semibold text-slate-500">Role</span>
+                                        <span className="text-xs font-black text-slate-500">Role</span>
                                     </div>
-                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{userDetails?.isAdmin ? 'Admin' : 'Member'}</span>
+                                    <span className="text-sm font-black text-slate-700 dark:text-slate-200">{userDetails?.isAdmin ? 'Admin' : 'Member'}</span>
                                 </div>
 
 
