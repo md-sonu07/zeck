@@ -8,6 +8,7 @@ import {
 
 import { logout as logoutUser } from '../../../store/thunk/authThunk';
 import { fetchMyApplications } from '../../../store/thunk/applicationThunk';
+import { fetchContactSettings } from '../../../store/thunk/contactThunk';
 
 import { useNavigate, Link } from 'react-router-dom';
 import { apiBaseUrl } from '../../../api/axios';
@@ -18,6 +19,7 @@ const ProfilePage = () => {
     const { userDetails, loading } = useSelector((state) => state.user);
     const { userInfo } = useSelector((state) => state.auth);
     const { myApplications, loading: appsLoading } = useSelector((state) => state.applications);
+    const { settings: contactSettings } = useSelector((state) => state.contact);
     const [selectedApp, setSelectedApp] = useState(null);
     const [activeTab, setActiveTab] = useState('history'); // 'history' or 'docs'
 
@@ -27,6 +29,7 @@ const ProfilePage = () => {
         } else {
             dispatch(getProfile());
             dispatch(fetchMyApplications());
+            dispatch(fetchContactSettings());
         }
     }, [dispatch, userInfo, navigate]);
 
@@ -326,18 +329,18 @@ const ProfilePage = () => {
                                 <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><MessageCircle size={11} /> Community</h3>
                             </div>
                             <div className="p-4 space-y-2">
-                                <a href="https://t.me/zoyacenter" target="_blank" rel="noreferrer" className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                                <a href={contactSettings?.telegramLink || "#"} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                                     <div className="size-8 bg-[#2CA5E0] rounded-lg flex items-center justify-center text-white shrink-0"><Send size={13} /></div>
                                     <div>
                                         <p className="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-primary transition-colors">Telegram</p>
-                                        <p className="text-[10px] text-slate-400">Instant alerts</p>
+                                        <p className="text-[10px] text-slate-400">{contactSettings?.telegramSub || "Instant alerts"}</p>
                                     </div>
                                 </a>
-                                <a href="#" className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                                <a href={contactSettings?.whatsappLink || "#"} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                                     <div className="size-8 bg-[#25D366] rounded-lg flex items-center justify-center text-white shrink-0"><MessageCircle size={13} /></div>
                                     <div>
                                         <p className="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-primary transition-colors">WhatsApp</p>
-                                        <p className="text-[10px] text-slate-400">Quick support</p>
+                                        <p className="text-[10px] text-slate-400">{contactSettings?.whatsappSub || "Quick support"}</p>
                                     </div>
                                 </a>
                             </div>

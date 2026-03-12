@@ -94,7 +94,7 @@ const AdminLayout = () => {
                 {/* Sidebar Header */}
                 <div className="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700">
                     <Link to="/admin" className="flex items-center gap-2 text-primary font-black text-xl tracking-tight">
-                        <div className="size-8 rounded-lg bg-linear-to-br from-primary to-blue-600 text-white flex items-center justify-center text-sm">ZO</div>
+                        <div className="size-8 rounded-lg bg-linear-to-br from-primary to-blue-600 text-white flex items-center justify-center text-sm">ZE</div>
                         Admin Panel
                     </Link>
                     <button
@@ -200,7 +200,7 @@ const AdminLayout = () => {
                             </div>
                             <div className="hidden md:block text-sm leading-tight">
                                 <p className="font-bold text-slate-800 dark:text-white">{userInfo?.name || 'Admin User'}</p>
-                                <p className="text-[10px] text-slate-500 font-semibold uppercase">Administrator</p>
+                                <p className="text-[10px] text-slate-500 font-semibold uppercase">Admin</p>
                             </div>
                         </div>
                     </div>

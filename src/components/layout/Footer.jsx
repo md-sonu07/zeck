@@ -29,7 +29,6 @@ const Footer = () => {
     }, [dispatch, contactSettings, aboutSettings, sections.length]);
 
     const socialLinks = [
-        { icon: <Facebook size={18} />, url: contactSettings?.facebookLink, hoverBg: 'hover:bg-primary' },
         { icon: <MessageCircle size={18} />, url: contactSettings?.whatsappLink, hoverBg: 'hover:bg-[#25D366]' },
         { icon: <Send size={18} />, url: contactSettings?.telegramLink, hoverBg: 'hover:bg-[#2CA5E0]' },
         { icon: <Instagram size={18} />, url: contactSettings?.instagramLink, hoverBg: 'hover:bg-[#E4405F]' },
@@ -111,35 +110,37 @@ const Footer = () => {
                         Contact Office
                     </h4>
                     <div className="space-y-5">
-                        <div className="flex items-start gap-4">
-                            <div className="size-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
-                                <MapPin className="text-primary" size={12} />
+                        <Link to="/contact" className="flex items-start gap-4 group cursor-pointer">
+                            <div className="size-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+                                <MapPin className="text-primary group-hover:scale-110 transition-transform" size={12} />
                             </div>
                             <div className="flex flex-col">
-                                <p className="text-sm text-slate-400 leading-relaxed font-bold">
-                                    {contactSettings?.address || 'Main Bazar Road, Bihar, India – 000000'}
+                                <p className="text-sm text-slate-400 leading-relaxed font-bold group-hover:text-primary transition-colors">
+                                    {contactSettings?.address || 'Kursakanta'}
                                 </p>
                                 {contactSettings?.addressSub && <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{contactSettings.addressSub}</span>}
                             </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <div className="size-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
-                                <Mail className="text-primary" size={12} />
+                        </Link>
+                        <a href={`mailto:${contactSettings?.email || 'contact@zoyaonline.com'}?subject=Hello from Zoya Education Centre`} className="flex items-center gap-4 group cursor-pointer">
+                            <div className="size-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+                                <Mail className="text-primary group-hover:scale-110 transition-transform" size={12} />
                             </div>
                             <div className="flex flex-col">
-                                <p className="text-sm text-slate-400 font-bold">{contactSettings?.email || 'contact@zoyaonline.com'}</p>
-                                {contactSettings?.emailSub && <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{contactSettings.emailSub}</span>}
+                                <p className="text-sm text-slate-400 font-bold group-hover:text-primary transition-colors">{contactSettings?.email || 'contact@zoyaonline.com'}</p>
+                                <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
+                                    {contactSettings?.emailSub || 'Get direct support'}
+                                </span>
                             </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <div className="size-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
-                                <Phone className="text-primary" size={12} />
+                        </a>
+                        <Link to="/contact" className="flex items-center gap-4 group cursor-pointer">
+                            <div className="size-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+                                <Phone className="text-primary group-hover:scale-110 transition-transform" size={12} />
                             </div>
                             <div className="flex flex-col">
-                                <p className="text-sm text-slate-400 font-bold">{contactSettings?.phoneNo || '+91 91XXX XXXXX'}</p>
+                                <p className="text-sm text-slate-400 font-bold group-hover:text-primary transition-colors">{contactSettings?.phoneNo || '+91 91XXX XXXXX'}</p>
                                 {contactSettings?.phoneSub && <span className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{contactSettings.phoneSub}</span>}
                             </div>
-                        </div>
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -149,7 +150,7 @@ const Footer = () => {
                     © {new Date().getFullYear()} {aboutSettings?.title || 'Zoya Eduction Centre'}. All Rights Reserved.
                 </p>
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">
-                    Designed with ❤️ for candidates
+                    Designed by ❤️ <a href="https://www.instagram.com/danish_farhan07/" target="_blank" rel="noopener noreferrer">Danish Farhan</a>
                 </p>
             </div>
         </footer>

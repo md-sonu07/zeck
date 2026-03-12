@@ -12,11 +12,13 @@ import {
     House,
     FileText,
     CheckCircle,
-    Key,
     Book,
     GraduationCap,
     Mail,
-    Newspaper
+    Newspaper,
+    School,
+    Briefcase,
+    Info
 } from 'lucide-react';
 
 const Header = () => {
@@ -29,12 +31,14 @@ const Header = () => {
 
     const navLinks = [
         { name: 'Home', path: '/', icon: House },
+        { name: 'University', path: '/university', icon: School },
+        { name: 'Admission', path: '/admission', icon: GraduationCap },
         { name: 'Latest News', path: '/latest-news', icon: Newspaper },
         { name: 'Admit Card', path: '/admit-card', icon: FileText },
         { name: 'Result', path: '/result', icon: CheckCircle },
-        { name: 'Answer Key', path: '/answer-key', icon: Key },
         { name: 'Syllabus', path: '/syllabus', icon: Book },
-        { name: 'Admission', path: '/admission', icon: GraduationCap },
+        { name: 'Service', path: '/service', icon: Briefcase },
+        { name: 'About Us', path: '/about', icon: Info },
         { name: 'Contact Us', path: '/contact', icon: Mail },
     ];
 
@@ -149,7 +153,7 @@ const Header = () => {
                 <div className={`absolute top-0 right-0 h-full w-80 bg-white dark:bg-slate-900 shadow-2xl flex flex-col transform transition-transform duration-300 ease-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                     <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
                         <div className="flex items-center gap-3 text-primary">
-                            <div className="size-9 rounded-xl bg-linear-to-br from-primary to-primary-dark text-white flex items-center justify-center font-black text-sm uppercase">ZC</div>
+                            <div className="size-9 rounded-xl bg-linear-to-br from-primary to-primary-dark text-white flex items-center justify-center font-black text-sm uppercase">ZE</div>
                             <span className="font-black text-base uppercase tracking-tighter text-slate-800 dark:text-white">Zoya Centre</span>
                         </div>
                         <button
