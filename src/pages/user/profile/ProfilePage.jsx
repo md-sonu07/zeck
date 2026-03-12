@@ -84,7 +84,7 @@ const ProfilePage = () => {
 
                                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-5 md:gap-6">
                                     {/* Avatar */}
-                                    <div className="size-30 rounded-3xl md:rounded-2xl bg-white/20 backdrop-blur-sm p-[4px] md:p-[3px] shadow-2xl shadow-black/30 md:shadow-lg shrink-0 ring-2 ring-white/30 md:ring-0">
+                                    <div className="size-36 rounded-3xl md:rounded-2xl bg-white/20 backdrop-blur-sm p-[4px] md:p-[3px] shadow-2xl shadow-black/30 md:shadow-lg shrink-0 ring-2 ring-white/30 md:ring-0">
                                         <div className="size-full rounded-[22px] md:rounded-[13px] bg-white dark:bg-slate-900 flex items-center justify-center">
                                             <span className="text-4xl md:text-3xl font-black text-primary select-none tracking-tight">{getInitials(userDetails?.name)}</span>
                                         </div>
@@ -92,7 +92,7 @@ const ProfilePage = () => {
 
                                     {/* Name + Email */}
                                     <div className="flex-1 text-center md:text-left min-w-0">
-                                        <h1 className="text-2xl font-bold text-white">{userDetails?.name || 'User'}</h1>
+                                        <h1 className="text-2xl font-bold text-white hidden md:block">{userDetails?.name || 'User'}</h1>
                                         <p className="text-sm text-blue-100 mt-0.5 truncate hidden md:block">{userDetails?.email}</p>
                                         <div className="inline-flex items-center max-md:hidden gap-1.5 mt-2 px-3 py-1 bg-white/15 rounded-full border border-white/20">
                                             <BadgeCheck size={11} className="text-white" />
@@ -101,11 +101,11 @@ const ProfilePage = () => {
                                     </div>
 
                                     {/* Info Cards */}
-                                    <div className="flex items-center gap-2 md:gap-3">
-                                        <div className="px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 text-center min-w-[75px]">
+                                    <div className="flex items-center gap-2 md:gap-3 ">
+                                        <Link to="/admin" className="px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 text-center min-w-[75px]">
                                             <p className="text-[10px] text-blue-200 font-semibold mb-0.5">Role</p>
                                             <p className="text-xs font-bold text-white">{userDetails?.isAdmin ? 'Admin' : 'Member'}</p>
-                                        </div>
+                                        </Link>
                                         <Link to="/saved-posts" className="px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 text-center min-w-[75px] hover:bg-white/20 transition-colors">
                                             <p className="text-[10px] text-blue-200 font-semibold mb-0.5">Saved</p>
                                             <p className="text-lg font-black text-white leading-none">{savedCount}</p>
@@ -120,6 +120,13 @@ const ProfilePage = () => {
 
                             {/* Detail Rows */}
                             <div className="divide-y divide-slate-50 dark:divide-slate-800">
+                                <div className="flex md:hidden items-center justify-between px-6 md:px-8 py-4">
+                                    <div className="flex items-center gap-3">
+                                        <User size={15} className="text-primary" />
+                                        <span className="text-xs font-semibold text-slate-500">Name</span>
+                                    </div>
+                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{userDetails?.name}</span>
+                                </div>
                                 <div className="flex items-center justify-between px-6 md:px-8 py-4">
                                     <div className="flex items-center gap-3">
                                         <Mail size={15} className="text-primary" />
@@ -132,16 +139,10 @@ const ProfilePage = () => {
                                         <Shield size={15} className="text-orange-500" />
                                         <span className="text-xs font-semibold text-slate-500">Role</span>
                                     </div>
-                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{userDetails?.isAdmin ? 'Administrator' : 'Member'}</span>
+                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{userDetails?.isAdmin ? 'Admin' : 'Member'}</span>
                                 </div>
 
-                                <div className="flex items-center justify-between px-6 md:px-8 py-4">
-                                    <div className="flex items-center gap-3">
-                                        <User size={15} className="text-green-500" />
-                                        <span className="text-xs font-semibold text-slate-500">Status</span>
-                                    </div>
-                                    <span className="text-sm font-semibold text-green-600 dark:text-green-400">Active ✓</span>
-                                </div>
+
                             </div>
 
                             {/* Bottom Buttons */}
