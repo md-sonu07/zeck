@@ -84,17 +84,17 @@ const ProfilePage = () => {
 
                                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-5 md:gap-6">
                                     {/* Avatar */}
-                                    <div className="size-20 md:size-30 rounded-2xl bg-white/15 backdrop-blur-sm p-[3px] shadow-lg shrink-0">
-                                        <div className="size-full rounded-[13px] bg-white dark:bg-slate-900 flex items-center justify-center">
-                                            <span className="text-2xl md:text-3xl font-black text-primary select-none">{getInitials(userDetails?.name)}</span>
+                                    <div className="size-30 rounded-3xl md:rounded-2xl bg-white/20 backdrop-blur-sm p-[4px] md:p-[3px] shadow-2xl shadow-black/30 md:shadow-lg shrink-0 ring-2 ring-white/30 md:ring-0">
+                                        <div className="size-full rounded-[22px] md:rounded-[13px] bg-white dark:bg-slate-900 flex items-center justify-center">
+                                            <span className="text-4xl md:text-3xl font-black text-primary select-none tracking-tight">{getInitials(userDetails?.name)}</span>
                                         </div>
                                     </div>
 
                                     {/* Name + Email */}
                                     <div className="flex-1 text-center md:text-left min-w-0">
-                                        <h1 className="text-xl md:text-2xl font-bold text-white">{userDetails?.name || 'User'}</h1>
-                                        <p className="text-sm text-blue-100 mt-0.5 truncate">{userDetails?.email}</p>
-                                        <div className="inline-flex items-center gap-1.5 mt-2 px-3 py-1 bg-white/15 rounded-full border border-white/20">
+                                        <h1 className="text-2xl font-bold text-white">{userDetails?.name || 'User'}</h1>
+                                        <p className="text-sm text-blue-100 mt-0.5 truncate hidden md:block">{userDetails?.email}</p>
+                                        <div className="inline-flex items-center max-md:hidden gap-1.5 mt-2 px-3 py-1 bg-white/15 rounded-full border border-white/20">
                                             <BadgeCheck size={11} className="text-white" />
                                             <span className="text-[9px] font-bold text-white uppercase tracking-widest">{userDetails?.isAdmin ? 'Admin' : 'Member'}</span>
                                         </div>
@@ -145,22 +145,25 @@ const ProfilePage = () => {
                             </div>
 
                             {/* Bottom Buttons */}
-                            <div className="border-t border-slate-100 dark:border-slate-800 px-6 md:px-8 py-5 flex flex-wrap gap-3">
+                            <div className="border-t border-slate-100 dark:border-slate-800 px-4 md:px-8 py-4 md:py-5 flex flex-col md:flex-row md:items-center gap-3">
                                 {userDetails?.isAdmin && (
-                                    <Link to="/admin" className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary-dark transition-all active:scale-95 shadow-lg shadow-primary/25">
-                                        <Shield size={14} /> Admin Panel
+                                    <Link to="/admin" className="flex items-center justify-center gap-2.5 px-4 py-4 md:px-5 md:py-2.5 w-full md:w-auto bg-primary text-white rounded-2xl md:rounded-xl text-xs md:text-[10px] font-black uppercase tracking-widest hover:bg-primary-dark transition-all active:scale-95 shadow-lg shadow-primary/25">
+                                        <Shield size={18} className="md:hidden" /><Shield size={14} className="hidden md:block" /> Admin Panel
                                     </Link>
                                 )}
                                 {/* <Link to="/profile/edit" className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 hover:text-primary transition-all active:scale-95">
                                     <Edit size={14} /> Edit Profile
                                 </Link> */}
-                                <Link to="/saved-posts" className="flex items-center gap-2 px-5 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 hover:text-primary transition-all active:scale-95">
-                                    <Bookmark size={14} /> Saved Posts
-                                    {savedCount > 0 && <span className="bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">{savedCount}</span>}
-                                </Link>
-                                <button onClick={handleLogout} className="ml-auto flex items-center gap-2 px-5 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/10 dark:hover:text-red-400 transition-all active:scale-95 cursor-pointer">
-                                    <LogOut size={14} /> Log Out
-                                </button>
+                                {/* Saved + Logout row */}
+                                <div className="flex items-center gap-3 w-full md:w-auto md:ml-auto">
+                                    <Link to="/saved-posts" className="flex-1 md:flex-none text-nowrap flex items-center justify-center gap-2 px-4 py-4 md:px-5 md:py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl md:rounded-xl text-xs md:text-[10px] font-black uppercase tracking-widest hover:bg-primary/10 hover:text-primary transition-all active:scale-95">
+                                        <Bookmark size={18} className="md:hidden" /><Bookmark size={14} className="hidden md:block" /> Saved Posts
+                                        {savedCount > 0 && <span className="bg-primary text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">{savedCount}</span>}
+                                    </Link>
+                                    <button onClick={handleLogout} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-4 md:px-5 md:py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl md:rounded-xl text-xs md:text-[10px] font-black uppercase tracking-widest hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/10 dark:hover:text-red-400 transition-all active:scale-95 cursor-pointer">
+                                        <LogOut size={18} className="md:hidden" /><LogOut size={14} className="hidden md:block" /> Log Out
+                                    </button>
+                                </div>
                             </div>
                         </div>
 

@@ -31,15 +31,15 @@ const HeroBanner = () => {
                         </p>
                         <div className="flex flex-nowrap gap-2 sm:gap-3 mt-6">
                             <a href="/latest-news"
-                                className="flex-1 flex items-center justify-center gap-2 bg-white text-primary font-bold text-[10px] sm:text-[11px] px-2 sm:px-5 py-2.5 rounded-2xl shadow-lg shadow-black/10 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 whitespace-nowrap">
+                                className="flex-1 flex items-center justify-center gap-2 bg-white text-primary font-bold text-[10px] sm:text-[11px] px-2 sm:px-5 py-2.5 rounded-xl shadow-lg shadow-black/10 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 whitespace-nowrap">
                                 <Newspaper size={12} className="shrink-0" /> LATEST NEWS
                             </a>
                             <a href="/result"
-                                className="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] sm:text-[11px] px-2 sm:px-5 py-2.5 rounded-2xl border border-white/20 backdrop-blur-sm transition-all duration-200 whitespace-nowrap">
+                                className="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] sm:text-[11px] px-2 sm:px-5 py-2.5 rounded-xl border border-white/20 backdrop-blur-sm transition-all duration-200 whitespace-nowrap">
                                 <CheckCircle size={12} className="shrink-0" /> RESULTS
                             </a>
                             <a href="/admit-card"
-                                className="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] sm:text-[11px] px-2 sm:px-5 py-2.5 rounded-2xl border border-white/20 backdrop-blur-sm transition-all duration-200 whitespace-nowrap">
+                                className="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] sm:text-[11px] px-2 sm:px-5 py-2.5 rounded-xl border border-white/20 backdrop-blur-sm transition-all duration-200 whitespace-nowrap">
                                 <IdCard size={12} className="shrink-0" /> ADMIT CARDS
                             </a>
                         </div>
