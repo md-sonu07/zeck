@@ -20,24 +20,24 @@ import { getDashboardStats } from '../../../store/thunk/dashboardThunk';
 
 const StatCard = ({ title, value, icon: Icon, color, trend, isLoading }) => {
     return (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700/60 flex items-start justify-between card-lift stat-card group">
-            <div className="flex-1">
-                <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1">{title}</p>
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-100 dark:border-slate-700/60 flex items-start justify-between card-lift stat-card group">
+            <div className="flex-1 min-w-0">
+                <p className="text-[11px] sm:text-sm font-semibold text-slate-500 dark:text-slate-400 mb-1 text-nowrap truncate">{title}</p>
                 {isLoading ? (
-                    <div className="h-9 w-24 bg-slate-100 dark:bg-slate-700 animate-pulse rounded-lg mt-1"></div>
+                    <div className="h-9  w-8  bg-slate-100 dark:bg-slate-700 animate-pulse rounded-lg mt-1"></div>
                 ) : (
-                    <h3 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">{value}</h3>
+                    <h3 className="text-xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight truncate">{value}</h3>
                 )}
 
                 {trend && !isLoading && (
-                    <div className="flex items-center gap-1 mt-3 text-xs font-bold text-green-500 bg-green-50 dark:bg-green-500/10 px-2 py-1 rounded-md w-fit">
-                        <TrendingUp size={12} />
+                    <div className="flex items-center gap-1 mt-2 sm:mt-3 text-[10px] sm:text-xs font-bold text-green-500 bg-green-50 dark:bg-green-500/10 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md w-fit">
+                        <TrendingUp className="size-3 sm:size-[12px]" />
                         <span>{trend}</span>
                     </div>
                 )}
             </div>
-            <div className={`size-12 rounded-xl flex items-center justify-center text-white shadow-lg ${color} group-hover:scale-110 transition-transform duration-300 shrink-0`}>
-                <Icon size={24} />
+            <div className={`size-9 sm:size-12 rounded-xl flex items-center justify-center text-white shadow-lg ${color} group-hover:scale-110 transition-transform duration-300 shrink-0 ml-2`}>
+                <Icon className="size-5 sm:size-6" />
             </div>
         </div>
     );
@@ -141,7 +141,7 @@ const DashboardPage = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
                 <StatCard
                     title="Total Users"
                     value={stats?.totalUsers || 0}

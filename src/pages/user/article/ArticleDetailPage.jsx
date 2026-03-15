@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCredentials } from '../../../store/slice/authSlice';
 import { getArticleByIdApi, toggleSavePostApi } from '../../../api/articleapi';
 import {
     Calendar, MapPin, Tag, ArrowLeft, Loader2, PlayCircle,
-    Share2, Bookmark, BookmarkCheck, FileText, CornerDownRight, CheckCircle2, AlertCircle, Info
+    Share2, Bookmark, BookmarkCheck, CheckCircle2, Info
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import './quill-content.css';
@@ -104,19 +104,60 @@ const ArticleDetailPage = () => {
                 type="article"
             />
 
-            {/* Top Bar: Breadcrumbs + Actions */}
-            <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40">
-                <div className="max-w-7xl mx-auto px-4 xl:px-8 py-3 flex items-center gap-3 text-sm text-slate-400">
-                    <button onClick={() => navigate(-1)} className="text-slate-500 hover:text-primary transition-colors">
-                        <ArrowLeft size={18} />
-                    </button>
-                    <span className="text-primary hover:underline cursor-pointer" onClick={() => navigate('/')}>Home</span>
-                    <span>/</span>
-                    <span className="text-primary hover:underline cursor-pointer">{article.mainCategory}</span>
-                    <span>/</span>
-                    <span className="text-slate-500 truncate">{article.title}</span>
+            {/* Premium Header: Breadcrumbs + Navigation */}
+            <nav className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-800/50 sticky top-0 z-40 transition-all duration-300">
+                <div className="max-w-7xl mx-auto px-4 xl:px-8 py-3.5 flex items-center justify-between">
+                    <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="size-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-primary hover:bg-primary/10 transition-all duration-300 active:scale-95 shrink-0 shadow-sm"
+                            aria-label="Go back"
+                        >
+                            <ArrowLeft size={18} />
+                        </button>
+
+                        <div className="flex items-center gap-2 text-[12px] sm:text-sm font-bold whitespace-nowrap overflow-hidden">
+                            <Link
+                                to="/"
+                                className="text-slate-400 hover:text-primary transition-colors cursor-pointer shrink-0"
+                            >
+                                Home
+                            </Link>
+                            <span className="text-slate-300 dark:text-slate-700 shrink-0 font-medium hidden sm:inline">/</span>
+                            <span
+                                className="text-slate-400 hover:text-primary transition-colors cursor-pointer truncate max-w-[80px] sm:max-w-none capitalize"
+                            >
+                                {article.mainCategory}
+                            </span>
+                            <span className="text-slate-300 dark:text-slate-700 shrink-0 font-medium hidden sm:inline">/</span>
+
+                            <span className="text-primary font-black truncate max-w-[100px] sm:max-w-sm ml-1 hidden min-[400px]:inline">
+                                {article.title}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                        <button
+                            onClick={handleShare}
+                            className="size-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-blue-500 hover:bg-blue-500/10 transition-all duration-300 active:scale-95 shadow-sm"
+                            title="Share"
+                        >
+                            <Share2 size={16} />
+                        </button>
+                        <button
+                            onClick={handleSaveToggle}
+                            className={`size-9 rounded-xl flex items-center justify-center transition-all duration-300 active:scale-95 shadow-sm ${isSaved
+                                ? 'bg-amber-500 text-white shadow-amber-500/20'
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-amber-500 hover:bg-amber-500/10'
+                                }`}
+                            title={isSaved ? "Saved" : "Save"}
+                        >
+                            {isSaved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </nav>
 
             {/* Main Content Container */}
             <div className="max-w-7xl mx-auto px-4 xl:px-8 mt-6 md:mt-10">
@@ -134,24 +175,24 @@ const ArticleDetailPage = () => {
 
                             {/* Info Chips */}
                             <div className="flex flex-wrap items-center gap-2.5 text-sm">
-                                <span className="bg-primary/10 text-primary font-bold px-3.5 py-1.5 rounded-lg border border-primary/20">{article.mainCategory}</span>
+                                <span className="bg-primary/10 text-primary font-bold px-3.5 py-1.5 rounded-lg border border-primary/20 capitalize">{article.mainCategory}</span>
                                 {article.subCategory && (
-                                    <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium px-3.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">{article.subCategory}</span>
+                                    <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium px-3.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 capitalize">{article.subCategory}</span>
                                 )}
                                 {article.resourceType && (
-                                    <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium px-3.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">{article.resourceType}</span>
+                                    <span className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium px-3.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 capitalize">{article.resourceType}</span>
                                 )}
-                                <span className="text-slate-300 dark:text-slate-600">|</span>
-                                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
+                                <span className="text-slate-300 dark:text-slate-600 hidden sm:inline">|</span>
+                                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium capitalize">
                                     <MapPin size={14} /> {article.location || 'India'}
                                 </span>
-                                <span className="text-slate-300 dark:text-slate-600">|</span>
+                                <span className="text-slate-300 dark:text-slate-600 hidden sm:inline">|</span>
                                 <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5 font-medium">
                                     <Calendar size={14} /> {new Date(article.postDate || article.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
                                 </span>
                                 {article.lastDate && (
                                     <>
-                                        <span className="text-slate-300 dark:text-slate-600">|</span>
+                                        <span className="text-slate-300 dark:text-slate-600 hidden sm:inline">|</span>
                                         <span className="text-red-500 flex items-center gap-1.5 font-bold">
                                             <Calendar size={14} /> Due: {new Date(article.lastDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
                                         </span>
@@ -330,7 +371,7 @@ const ArticleDetailPage = () => {
                                         {article.tags.map((tag, idx) => (
                                             <span
                                                 key={idx}
-                                                className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-100 dark:border-slate-700 hover:text-primary hover:border-primary/30 transition-all cursor-pointer"
+                                                className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-100 dark:border-slate-700 hover:text-primary hover:border-primary/30 transition-all cursor-pointer capitalize"
                                             >
                                                 #{tag}
                                             </span>

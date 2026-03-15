@@ -99,7 +99,7 @@ const CategoriesManagementPage = () => {
             {/* Registry Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in duration-300">
                 {[
-                    { title: 'Sub Categories', data: availableSubs, type: 'sub', icon: Building2 },
+                    { title: 'Categories', data: availableSubs, type: 'sub', icon: Building2 },
                     { title: 'Resources', data: availableRes, type: 'res', icon: BookOpen },
                     { title: 'Locations', data: availableLocs, type: 'loc', icon: MapPin },
                 ].map((section) => (
