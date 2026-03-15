@@ -171,7 +171,7 @@ const PaymentSlipsPage = () => {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+                                <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 text-nowrap dark:border-slate-700">
                                     <th className="p-4 font-semibold text-slate-600 dark:text-slate-400 text-sm">Invoice #</th>
                                     <th className="p-4 font-semibold text-slate-600 dark:text-slate-400 text-sm">Date</th>
                                     <th className="p-4 font-semibold text-slate-600 dark:text-slate-400 text-sm">Student</th>
@@ -180,18 +180,31 @@ const PaymentSlipsPage = () => {
                                     <th className="p-4 font-semibold text-slate-600 dark:text-slate-400 text-sm text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                            <tbody className="divide-y divide-slate-200 text-nowrap dark:divide-slate-700">
                                 {filteredSlips?.map((slip) => (
-                                    <tr key={slip._id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors">
-                                        <td className="p-4 font-medium text-slate-900 dark:text-white">
-                                            ZEC- {slip.invoiceNumber.slice(-4)}
+                                    <tr
+                                        key={slip._id}
+                                        className="hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors group"
+                                    >
+                                        <td className="p-4 font-medium">
+                                            <Link
+                                                to={`/admin/payment-slips/create?slipId=${slip._id}&view=true`}
+                                                className="text-slate-900 dark:text-white hover:text-primary transition-colors"
+                                            >
+                                                ZEC- {slip.invoiceNumber.slice(-4)}
+                                            </Link>
                                         </td>
                                         <td className="p-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">
                                             {new Date(slip.date).toLocaleDateString()}
                                         </td>
                                         <td className="p-4">
-                                            <p className="font-medium text-slate-900 dark:text-white">{slip.studentName}</p>
-                                            <p className="text-xs text-slate-500">{slip.studentEmail}</p>
+                                            <Link
+                                                to={`/admin/payment-slips/create?slipId=${slip._id}&view=true`}
+                                                className="block hover:opacity-80 transition-opacity"
+                                            >
+                                                <p className="font-medium text-slate-900 dark:text-white group-hover:text-primary transition-colors">{slip.studentName}</p>
+                                                <p className="text-xs text-slate-500">{slip.studentEmail}</p>
+                                            </Link>
                                         </td>
                                         <td className="p-4 font-semibold text-slate-900 dark:text-emerald-400">
                                             ₹{slip.total}
@@ -206,16 +219,19 @@ const PaymentSlipsPage = () => {
                                         </td>
                                         <td className="p-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
-                                                {/* Passing view=true to auto-open the preview modal */}
                                                 <Link
                                                     to={`/admin/payment-slips/create?slipId=${slip._id}&view=true`}
+                                                    onClick={(e) => e.stopPropagation()}
                                                     className="p-2 text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                                                     title="View receipt"
                                                 >
                                                     <Eye size={18} />
                                                 </Link>
                                                 <button
-                                                    onClick={() => setItemToDelete(slip._id)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setItemToDelete(slip._id);
+                                                    }}
                                                     className="p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                                                     title="Delete slip"
                                                 >

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import {
     ChevronLeft, FileEdit, Printer, User, Building2,
-    CreditCard, Save, Loader2, Eye, X, ChevronDown
+    CreditCard, Save, Loader2, Eye, X, ChevronDown, ArrowLeft
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -210,26 +210,22 @@ const CreatePaymentSlipPage = () => {
     return (
         <div className="space-y-6 pb-20">
             {/* Page Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <button
-                        onClick={() => navigate('/admin/payment-slips')}
-                        className="flex items-center gap-2 px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700 transition-all rounded-xl mb-4 text-xs font-black uppercase tracking-widest border border-slate-200 dark:border-slate-700 shadow-sm"
-                    >
-                        <ChevronLeft size={18} /> Go Back
-                    </button>
-                    <h1 className="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-2">
-                        <FileEdit className="text-primary" />
+            <div className="flex items-start gap-4 pb-6">
+                <button
+                    onClick={() => navigate('/admin/payment-slips')}
+                    className="mt-1.5 p-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-all active:scale-90"
+                    title="Go Back"
+                >
+                    <ArrowLeft size={20} />
+                </button>
+
+                <div className="flex-1">
+                    <h1 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight">
                         {slipId ? 'Review & Edit Slip' : 'Create New Receipt'}
                     </h1>
-                </div>
-
-                <div className="flex items-center gap-3">
-                    {slipId && (
-                        <button onClick={handlePrint} className="btn-slate-premium">
-                            <Printer size={18} /> Print Record
-                        </button>
-                    )}
+                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">
+                        {slipId ? 'Update details for this invoice record and save changes.' : 'Issue a fresh payment confirmation and generate a receipt.'}
+                    </p>
                 </div>
             </div>
 

@@ -37,7 +37,7 @@ const Footer = () => {
 
     return (
         <footer className="bg-slate-900 border-t-4 border-primary pb-8">
-            <div className="max-w-[1200px] mx-auto px-4 pt-16 pb-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div className="max-w-[1200px] mx-auto px-8 pt-16 pb-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                 {/* Brand Column */}
                 <div className="col-span-1 lg:col-span-1">
                     <div className="flex items-center gap-3 mb-6">
@@ -129,7 +129,7 @@ const Footer = () => {
 
                 {/* WhatsApp Group QR Code Section */}
                 {aboutSettings?.whatsappGroupUrl && (
-                    <div className="bg-slate-800/40 p-6 rounded-2xl border border-slate-700/50 flex flex-col items-center gap-4">
+                    <div className="bg-slate-800/40 py-8 px-12 mx-auto rounded-2xl border border-slate-700/50 flex flex-col items-center gap-4">
                         <div className="text-center space-y-1">
                             <h4 className="text-white font-black text-sm uppercase tracking-widest">Join WhatsApp Group</h4>
                             <p className="text-[10px] text-slate-500 font-medium">Daily updates on WhatsApp</p>
@@ -152,7 +152,7 @@ const Footer = () => {
                             href={contactSettings?.whatsappLink || "https://chat.whatsapp.com/"}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-full py-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl text-[11px] font-black transition-all flex items-center justify-center gap-2 active:scale-95"
+                            className="px-8 py-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl text-[11px] font-black transition-all flex items-center justify-center gap-2 active:scale-95"
                         >
                             <MessageCircle size={14} />
                             Join Now

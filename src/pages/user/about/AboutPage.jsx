@@ -46,7 +46,7 @@ export default function AboutPage() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-6 pt-4 max-w-xl">
+                        <div className="hidden sm:block space-y-6 pt-4 max-w-xl">
                             <div className="p-5 rounded-2xl bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 flex gap-4">
                                 <div className="mt-1">
                                     <Star className="text-amber-500 fill-amber-500" size={24} />
@@ -73,8 +73,8 @@ export default function AboutPage() {
                         </div>
                     </div>
 
-                    {/* Right: Image & WhatsApp QR */}
-                    <div className="flex-1 w-full max-w-sm lg:max-w-md relative mt-16 lg:mt-0 mx-auto lg:ml-auto lg:mr-0 z-10 flex flex-col gap-8">
+                    {/* Right: Image*/}
+                    <div className="flex-1 w-full max-w-sm lg:max-w-md relative  sm:mt-16 lg:mt-0 mx-auto lg:ml-auto lg:mr-0 z-10 flex flex-col gap-8">
                         {/* Premium Portrait Frame */}
                         <div className="relative rounded-[2.5rem] shadow-2xl overflow-hidden group border border-slate-200/50 dark:border-slate-800/80">
                             {/* Inner Glow / Overlay */}
