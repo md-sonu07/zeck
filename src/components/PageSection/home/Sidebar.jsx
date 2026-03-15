@@ -102,12 +102,7 @@ const Sidebar = () => {
     const quickLinks = activeServices.length > 0
         ? activeServices.map(s => ({ name: s.title, icon: FileText, isDynamic: true }))
         : [
-            { name: 'Aadhar Card Download', icon: IdCard },
-            { name: 'Voter ID Card Download', icon: UserRound },
-            { name: 'RTPS Bihar Services', icon: FileText },
-            { name: 'Ayushman Card Apply', icon: HeartPulse },
-            { name: 'Post Matric Scholarship', icon: GraduationCap },
-            { name: 'e-Shram Card Download', icon: Contact },
+            { name: 'Aadhar Card Download', icon: IdCard }
         ];
 
     const helplineNumber = contactSettings?.phoneNo || '123456789';

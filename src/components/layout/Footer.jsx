@@ -129,12 +129,12 @@ const Footer = () => {
 
                 {/* WhatsApp Group QR Code Section */}
                 {aboutSettings?.whatsappGroupUrl && (
-                    <div className="bg-slate-800/40 py-8 px-18 mx-auto rounded-2xl border border-slate-700/50 flex flex-col items-center gap-4">
+                    <div className="bg-slate-800/40 py-8 px-6 rounded-2xl border border-slate-700/50 flex flex-col items-center gap-4 w-full lg:col-span-1">
                         <div className="text-center space-y-1">
-                            <h4 className="text-white font-black text-sm uppercase tracking-widest">Join WhatsApp Group</h4>
+                            <h4 className="text-white font-black text-sm uppercase tracking-widest leading-tight">Join WhatsApp Group</h4>
                             <p className="text-[10px] text-slate-500 font-medium">Daily updates on WhatsApp</p>
                         </div>
-                        <div className="p-3 bg-white rounded-xl shadow-md overflow-hidden group">
+                        <div className="p-3 bg-white rounded-xl shadow-md overflow-hidden group w-fit">
                             <a
                                 href={contactSettings?.whatsappLink || "#"}
                                 target="_blank"
@@ -144,7 +144,7 @@ const Footer = () => {
                                 <img
                                     src={aboutSettings.whatsappGroupUrl}
                                     alt="WhatsApp Group QR"
-                                    className="size-36 object-contain transition-all duration-500 ease-out group-hover:scale-105"
+                                    className="w-32 h-32 md:w-36 md:h-36 object-contain transition-all duration-500 ease-out group-hover:scale-105"
                                 />
                             </a>
                         </div>
@@ -152,7 +152,7 @@ const Footer = () => {
                             href={contactSettings?.whatsappLink || "https://chat.whatsapp.com/"}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-8 py-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl text-[11px] font-black transition-all flex items-center justify-center gap-2 active:scale-95"
+                            className="w-full px-4 text-nowrap py-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl text-[11px] font-black transition-all flex items-center justify-center gap-2 active:scale-95"
                         >
                             <MessageCircle size={14} />
                             Join Now
