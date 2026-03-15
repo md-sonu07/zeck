@@ -1,4 +1,5 @@
-import { Newspaper, CheckCircle, IdCard } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Newspaper, CheckCircle, IdCard, GraduationCap } from 'lucide-react';
 
 const HeroBanner = () => {
     return (
@@ -53,18 +54,25 @@ const HeroBanner = () => {
                         </div>
 
                         <div className="flex flex-wrap gap-3 mt-8">
-                            <a href="/latest-news"
-                                className="flex-1 sm:flex-none flex items-center justify-center gap-3 bg-white text-primary font-black text-xs px-8 py-4 rounded-xl shadow-xl shadow-black/10 hover:shadow-2xl hover:-translate-y-1 active:translate-y-0 transition-all duration-300 uppercase tracking-widest whitespace-nowrap">
-                                <Newspaper size={16} className="shrink-0" /> LATEST NEWS
-                            </a>
-                            <a href="/result"
-                                className="flex-1 sm:flex-none flex items-center justify-center gap-3 bg-white/10 hover:bg-white/20 text-white font-black text-xs px-8 py-4 rounded-xl border border-white/20 backdrop-blur-sm transition-all duration-300 uppercase tracking-widest whitespace-nowrap">
-                                <CheckCircle size={16} className="shrink-0" /> RESULTS
-                            </a>
-                            <a href="/admit-card"
-                                className="flex-1 sm:flex-none flex items-center justify-center gap-3 bg-white/10 hover:bg-white/20 text-white font-black text-xs px-8 py-4 rounded-xl border border-white/20 backdrop-blur-sm transition-all duration-300 uppercase tracking-widest whitespace-nowrap">
-                                <IdCard size={16} className="shrink-0" /> ADMIT CARDS
-                            </a>
+                            <Link to="/latest-news"
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2.5 bg-white text-primary font-bold text-[10px] px-5 py-3 rounded-xl shadow-xl shadow-black/10 hover:shadow-2xl hover:-translate-y-1 active:translate-y-0 transition-all duration-300 uppercase tracking-widest whitespace-nowrap">
+                                <Newspaper size={14} className="shrink-0" /> LATEST NEWS
+                            </Link>
+
+                            <Link to="/university"
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] px-5 py-3 rounded-xl border border-white/20 backdrop-blur-sm transition-all duration-300 uppercase tracking-widest whitespace-nowrap">
+                                <GraduationCap size={14} className="shrink-0" /> UNIVERSITY
+                            </Link>
+
+                            <Link to="/result"
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] px-5 py-3 rounded-xl border border-white/20 backdrop-blur-sm transition-all duration-300 uppercase tracking-widest whitespace-nowrap">
+                                <CheckCircle size={14} className="shrink-0" /> RESULTS
+                            </Link>
+
+                            <Link to="/admit-card"
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] px-5 py-3 rounded-xl border border-white/20 backdrop-blur-sm transition-all duration-300 uppercase tracking-widest whitespace-nowrap">
+                                <IdCard size={14} className="shrink-0" /> ADMIT CARDS
+                            </Link>
                         </div>
                     </div>
                 </div>

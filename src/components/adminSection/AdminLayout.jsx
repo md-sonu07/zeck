@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../../store/slice/themeSlice';
@@ -43,7 +43,7 @@ const AdminLayout = () => {
         { path: '/admin/categories', label: 'Categories', icon: ListTree },
         { path: '/admin/activities', label: 'Activities', icon: History },
         { path: '/admin/payment-slips', label: 'Payment Slips', icon: FileText },
-        { path: '/admin/payments', label: 'Payments Settings', icon: CreditCard },
+        { path: '/admin/payments', label: 'Online Payments', icon: CreditCard },
         { path: '/admin/page-articles', label: 'Page Articles', icon: FileText },
 
         { path: '/admin/marquee', label: 'Announcement Bar', icon: Megaphone },
@@ -180,10 +180,14 @@ const AdminLayout = () => {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <button className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors relative">
+                        <Link
+                            to="/admin/activities"
+                            className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors relative"
+                            title="Recent Activities"
+                        >
                             <Bell size={18} />
                             <span className="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-800"></span>
-                        </button>
+                        </Link>
 
                         <button
                             onClick={() => dispatch(toggleTheme())}

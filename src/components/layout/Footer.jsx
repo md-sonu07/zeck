@@ -37,14 +37,14 @@ const Footer = () => {
 
     return (
         <footer className="bg-slate-900 border-t-4 border-primary pb-8">
-            <div className="max-w-[1200px] mx-auto px-4 pt-16 pb-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div className="max-w-[1200px] mx-auto px-4 pt-16 pb-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
                 {/* Brand Column */}
                 <div className="col-span-1 lg:col-span-1">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="size-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
                             <span className="text-white font-black text-lg">ZC</span>
                         </div>
-                        <h3 className="text-white font-black text-xl tracking-tight">{aboutSettings?.title || 'Zoya Eduction Centre'}</h3>
+                        <h3 className="text-white font-black text-xl tracking-tight">Zoya Eduction Centre</h3>
                     </div>
                     <p className="text-sm leading-relaxed text-slate-400 font-medium">
                         {aboutSettings?.description || "India's most trusted recruitment portal since 2018. We provide accurate and reliable information to help you secure your future in public service."}
@@ -82,23 +82,6 @@ const Footer = () => {
                                     <ChevronRight size={10} className="text-primary/40 group-hover:text-primary transition-colors" />
                                     {link.title}
                                 </Link>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
-                {/* Policies */}
-                <div>
-                    <h4 className="text-white font-black text-xs uppercase tracking-[0.2em] mb-8 relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-8 after:h-0.5 after:bg-primary">
-                        Terms & Policies
-                    </h4>
-                    <ul className="space-y-4">
-                        {['Privacy Policy', 'Terms of Service', 'Disclaimer Notice', 'Cookie Policy', 'Sitemap'].map((item, idx) => (
-                            <li key={idx}>
-                                <a href="#" className="text-slate-400 hover:text-primary transition-colors text-sm font-bold flex items-center gap-2 group">
-                                    <ChevronRight size={10} className="text-primary/40 group-hover:text-primary transition-colors" />
-                                    {item}
-                                </a>
                             </li>
                         ))}
                     </ul>
@@ -143,6 +126,39 @@ const Footer = () => {
                         </Link>
                     </div>
                 </div>
+
+                {/* WhatsApp Group QR Code Section */}
+                {aboutSettings?.whatsappGroupUrl && (
+                    <div className="bg-slate-800/40 p-6 rounded-2xl border border-slate-700/50 flex flex-col items-center gap-4">
+                        <div className="text-center space-y-1">
+                            <h4 className="text-white font-black text-sm uppercase tracking-widest">Join WhatsApp Group</h4>
+                            <p className="text-[10px] text-slate-500 font-medium">Daily updates on WhatsApp</p>
+                        </div>
+                        <div className="p-3 bg-white rounded-xl shadow-md overflow-hidden group">
+                            <a
+                                href={contactSettings?.whatsappLink || "#"}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block"
+                            >
+                                <img
+                                    src={aboutSettings.whatsappGroupUrl}
+                                    alt="WhatsApp Group QR"
+                                    className="size-36 object-contain transition-all duration-500 ease-out group-hover:scale-105"
+                                />
+                            </a>
+                        </div>
+                        <a
+                            href={contactSettings?.whatsappLink || "https://chat.whatsapp.com/"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full py-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl text-[11px] font-black transition-all flex items-center justify-center gap-2 active:scale-95"
+                        >
+                            <MessageCircle size={14} />
+                            Join Now
+                        </a>
+                    </div>
+                )}
             </div>
 
             <div className="max-w-[1200px] mx-auto px-4 mt-8 pt-8 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -150,7 +166,7 @@ const Footer = () => {
                     © {new Date().getFullYear()} {aboutSettings?.title || 'Zoya Eduction Centre'}. All Rights Reserved.
                 </p>
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-600">
-                    Designed by ❤️ <a href="https://www.instagram.com/danish_farhan07/" target="_blank" rel="noopener noreferrer">Danish Farhan</a>
+                    Created by ❤️ <a href="https://www.instagram.com/danish_farhan07/" target="_blank" rel="noopener noreferrer">Danish Farhan</a>
                 </p>
             </div>
         </footer>

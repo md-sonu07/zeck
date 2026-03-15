@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getProfile } from '../../../store/thunk/userThunk';
 import {
     User, Mail, Shield, LogOut, BadgeCheck, Bookmark, ChevronRight,
-    Send, MessageCircle, CreditCard, Clock, CheckCircle2, XCircle, AlertCircle, Eye, FileText, X, Edit
+    Send, MessageCircle, CreditCard, Clock, CheckCircle2, XCircle, AlertCircle, Eye, FileText, X, Edit, Phone
 } from 'lucide-react';
 
 import { logout as logoutUser } from '../../../store/thunk/authThunk';
@@ -136,6 +136,13 @@ const ProfilePage = () => {
                                         <span className="text-xs font-black text-slate-500">Email</span>
                                     </div>
                                     <span className="text-sm font-black text-slate-700 dark:text-slate-200">{userDetails?.email}</span>
+                                </div>
+                                <div className="flex items-center justify-between px-6 md:px-8 py-4">
+                                    <div className="flex items-center gap-3">
+                                        <Phone size={15} className="text-green-500" />
+                                        <span className="text-xs font-black text-slate-500">Phone</span>
+                                    </div>
+                                    <span className="text-sm font-black text-slate-700 dark:text-slate-200">{userDetails?.phone || 'Not Provided'}</span>
                                 </div>
                                 <div className="flex items-center justify-between px-6 md:px-8 py-4">
                                     <div className="flex items-center gap-3">

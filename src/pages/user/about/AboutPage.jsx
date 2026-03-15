@@ -14,6 +14,9 @@ export default function AboutPage() {
     const title = settings?.title || 'Welcome to Zoya Education Center';
     const description = settings?.description || 'Hi! We are here to help you easily find the right government jobs, admission updates, and results. We want to make sure you get the best and most honest information without any confusion.';
     const imageUrl = settings?.imageUrl || '/logo/about-img.jpeg';
+    const banner1Url = settings?.banner1Url;
+    const banner2Url = settings?.banner2Url;
+    const whatsappGroupUrl = settings?.whatsappGroupUrl;
 
     if (loading && !settings) {
         return (
@@ -70,8 +73,8 @@ export default function AboutPage() {
                         </div>
                     </div>
 
-                    {/* Right: Image */}
-                    <div className="flex-1 w-full max-w-sm lg:max-w-md relative mt-16 lg:mt-0 mx-auto lg:ml-auto lg:mr-0 z-10">
+                    {/* Right: Image & WhatsApp QR */}
+                    <div className="flex-1 w-full max-w-sm lg:max-w-md relative mt-16 lg:mt-0 mx-auto lg:ml-auto lg:mr-0 z-10 flex flex-col gap-8">
                         {/* Premium Portrait Frame */}
                         <div className="relative rounded-[2.5rem] shadow-2xl overflow-hidden group border border-slate-200/50 dark:border-slate-800/80">
                             {/* Inner Glow / Overlay */}
@@ -99,11 +102,44 @@ export default function AboutPage() {
                             </div>
                         </div>
 
+
+
                         {/* Decorative background shadow */}
                         <div className="absolute -inset-1 bg-linear-to-tr from-primary/30 to-blue-500/20 rounded-[3rem] blur-2xl -z-10 opacity-50 dark:opacity-30"></div>
                     </div>
                 </div>
+
+                {/* Promotional Banners */}
+                {(banner1Url || banner2Url) && (
+                    <div className="mt-20 space-y-12">
+                        <div className="text-center space-y-3">
+                            <h4 className="font-black text-xs uppercase tracking-[0.2em] text-primary">Special Updates</h4>
+                            <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">Our Posters & Banners</h2>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {banner1Url && (
+                                <div className="rounded-md overflow-hidden shadow-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 group">
+                                    <img
+                                        src={banner1Url}
+                                        alt="Promotion Banner 1"
+                                        className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-[1.02]"
+                                    />
+                                </div>
+                            )}
+                            {banner2Url && (
+                                <div className="rounded-md overflow-hidden shadow-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 group">
+                                    <img
+                                        src={banner2Url}
+                                        alt="Promotion Banner 2"
+                                        className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-[1.02]"
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
-        </div>
+        </div >
     );
 }

@@ -1,14 +1,17 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchImportantServices } from '../../../store/thunk/importantServiceThunk';
-import { Home, ChevronRight, Briefcase, Clock, CheckCircle2, MessageCircle, Send, Sparkles, Loader2 } from 'lucide-react';
+import { fetchContactSettings } from '../../../store/thunk/contactThunk';
+import { Home, ChevronRight, Briefcase, CheckCircle2, MessageCircle, Send, Sparkles, Loader2, Phone, MapPin } from 'lucide-react';
 
 const ServicesPage = () => {
     const dispatch = useDispatch();
     const { data: allServices, loading } = useSelector((state) => state.importantServices);
+    const { settings: contactDetail } = useSelector((state) => state.contact);
 
     React.useEffect(() => {
         dispatch(fetchImportantServices());
+        dispatch(fetchContactSettings());
     }, [dispatch]);
 
     const services = allServices.filter(s => s.status === 'active');
@@ -41,50 +44,70 @@ const ServicesPage = () => {
                                 <Loader2 className="animate-spin text-primary" size={40} />
                             </div>
                         ) : services.length > 0 ? (
-                            services.map(service => (
-                                <div
-                                    key={service._id}
-                                    className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-200"
-                                >
-                                    <div className="flex flex-col md:flex-row items-center p-4 gap-5">
-                                        {/* Small Image Thumbnail - Decreased height */}
-                                        <div className="w-full md:w-40 h-32 shrink-0 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-700 shadow-xs bg-slate-50 dark:bg-slate-900">
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                {services.map(service => (
+                                    <div
+                                        key={service._id}
+                                        className="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-300 flex flex-col h-full"
+                                    >
+                                        {/* Image Area - Fixed Height for vertical layout */}
+                                        <div className="relative h-48 overflow-hidden bg-slate-100 dark:bg-slate-900">
                                             <img
                                                 src={service.image}
                                                 alt={service.title}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                             />
+                                            <div className="absolute top-3 left-3 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md px-2.5 py-1 rounded-full border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 shadow-sm">
+                                                <CheckCircle2 size={10} className="text-primary" />
+                                                <span className="text-[9px] font-black text-primary uppercase tracking-widest">Verified</span>
+                                            </div>
                                         </div>
 
-                                        {/* Content Area - Full width flex-1 */}
-                                        <div className="flex-1 min-w-0 space-y-2">
-                                            <div className="flex items-center gap-2">
-                                                <CheckCircle2 size={12} className="text-primary" />
-                                                <span className="text-[9px] font-black text-primary uppercase tracking-widest">Verified Service</span>
+                                        {/* Content Area */}
+                                        <div className="p-5 flex-1 flex flex-col">
+                                            <div className="mb-3">
+                                                <h3 className="text-base font-bold text-slate-800 dark:text-white group-hover:text-primary transition-colors leading-snug line-clamp-1 mb-1.5">
+                                                    {service.title}
+                                                </h3>
+                                                <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3">
+                                                    {service.summary}
+                                                </p>
                                             </div>
-                                            <h3 className="text-lg font-bold text-slate-800 dark:text-white group-hover:text-primary transition-colors leading-tight">
-                                                {service.title}
-                                            </h3>
-                                            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed line-clamp-2 md:line-clamp-3">
-                                                {service.summary}
-                                            </p>
 
-                                            <div className="pt-2 flex items-center justify-between">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400">
-                                                        <Clock size={12} />
-                                                        Updated Daily
+                                            <div className="mt-auto space-y-4">
+                                                {/* Meta Info */}
+                                                <div className="flex flex-wrap items-center justify-between gap-y-2 pt-4 border-t border-slate-100 dark:border-slate-700/50">
+                                                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 max-w-[150px]">
+                                                        <MapPin size={12} className="shrink-0" />
+                                                        <span className="truncate">{contactDetail?.address || 'Location Unavailable'}</span>
                                                     </div>
+                                                    
                                                 </div>
-                                                <button className="text-[10px] font-black text-primary hover:text-primary-dark uppercase tracking-widest flex items-center gap-1 group/btn">
-                                                    Visit Website
-                                                    <ChevronRight size={12} className="group-hover/btn:translate-x-1 transition-transform" />
-                                                </button>
+
+                                                {/* Contact Actions */}
+                                                <div className="grid grid-cols-2 gap-2 mt-4">
+                                                    <a
+                                                        href={`tel:${contactDetail?.phoneNo}`}
+                                                        className="flex items-center text-nowrap justify-center gap-1.5 py-2.5 px-3 bg-slate-100 dark:bg-slate-700 hover:bg-primary hover:text-white dark:hover:bg-primary transition-all duration-200 rounded-xl text-[11px] font-bold text-slate-600 dark:text-slate-300 border border-transparent"
+                                                    >
+                                                        <Phone size={15} />
+                                                        <span>Call Now</span>
+                                                    </a>
+                                                    <a
+                                                        href={contactDetail?.whatsappLink}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center text-nowrap justify-center gap-1.5 py-2.5 px-3 bg-green-500/10 dark:bg-green-500/10 hover:bg-green-500 hover:text-white transition-all duration-200 rounded-xl text-[11px] font-bold text-green-600 dark:text-green-400 border border-green-500/20"
+                                                    >
+                                                        <MessageCircle size={15} />
+                                                        <span>WhatsApp</span>
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))
+                                ))}
+                            </div>
                         ) : (
                             <div className="py-20 text-center bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700">
                                 <p className="text-slate-400 font-bold">No verified services found at the moment.</p>

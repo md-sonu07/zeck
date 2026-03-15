@@ -63,6 +63,21 @@ export const deletePaymentSlip = createAsyncThunk(
     }
 );
 
+export const updatePaymentSlip = createAsyncThunk(
+    'paymentSlips/update',
+    async ({ id, formData }, { rejectWithValue }) => {
+        try {
+            return await paymentSlipApi.updatePaymentSlipApi(id, formData);
+        } catch (error) {
+            return rejectWithValue(
+                error.response && error.response.data.message
+                    ? error.response.data.message
+                    : error.message
+            );
+        }
+    }
+);
+
 const initialState = {
     paymentSlips: [],
     currentSlip: null,
@@ -142,6 +157,25 @@ const paymentSlipSlice = createSlice({
                 }
             })
             .addCase(deletePaymentSlip.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // Update
+            .addCase(updatePaymentSlip.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                state.success = false;
+            })
+            .addCase(updatePaymentSlip.fulfilled, (state, action) => {
+                state.loading = false;
+                state.success = true;
+                const index = state.paymentSlips.findIndex(slip => slip._id === action.payload._id);
+                if (index !== -1) {
+                    state.paymentSlips[index] = action.payload;
+                }
+                state.currentSlip = action.payload;
+            })
+            .addCase(updatePaymentSlip.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });

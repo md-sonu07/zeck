@@ -15,6 +15,7 @@ import dashboardReducer from './slice/dashboardSlice';
 import paymentReducer from './slice/paymentSlice';
 import applicationReducer from './slice/applicationSlice';
 import paymentSlipReducer from './slice/paymentSlipSlice';
+import slipSettingReducer from './slice/slipSettingSlice';
 
 
 
@@ -36,6 +37,7 @@ const store = configureStore({
         payment: paymentReducer,
         applications: applicationReducer,
         paymentSlips: paymentSlipReducer,
+        slipSetting: slipSettingReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

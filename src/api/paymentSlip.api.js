@@ -19,3 +19,8 @@ export const deletePaymentSlipApi = async (id) => {
     const response = await api.delete(`/payment-slips/${id}`);
     return response.data;
 };
+
+export const updatePaymentSlipApi = async (id, slipData) => {
+    const response = await api.put(`/payment-slips/${id}`, slipData);
+    return response.data;
+};
