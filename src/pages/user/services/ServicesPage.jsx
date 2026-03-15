@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchImportantServices } from '../../../store/thunk/importantServiceThunk';
 import { fetchContactSettings } from '../../../store/thunk/contactThunk';
 import { Home, ChevronRight, Briefcase, CheckCircle2, MessageCircle, Send, Sparkles, Loader2, Phone, MapPin } from 'lucide-react';
+import SEO from '../../../components/common/SEO';
 
 const ServicesPage = () => {
     const dispatch = useDispatch();
@@ -18,6 +19,11 @@ const ServicesPage = () => {
 
     return (
         <div className="pb-16 bg-slate-50 dark:bg-slate-900 min-h-screen">
+            <SEO
+                title="Our Services"
+                description="Explore the important services provided by Zoya Education Center, including academic support, exam information, and more."
+                keywords="services, education, academic support, zoya center"
+            />
             {/* Header - Compact Height */}
             <div className="bg-linear-to-r from-primary to-blue-700 px-4 py-6 md:py-8">
                 <div className="max-w-[1200px] mx-auto">
@@ -81,7 +87,7 @@ const ServicesPage = () => {
                                                         <MapPin size={12} className="shrink-0" />
                                                         <span className="truncate">{contactDetail?.address || 'Location Unavailable'}</span>
                                                     </div>
-                                                    
+
                                                 </div>
 
                                                 {/* Contact Actions */}

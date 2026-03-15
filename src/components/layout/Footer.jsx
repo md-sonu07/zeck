@@ -129,7 +129,7 @@ const Footer = () => {
 
                 {/* WhatsApp Group QR Code Section */}
                 {aboutSettings?.whatsappGroupUrl && (
-                    <div className="bg-slate-800/40 py-8 px-12 mx-auto rounded-2xl border border-slate-700/50 flex flex-col items-center gap-4">
+                    <div className="bg-slate-800/40 py-8 px-18 mx-auto rounded-2xl border border-slate-700/50 flex flex-col items-center gap-4">
                         <div className="text-center space-y-1">
                             <h4 className="text-white font-black text-sm uppercase tracking-widest">Join WhatsApp Group</h4>
                             <p className="text-[10px] text-slate-500 font-medium">Daily updates on WhatsApp</p>

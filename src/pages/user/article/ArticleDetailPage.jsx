@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import './quill-content.css';
+import SEO from '../../../components/common/SEO';
 
 const ArticleDetailPage = () => {
     const { slug } = useParams();
@@ -95,6 +96,13 @@ const ArticleDetailPage = () => {
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-900 pb-20 font-sans">
+            <SEO
+                title={article.title}
+                description={article.shortSummary || article.content?.substring(0, 160).replace(/<[^>]*>?/gm, '')}
+                image={article.imageUrl}
+                keywords={`${article.mainCategory}, ${article.subCategory || ''}, ${article.tags?.join(', ') || ''}`}
+                type="article"
+            />
 
             {/* Top Bar: Breadcrumbs + Actions */}
             <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40">
@@ -213,7 +221,7 @@ const ArticleDetailPage = () => {
                                         </div>
                                         <button
                                             onClick={() => navigate(`/apply/${article.slug}`)}
-                                            className="w-full mt-2 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg shadow-primary/25"
+                                            className="w-full mt-2 bg-linear-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-lg shadow-primary/25"
                                         >
                                             <CheckCircle2 size={16} />
                                             Apply Now

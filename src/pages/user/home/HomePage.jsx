@@ -9,10 +9,16 @@ import ResultsSection from '../../../components/PageSection/home/linkSection/Res
 import AnswerKeySyllabus from '../../../components/PageSection/home/linkSection/AnswerKeySyllabus';
 import UniversityBoardUpdates from '../../../components/PageSection/home/linkSection/UniversityBoardUpdates';
 import Sidebar from '../../../components/PageSection/home/Sidebar';
+import SEO from '../../../components/common/SEO';
 
 const HomePage = () => {
     return (
         <div className="pb-10">
+            <SEO
+                title="Home"
+                description="Zoya Education Center - Your one-stop destination for latest news, exam updates, results, admit cards, and academic resources."
+                keywords="education, latest news, exam results, admit card, syllabus, answer key, university updates"
+            />
             <HeroBanner />
             <NoticeMarquee />
             <FilterStrip />

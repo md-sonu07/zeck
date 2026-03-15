@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { submitContactMessageApi } from '../../../api/contact.api';
 import toast from 'react-hot-toast';
+import SEO from '../../../components/common/SEO';
 
 /* ── WhatsApp SVG ─────────────────────────────────────── */
 const WhatsAppIcon = ({ size = 20 }) => (
@@ -107,6 +108,11 @@ const ContactPage = () => {
 
     return (
         <div className="pb-16 bg-slate-50 dark:bg-slate-900 min-h-screen">
+            <SEO
+                title="Contact Us"
+                description="Get in touch with Zoya Education Center. We are here to help you with your queries regarding government jobs, admissions, and results."
+                keywords="contact, support, query, education center, patna"
+            />
 
             {/* ── Hero Bar ──────────────────────────────────────── */}
             <div className="bg-linear-to-r from-primary via-blue-600 to-blue-700 px-4 py-6">

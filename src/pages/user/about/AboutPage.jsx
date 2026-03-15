@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CheckCircle, Heart, Star, Loader2 } from 'lucide-react';
 import { fetchAboutSettings } from '../../../store/thunk/aboutThunk';
+import SEO from '../../../components/common/SEO';
 
 export default function AboutPage() {
     const dispatch = useDispatch();
@@ -28,6 +29,11 @@ export default function AboutPage() {
 
     return (
         <div className="pb-16 bg-white dark:bg-slate-950 min-h-screen">
+            <SEO
+                title="About Us"
+                description={description}
+                image={imageUrl}
+            />
 
             {/* Main Content: Text Left, Image Right */}
             <div className="max-w-[1200px] mx-auto px-4 py-8 md:py-10">
