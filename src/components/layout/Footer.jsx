@@ -15,6 +15,7 @@ import {
     Instagram,
     Youtube
 } from 'lucide-react';
+import WhatsAppIcon from '../common/WhatsAppIcon';
 
 const Footer = () => {
     const dispatch = useDispatch();
@@ -29,7 +30,7 @@ const Footer = () => {
     }, [dispatch, contactSettings, aboutSettings, sections.length]);
 
     const socialLinks = [
-        { icon: <MessageCircle size={18} />, url: contactSettings?.whatsappLink, hoverBg: 'hover:bg-[#25D366]' },
+        { icon: <WhatsAppIcon size={18} />, url: contactSettings?.whatsappLink, hoverBg: 'hover:bg-[#25D366]' },
         { icon: <Send size={18} />, url: contactSettings?.telegramLink, hoverBg: 'hover:bg-[#2CA5E0]' },
         { icon: <Instagram size={18} />, url: contactSettings?.instagramLink, hoverBg: 'hover:bg-[#E4405F]' },
         { icon: <Youtube size={18} />, url: contactSettings?.youtubeLink, hoverBg: 'hover:bg-[#FF0000]' },
@@ -154,7 +155,7 @@ const Footer = () => {
                             rel="noopener noreferrer"
                             className="w-full px-4 text-nowrap py-2.5 bg-[#25D366] hover:bg-[#20ba59] text-white rounded-xl text-[11px] font-black transition-all flex items-center justify-center gap-2 active:scale-95"
                         >
-                            <MessageCircle size={14} />
+                            <WhatsAppIcon size={14} />
                             Join Now
                         </a>
                     </div>

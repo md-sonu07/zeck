@@ -2,7 +2,8 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchImportantServices } from '../../../store/thunk/importantServiceThunk';
 import { fetchContactSettings } from '../../../store/thunk/contactThunk';
-import { Home, ChevronRight, Briefcase, CheckCircle2, MessageCircle, Send, Sparkles, Loader2, Phone, MapPin } from 'lucide-react';
+import { Home, ChevronRight, Briefcase, CheckCircle2, Send, Sparkles, Loader2, Phone, MapPin } from 'lucide-react';
+import WhatsAppIcon from '../../../components/common/WhatsAppIcon';
 import SEO from '../../../components/common/SEO';
 
 const ServicesPage = () => {
@@ -105,7 +106,7 @@ const ServicesPage = () => {
                                                         rel="noopener noreferrer"
                                                         className="flex items-center text-nowrap justify-center gap-1.5 py-2.5 px-3 bg-green-500/10 dark:bg-green-500/10 hover:bg-green-500 hover:text-white transition-all duration-200 rounded-xl text-[11px] font-bold text-green-600 dark:text-green-400 border border-green-500/20"
                                                     >
-                                                        <MessageCircle size={15} />
+                                                        <WhatsAppIcon size={15} />
                                                         <span>WhatsApp</span>
                                                     </a>
                                                 </div>
@@ -145,7 +146,7 @@ const ServicesPage = () => {
                                     <a href="#" className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-green-500/30 transition-all group">
                                         <div className="flex items-center gap-3">
                                             <div className="size-8 bg-green-500 rounded-lg flex items-center justify-center text-white">
-                                                <MessageCircle size={14} />
+                                                <WhatsAppIcon size={14} />
                                             </div>
                                             <span className="text-xs font-bold text-slate-700 dark:text-slate-200">WhatsApp</span>
                                         </div>
