@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Key, ArrowRight, ChevronRight, BookOpen, Loader2 } from 'lucide-react';
+import { ListItemsSkeleton } from '../../../common/Skeleton';
 import { fetchArticles } from '../../../../store/thunk/articleThunk';
 import { Link } from 'react-router-dom';
 
@@ -57,13 +58,10 @@ const AnswerKeySyllabus = () => {
                 <div>
                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 dark:border-slate-700 pb-2 flex items-center justify-between">
                         Answer Key
-                        {loadingKeys && <Loader2 size={10} className="animate-spin text-primary" />}
                     </p>
                     <ul className="text-sm space-y-1">
                         {loadingKeys ? (
-                            <div className="flex items-center justify-center py-10 opacity-50">
-                                <Loader2 className="animate-spin text-primary" size={20} />
-                            </div>
+                            <ListItemsSkeleton count={5} />
                         ) : answerKeys.length > 0 ? (
                             answerKeys.map((item, index) => (
                                 <li
@@ -106,13 +104,10 @@ const AnswerKeySyllabus = () => {
                 <div>
                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 dark:border-slate-700 pb-2 flex items-center justify-between">
                         Syllabus
-                        {loadingSyllabi && <Loader2 size={10} className="animate-spin text-primary" />}
                     </p>
                     <ul className="text-sm space-y-1">
                         {loadingSyllabi ? (
-                            <div className="flex items-center justify-center py-10 opacity-50">
-                                <Loader2 className="animate-spin text-primary" size={20} />
-                            </div>
+                            <ListItemsSkeleton count={5} />
                         ) : syllabi.length > 0 ? (
                             syllabi.map((item, index) => (
                                 <li

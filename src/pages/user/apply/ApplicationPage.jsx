@@ -15,6 +15,7 @@ import {
     Copy,
     Check
 } from 'lucide-react';
+import { ApplicationSkeleton } from '../../../components/common/Skeleton';
 import toast from 'react-hot-toast';
 import { getArticleByIdApi } from '../../../api/articleapi';
 import { submitApplicationApi } from '../../../api/application.api';
@@ -129,12 +130,7 @@ const ApplicationPage = () => {
     };
 
     if (loading) {
-        return (
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-center">
-                <Loader2 className="animate-spin text-primary size-10" />
-                <p className="mt-4 text-slate-500 font-medium tracking-tight">Preparing Application...</p>
-            </div>
-        );
+        return <ApplicationSkeleton />;
     }
 
     const finalPrice = article?.paymentPrice

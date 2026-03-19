@@ -10,6 +10,7 @@ import {
 import toast from 'react-hot-toast';
 import './quill-content.css';
 import SEO from '../../../components/common/SEO';
+import { ArticleSkeleton } from '../../../components/common/Skeleton';
 
 const ArticleDetailPage = () => {
     const { slug } = useParams();
@@ -80,12 +81,7 @@ const ArticleDetailPage = () => {
     };
 
     if (loading) {
-        return (
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-center">
-                <Loader2 className="animate-spin text-primary size-10" />
-                <p className="mt-4 text-slate-500 font-medium">Loading details...</p>
-            </div>
-        );
+        return <ArticleSkeleton />;
     }
 
     if (!article) return null;

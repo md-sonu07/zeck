@@ -6,6 +6,7 @@ import {
     Send, MessageCircle, CreditCard, Clock, CheckCircle2, XCircle, Eye, FileText, X, Edit, Phone, Loader2, Save, Camera, Upload
 } from 'lucide-react';
 import WhatsAppIcon from '../../../components/common/WhatsAppIcon';
+import { ProfileSkeleton } from '../../../components/common/Skeleton';
 
 import { logout as logoutUser } from '../../../store/thunk/authThunk';
 import { fetchMyApplications } from '../../../store/thunk/applicationThunk';
@@ -117,11 +118,7 @@ const ProfilePage = () => {
     const savedCount = userDetails?.savedPosts?.length || userInfo?.savedPosts?.length || 0;
 
     if (loading) {
-        return (
-            <div className="min-h-[80vh] flex items-center justify-center bg-slate-50 dark:bg-slate-950">
-                <div className="size-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-            </div>
-        );
+        return <ProfileSkeleton />;
     }
 
     return (

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CheckCircle, Heart, Star, Loader2 } from 'lucide-react';
+import { AboutSkeleton } from '../../../components/common/Skeleton';
 import { fetchAboutSettings } from '../../../store/thunk/aboutThunk';
 import SEO from '../../../components/common/SEO';
 
@@ -20,11 +21,7 @@ export default function AboutPage() {
     const whatsappGroupUrl = settings?.whatsappGroupUrl;
 
     if (loading && !settings) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="animate-spin text-primary" size={32} />
-            </div>
-        );
+        return <AboutSkeleton />;
     }
 
     return (

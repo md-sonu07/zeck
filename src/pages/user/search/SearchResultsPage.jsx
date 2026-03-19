@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchSearchResults } from '../../../store/thunk/searchThunk';
 import { clearSearchResults } from '../../../store/slice/searchSlice';
 import { Search, ChevronRight, Home, Loader2, FileX2 } from 'lucide-react';
+import { CategorySkeleton } from '../../../components/common/Skeleton';
 
 const isNew = (article) => {
     const date = article?.postDate || article?.createdAt;
@@ -59,9 +60,7 @@ const SearchResultsPage = () => {
                 </p>
 
                 {loading ? (
-                    <div className="flex items-center justify-center py-20 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700">
-                        <Loader2 className="animate-spin text-primary" size={40} />
-                    </div>
+                    <CategorySkeleton />
                 ) : !query.trim() ? (
                     <div className="py-20 text-center bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700">
                         <Search size={48} className="mx-auto text-slate-300 dark:text-slate-600 mb-4" />

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchArticles } from '../../store/thunk/articleThunk';
-import { ChevronRight, Home, MessageCircle, ChevronLeft, Send, Loader2, MapPin, Calendar, Info } from 'lucide-react';
+import { ChevronRight, Home, MessageCircle, ChevronLeft, Send, MapPin, Calendar, Info } from 'lucide-react';
+import { CategorySkeleton } from './Skeleton';
 import FilterStrip from '../PageSection/home/FilterStrip';
 import { Link } from 'react-router-dom';
 
@@ -61,6 +62,10 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
     const currentTheme = themeClasses[theme] || themeClasses.primary;
     const [bgClass, textColor] = currentTheme.split(' ');
 
+    if (isLoading) {
+        return <CategorySkeleton />;
+    }
+
     return (
         <div className="pb-16 bg-slate-50 dark:bg-slate-900 min-h-screen">
             <div className={`${bgClass} px-4 py-6`}>
@@ -83,11 +88,7 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
                             {isLoading ? 'Fetching Updates...' : `Showing ${displayArticles.length} ${activeFilters ? 'Search Results' : (category || 'Updates')}`}
                         </p>
 
-                        {isLoading ? (
-                            <div className="flex items-center justify-center py-20 bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700">
-                                <Loader2 className="animate-spin text-primary" size={40} />
-                            </div>
-                        ) : displayArticles.length > 0 ? (
+                        {displayArticles.length > 0 ? (
                             displayArticles.map(article => (
                                 <div key={article._id} className={`bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-${theme}-400/30 transition-all duration-200`}>
                                     <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-700">

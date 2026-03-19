@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Newspaper, ArrowRight, ChevronRight, Loader2 } from 'lucide-react';
+import { ListItemsSkeleton } from '../../../common/Skeleton';
 import { fetchArticles } from '../../../../store/thunk/articleThunk';
 import { Link } from 'react-router-dom';
 
@@ -56,8 +57,8 @@ const LatestNewsSection = () => {
             {/* Job List */}
             <ul className="min-h-[100px]">
                 {loading ? (
-                    <div className="flex items-center justify-center py-10">
-                        <Loader2 className="animate-spin text-primary" size={24} />
+                    <div className="p-0">
+                        <ListItemsSkeleton count={10} />
                     </div>
                 ) : displayArticles.length > 0 ? (
                     displayArticles.map((article, index) => (

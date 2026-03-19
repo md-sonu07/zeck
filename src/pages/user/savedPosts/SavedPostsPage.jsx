@@ -6,6 +6,7 @@ import {
     Bookmark, BookmarkX, Calendar, MapPin, Home, ChevronRight,
     Loader2, BookmarkCheck, ArrowLeft, Inbox, Send, MessageCircle
 } from 'lucide-react';
+import { CategorySkeleton } from '../../../components/common/Skeleton';
 import toast from 'react-hot-toast';
 import slug from 'slug';
 
@@ -89,10 +90,7 @@ const SavedPostsPage = () => {
                     {/* Main Content */}
                     <div className="flex-1 min-w-0">
                         {loading ? (
-                            <div className="flex flex-col items-center justify-center py-24">
-                                <Loader2 size={40} className="text-primary animate-spin mb-4" />
-                                <p className="text-sm text-slate-400 font-medium">Loading saved posts...</p>
-                            </div>
+                            <CategorySkeleton />
                         ) : savedPosts.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-24 px-4">
                                 <div className="p-6 rounded-full bg-slate-100 dark:bg-slate-800 mb-6">

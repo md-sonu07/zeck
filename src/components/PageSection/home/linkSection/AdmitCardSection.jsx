@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { BadgeCheck, ArrowRight, ChevronRight, Loader2 } from 'lucide-react';
+import { ListItemsSkeleton } from '../../../common/Skeleton';
 import { fetchArticles } from '../../../../store/thunk/articleThunk';
 import { Link } from 'react-router-dom';
 
@@ -44,8 +45,8 @@ const AdmitCardSection = () => {
             {/* Admit Card List */}
             <ul className="text-sm min-h-[100px]">
                 {loading ? (
-                    <div className="flex items-center justify-center py-10">
-                        <Loader2 className="animate-spin text-blue-500" size={24} />
+                    <div className="p-0">
+                        <ListItemsSkeleton count={6} />
                     </div>
                 ) : admitCards.length > 0 ? (
                     admitCards.map((card, index) => (

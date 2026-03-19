@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { GraduationCap, ArrowRight, ChevronRight, Newspaper, Loader2 } from 'lucide-react';
+import { ListItemsSkeleton } from '../../../common/Skeleton';
 import { fetchArticles } from '../../../../store/thunk/articleThunk';
 import { Link } from 'react-router-dom';
 
@@ -57,13 +58,10 @@ const UniversityBoardUpdates = () => {
                 <div>
                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 dark:border-slate-700 pb-2 flex items-center justify-between">
                         Admissions
-                        {loadingAdmissions && <Loader2 size={10} className="animate-spin text-purple-500" />}
                     </p>
                     <ul className="text-sm space-y-1">
                         {loadingAdmissions ? (
-                            <div className="flex items-center justify-center py-10 opacity-50">
-                                <Loader2 className="animate-spin text-purple-500" size={20} />
-                            </div>
+                            <ListItemsSkeleton count={5} />
                         ) : admissions.length > 0 ? (
                             admissions.map((item, index) => (
                                 <li
@@ -106,13 +104,10 @@ const UniversityBoardUpdates = () => {
                 <div>
                     <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3 border-b border-slate-100 dark:border-slate-700 pb-2 flex items-center justify-between">
                         University News
-                        {loadingUniversity && <Loader2 size={10} className="animate-spin text-indigo-500" />}
                     </p>
                     <ul className="text-sm space-y-1">
                         {loadingUniversity ? (
-                            <div className="flex items-center justify-center py-10 opacity-50">
-                                <Loader2 className="animate-spin text-indigo-500" size={20} />
-                            </div>
+                            <ListItemsSkeleton count={5} />
                         ) : universityNews.length > 0 ? (
                             universityNews.map((item, index) => (
                                 <li

@@ -4,8 +4,9 @@ import { fetchContactSettings } from '../../../store/thunk/contactThunk';
 import {
     Mail, Phone, MapPin, Send,
     Clock, CheckCircle2, ChevronDown, ExternalLink,
-    Home, ChevronRight as Chevron,
+    Home, ChevronRight as Chevron, Loader2
 } from 'lucide-react';
+import { ContactSkeleton } from '../../../components/common/Skeleton';
 import WhatsAppIcon from '../../../components/common/WhatsAppIcon';
 import { submitContactMessageApi } from '../../../api/contact.api';
 import toast from 'react-hot-toast';
@@ -58,11 +59,11 @@ const FaqItem = ({ q, a, index }) => {
 /* ── Contact Page ─────────────────────────────────────── */
 const ContactPage = () => {
     const dispatch = useDispatch();
-    const { settings } = useSelector((state) => state.contact);
+    const { settings, loading: settingsLoading } = useSelector((state) => state.contact);
 
-    useEffect(() => {
-        dispatch(fetchContactSettings());
-    }, [dispatch]);
+    if (settingsLoading && !settings) {
+        return <ContactSkeleton />;
+    }
 
     const infoCards = [
         {

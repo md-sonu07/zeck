@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchImportantServices } from '../../../store/thunk/importantServiceThunk';
 import { fetchContactSettings } from '../../../store/thunk/contactThunk';
 import { Home, ChevronRight, Briefcase, CheckCircle2, Send, Sparkles, Loader2, Phone, MapPin } from 'lucide-react';
+import { ServicesSkeleton } from '../../../components/common/Skeleton';
 import WhatsAppIcon from '../../../components/common/WhatsAppIcon';
 import SEO from '../../../components/common/SEO';
 
@@ -11,10 +12,9 @@ const ServicesPage = () => {
     const { data: allServices, loading } = useSelector((state) => state.importantServices);
     const { settings: contactDetail } = useSelector((state) => state.contact);
 
-    React.useEffect(() => {
-        dispatch(fetchImportantServices());
-        dispatch(fetchContactSettings());
-    }, [dispatch]);
+    if (loading && allServices.length === 0) {
+        return <ServicesSkeleton />;
+    }
 
     const services = allServices.filter(s => s.status === 'active');
 
@@ -47,9 +47,7 @@ const ServicesPage = () => {
                         </div>
 
                         {loading ? (
-                            <div className="flex items-center justify-center py-20">
-                                <Loader2 className="animate-spin text-primary" size={40} />
-                            </div>
+                            <ServicesSkeleton />
                         ) : services.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                                 {services.map(service => (
