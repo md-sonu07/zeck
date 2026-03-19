@@ -61,7 +61,7 @@ const Header = () => {
                     <div className="">
                         <div className="size-11 sm:size-12 rounded-md flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
                             <img
-                                src={darkMode ? "/logo/crop-logoo.png" : "/logo/light-logo.png"}
+                                src={darkMode ? "/logo/light-logo.png" : "/logo/dark-logo.png"}
                                 alt="Zoya Education Centre"
                                 className="w-full h-full object-contain scale-[1.2] brightness-110"
                             />
