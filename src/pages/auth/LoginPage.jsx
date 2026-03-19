@@ -77,7 +77,7 @@ const LoginPage = () => {
                             <div>
                                 <div className="flex justify-between items-center mb-2 ml-1">
                                     <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">
-                                        Security Key
+                                        Password
                                     </label>
                                     <Link to="/forgot-password" size={18} className="text-[10px] font-black text-primary hover:text-primary-dark uppercase tracking-widest">
                                         Forgot?
@@ -122,9 +122,9 @@ const LoginPage = () => {
                         </button>
                     </form>
 
-                    <div className="mt-8 text-center pt-6 border-t border-slate-50 dark:border-slate-800">
+                    <div className="mt-4 text-center pt-6 border-t border-slate-50 dark:border-slate-800">
                         <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                            No credentials yet?{' '}
+                            Create an Account?{' '}
                             <Link to="/register" className="text-primary hover:text-primary-dark flex items-center justify-center gap-1.5 mt-2 transition-all hover:gap-2">
                                 Register Account <ArrowRight size={14} />
                             </Link>

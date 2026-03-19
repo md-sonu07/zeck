@@ -164,7 +164,7 @@ const Sidebar = () => {
             <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm">
                 <div className="bg-linear-to-r from-emerald-500 to-teal-600 px-5 py-3">
                     <h2 className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-2">
-                        <Phone size={14} /> Help Desk
+                        <Phone size={12} /> Help Desk
                     </h2>
                 </div>
                 <div className="p-4">
@@ -172,12 +172,12 @@ const Sidebar = () => {
                         href={`tel:${helplineNumber}`}
                         className="flex items-center gap-4 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 group hover:border-emerald-500 transition-colors duration-300 no-underline"
                     >
-                        <div className="size-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform duration-300">
-                            <Phone size={22} />
+                        <div className="size-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform duration-300">
+                            <Phone size={16} />
                         </div>
                         <div>
                             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Helpline Number</p>
-                            <p className="text-xl font-black text-slate-800 dark:text-white group-hover:text-emerald-500 transition-colors">{helplineNumber}</p>
+                            <p className="text-lg font-black text-slate-800 dark:text-white group-hover:text-emerald-500 transition-colors">{helplineNumber}</p>
                         </div>
                     </a>
                 </div>

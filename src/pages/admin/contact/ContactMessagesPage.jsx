@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, Search, Trash2, CheckCircle2, ChevronRight, Mail, Clock, ShieldAlert } from 'lucide-react';
+import { MessageSquare, Search, Trash2, CheckCircle2, ChevronRight, Mail, Clock, ShieldAlert, Phone } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getAllContactMessagesApi, updateContactMessageStatusApi, deleteContactMessageApi } from '../../../api/contact.api';
 import ConfirmationModal from '../../../components/common/ConfirmationModal';
@@ -63,7 +63,7 @@ const ContactMessagesPage = () => {
 
     const filteredMessages = messages.filter(msg =>
         msg.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        msg.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        msg.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
         msg.subject.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -91,7 +91,7 @@ const ContactMessagesPage = () => {
                         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
                         <input
                             type="text"
-                            placeholder="Search by name, email, or subject..."
+                            placeholder="Search by name, phone, or subject..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary text-sm font-medium transition-shadow"
@@ -158,8 +158,8 @@ const ContactMessagesPage = () => {
                                         </div>
                                         <div>
                                             <h2 className="text-xl font-black text-slate-800 dark:text-white tracking-tight">{selectedMessage.name}</h2>
-                                            <a href={`mailto:${selectedMessage.email}`} className="text-sm font-semibold text-slate-500 hover:text-primary transition-colors flex items-center gap-1.5 mt-0.5">
-                                                <Mail size={14} /> {selectedMessage.email}
+                                            <a href={`tel:${selectedMessage.phone}`} className="text-sm font-semibold text-slate-500 hover:text-primary transition-colors flex items-center gap-1.5 mt-0.5">
+                                                <Phone size={14} /> {selectedMessage.phone}
                                             </a>
                                         </div>
                                     </div>
@@ -189,13 +189,13 @@ const ContactMessagesPage = () => {
 
                                     <div className="flex items-center gap-3 pt-6 border-t border-slate-100 dark:border-slate-700 mt-8">
                                         <a
-                                            href={`mailto:${selectedMessage.email}?subject=Re: ${selectedMessage.subject}`}
+                                            href={`tel:${selectedMessage.phone}`}
                                             onClick={() => {
                                                 if (selectedMessage.status !== 'replied') handleUpdateStatus(selectedMessage._id, 'replied');
                                             }}
                                             className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-primary/25 hover:-translate-y-0.5"
                                         >
-                                            <Mail size={16} /> Reply via Email
+                                            <Phone size={16} /> Call User
                                         </a>
                                         {selectedMessage.status === 'unread' && (
                                             <button

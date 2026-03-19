@@ -61,6 +61,15 @@ const PostManagementPage = ({ categoryTitle }) => {
         }
     }, [categories]);
 
+    // Fix for Content Editor being blank when editing
+    useEffect(() => {
+        if (activeTab === 'add' && contentRef.current) {
+            if (contentRef.current.innerHTML !== content) {
+                contentRef.current.innerHTML = content || '';
+            }
+        }
+    }, [activeTab, editArticleId, content]);
+
     const contentRef = useRef(null);
     const [activeFormats, setActiveFormats] = useState({});
 
@@ -300,9 +309,6 @@ const PostManagementPage = ({ categoryTitle }) => {
         setPaymentPrice(art.paymentPrice || '');
         setPaymentDiscountPercent(art.paymentDiscountPercent || '');
         setContent(art.content || '');
-        if (contentRef.current) {
-            contentRef.current.innerHTML = art.content || '';
-        }
         setPostDate(art.postDate ? new Date(art.postDate).toISOString().split('T')[0] : '');
         setLastDate(art.lastDate ? new Date(art.lastDate).toISOString().split('T')[0] : '');
         setActiveTab('add');
@@ -387,7 +393,7 @@ const PostManagementPage = ({ categoryTitle }) => {
                             <div className="space-y-2 p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
                                 <label className="flex items-center gap-2 text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                                     <Type size={18} className="text-primary" />
-                                    Post Title
+                                    Post Title <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -405,7 +411,7 @@ const PostManagementPage = ({ categoryTitle }) => {
                                 <div className="space-y-2 p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-800">
                                     <label className="flex items-center gap-2 text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                                         <AlignLeft size={18} className="text-primary" />
-                                        Short Summary
+                                        Short Summary <span className="text-red-500">*</span>
                                     </label>
                                     <textarea
                                         required
@@ -488,7 +494,7 @@ const PostManagementPage = ({ categoryTitle }) => {
                                         <div className="space-y-2">
                                             <label className="flex items-center gap-2 text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                                                 <ListTree size={14} className="text-orange-500" />
-                                                Sub Category
+                                                Sub Category <span className="text-red-500">*</span>
                                             </label>
                                             <div className="relative">
                                                 <button
@@ -530,7 +536,7 @@ const PostManagementPage = ({ categoryTitle }) => {
                                         <div className="space-y-2">
                                             <label className="flex items-center gap-2 text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                                                 <Layers size={14} className="text-violet-500" />
-                                                Resource
+                                                Resource <span className="text-red-500">*</span>
                                             </label>
                                             <div className="relative">
                                                 <button
@@ -572,7 +578,7 @@ const PostManagementPage = ({ categoryTitle }) => {
                                         <div className="space-y-2">
                                             <label className="flex items-center gap-2 text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                                                 <MapPin size={14} className="text-teal-500" />
-                                                Location
+                                                Location <span className="text-red-500">*</span>
                                             </label>
                                             <div className="relative">
                                                 <button
@@ -1308,7 +1314,7 @@ const PostManagementPage = ({ categoryTitle }) => {
                     <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
                         <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-500" onClick={() => setIsHeaderImageSelectorOpen(false)}></div>
 
-                        <div className="relative bg-white dark:bg-slate-800 rounded-[3rem] shadow-[0_32px_128px_-16px_rgba(0,0,0,0.3)] border border-white/20 dark:border-slate-700/50 w-full max-w-md overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+                        <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-[0_32px_128px_-16px_rgba(0,0,0,0.3)] border border-white/20 dark:border-slate-700/50 w-full max-w-md overflow-hidden animate-in zoom-in-95 fade-in duration-300">
                             {/* Compact Header Section */}
                             <div className="px-8 pt-8 pb-4">
                                 <div className="flex items-center justify-between mb-6">

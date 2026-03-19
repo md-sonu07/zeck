@@ -9,6 +9,7 @@ import ResultsSection from '../../../components/PageSection/home/linkSection/Res
 import AnswerKeySyllabus from '../../../components/PageSection/home/linkSection/AnswerKeySyllabus';
 import UniversityBoardUpdates from '../../../components/PageSection/home/linkSection/UniversityBoardUpdates';
 import Sidebar from '../../../components/PageSection/home/Sidebar';
+import MobileQuickMenu from '../../../components/PageSection/home/MobileQuickMenu';
 import SEO from '../../../components/common/SEO';
 
 const HomePage = () => {
@@ -26,7 +27,7 @@ const HomePage = () => {
             <main className="max-w-[1200px] mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     {/* Left Column */}
-                    <div className="lg:col-span-8 space-y-8">
+                    <div className="lg:col-span-9 space-y-8">
                         <div className="section-label">
                             <Flame className="text-accent" size={10} /> Latest News & Updates
                         </div>
@@ -61,8 +62,10 @@ const HomePage = () => {
                     </div>
 
                     {/* Right Column (Sidebar) */}
-                    <div className="lg:col-span-4">
+                    <div className="lg:col-span-3">
                         <Sidebar />
+                        <MobileQuickMenu />
+
                     </div>
                 </div>
             </main>

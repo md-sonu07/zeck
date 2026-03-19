@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchContactSettings } from '../../../store/thunk/contactThunk';
 import {
     Mail, Phone, MapPin, Send,
     Clock, CheckCircle2, ChevronDown, ExternalLink,
@@ -15,33 +17,7 @@ const WhatsAppIcon = ({ size = 20 }) => (
     </svg>
 );
 
-/* ── Data ─────────────────────────────────────────────── */
-const infoCards = [
-    {
-        icon: Phone, label: 'Call Us',
-        value: '+91 98765 43210', sub: 'Mon – Sat, 9 AM – 6 PM',
-        color: 'bg-blue-500', ring: 'ring-blue-500/20', text: 'text-blue-600 dark:text-blue-400',
-        href: 'tel:+919876543210',
-    },
-    {
-        icon: Mail, label: 'Email Us',
-        value: 'support@zoyacenter.in', sub: 'Reply within 24 hours',
-        color: 'bg-primary', ring: 'ring-primary/20', text: 'text-primary',
-        href: 'mailto:support@zoyacenter.in',
-    },
-    {
-        icon: MapPin, label: 'Visit Us',
-        value: 'Patna, Bihar – 800001', sub: 'Near Gandhi Maidan',
-        color: 'bg-rose-500', ring: 'ring-rose-500/20', text: 'text-rose-600 dark:text-rose-400',
-        href: null,
-    },
-    {
-        icon: Clock, label: 'Working Hours',
-        value: '9:00 AM – 6:00 PM', sub: 'Monday to Saturday',
-        color: 'bg-amber-500', ring: 'ring-amber-500/20', text: 'text-amber-600 dark:text-amber-400',
-        href: null,
-    },
-];
+/* ── FAQ Accordion ────────────────────────────────────── */
 
 const faqs = [
     { q: 'How do I get notified about new job postings?', a: 'Join our Telegram or WhatsApp channel for instant alerts. We post every new government job notification within minutes of official release.' },
@@ -86,7 +62,45 @@ const FaqItem = ({ q, a, index }) => {
 
 /* ── Contact Page ─────────────────────────────────────── */
 const ContactPage = () => {
-    const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+    const dispatch = useDispatch();
+    const { settings } = useSelector((state) => state.contact);
+
+    useEffect(() => {
+        dispatch(fetchContactSettings());
+    }, [dispatch]);
+
+    const infoCards = [
+        {
+            icon: Phone, label: 'Call Us',
+            value: settings?.phoneNo || '+91 9162653235',
+            sub: settings?.phoneSub || 'Get direct support',
+            color: 'bg-blue-500', ring: 'ring-blue-500/20', text: 'text-blue-600 dark:text-blue-400',
+            href: settings?.phoneNo ? `tel:${settings.phoneNo}` : 'tel:+919162653235',
+        },
+        {
+            icon: Mail, label: 'Email Us',
+            value: settings?.email || 'zoyaeducationcentre@gmail.com',
+            sub: settings?.emailSub || 'Reply within 24 hours',
+            color: 'bg-primary', ring: 'ring-primary/20', text: 'text-primary',
+            href: settings?.email ? `mailto:${settings.email}` : 'mailto:zoyaeducationcentre@gmail.com',
+        },
+        {
+            icon: MapPin, label: 'Visit Us',
+            value: settings?.address || 'Man Road, Kursakanta, Araria, Bihar-854331',
+            sub: settings?.addressSub || 'Near Gandhi Maidan',
+            color: 'bg-rose-500', ring: 'ring-rose-500/20', text: 'text-rose-600 dark:text-rose-400',
+            href: null,
+        },
+        {
+            icon: Clock, label: 'Working Hours',
+            value: settings?.workingHours || '9:00 AM – 6:00 PM',
+            sub: settings?.workingHoursSub || 'Monday to Saturday',
+            color: 'bg-amber-500', ring: 'ring-amber-500/20', text: 'text-amber-600 dark:text-amber-400',
+            href: null,
+        },
+    ];
+
+    const [form, setForm] = useState({ name: '', phone: '', subject: '', message: '' });
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -170,10 +184,10 @@ const ContactPage = () => {
                                         </div>
                                         <h3 className="text-lg font-black text-slate-800 dark:text-slate-100 mt-2">Message Sent!</h3>
                                         <p className="text-sm text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
-                                            Thank you for reaching out. We'll reply to <strong className="text-slate-700 dark:text-slate-200">{form.email}</strong> within 24 hours.
+                                            Thank you for reaching out. We'll contact you on <strong className="text-slate-700 dark:text-slate-200">{form.phone}</strong> within 24 hours.
                                         </p>
                                         <button
-                                            onClick={() => { setSubmitted(false); setForm({ name: '', email: '', subject: '', message: '' }); }}
+                                            onClick={() => { setSubmitted(false); setForm({ name: '', phone: '', subject: '', message: '' }); }}
                                             className="mt-3 text-xs font-bold text-primary border border-primary/30 hover:bg-primary hover:text-white px-5 py-2 rounded-lg transition-all duration-200"
                                         >
                                             Send another message
@@ -187,8 +201,8 @@ const ContactPage = () => {
                                                 <input name="name" value={form.name} onChange={handleChange} required placeholder="Your full name" className={inputBase} />
                                             </div>
                                             <div>
-                                                <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Email Address *</label>
-                                                <input name="email" type="email" value={form.email} onChange={handleChange} required placeholder="you@example.com" className={inputBase} />
+                                                <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Contact No *</label>
+                                                <input name="phone" value={form.phone} onChange={handleChange} required placeholder="Your contact number" className={inputBase} />
                                             </div>
                                         </div>
                                         <div>
@@ -235,21 +249,21 @@ const ContactPage = () => {
                             <div className="p-4 space-y-3">
                                 {[
                                     {
-                                        href: 'https://wa.me/919876543210',
+                                        href: settings?.whatsappLink || 'https://wa.me/919162653235',
                                         icon: <WhatsAppIcon size={20} />,
                                         bg: 'bg-[#25D366]', hoverBg: 'hover:bg-[#25D366]/12',
                                         border: 'border-[#25D366]/25', hoverBorder: 'hover:border-[#25D366]/50',
                                         label: 'WhatsApp Us',
-                                        sub: 'Fastest response',
+                                        sub: settings?.whatsappSub || 'Fastest response',
                                         accent: 'group-hover:text-[#25D366]',
                                     },
                                     {
-                                        href: 'https://t.me/zoyacenter',
+                                        href: settings?.telegramLink || 'https://t.me/zoyacenter',
                                         icon: <Send size={20} />,
                                         bg: 'bg-[#2CA5E0]', hoverBg: 'hover:bg-[#2CA5E0]/12',
                                         border: 'border-[#2CA5E0]/25', hoverBorder: 'hover:border-[#2CA5E0]/50',
                                         label: 'Telegram Channel',
-                                        sub: 'Instant job alerts',
+                                        sub: settings?.telegramSub || 'Instant job alerts',
                                         accent: 'group-hover:text-[#2CA5E0]',
                                     },
                                 ].map((s, i) => (
@@ -274,7 +288,7 @@ const ContactPage = () => {
                             {/* Embedded Google Map */}
                             <div className="relative w-full h-48 bg-slate-100 dark:bg-slate-900 overflow-hidden">
                                 <iframe
-                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14391.229158525313!2d85.13114065!3d25.61141315!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39ed585d56441b8f%3A0xe543c7ae00755714!2sGandhi%20Maidan%2C%20Patna%2C%20Bihar!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                                    src={settings?.mapEmbedSrc || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14391.229158525313!2d85.13114065!3d25.61141315!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39ed585d56441b8f%3A0xe543c7ae00755714!2sGandhi%20Maidan%2C%20Patna%2C%20Bihar!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"}
                                     width="100%"
                                     height="100%"
                                     style={{ border: 0 }}
@@ -306,7 +320,7 @@ const ContactPage = () => {
                                     </p>
 
                                     <a
-                                        href="https://maps.google.com"
+                                        href={settings?.mapEmbedSrc ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(settings.address)}` : "https://maps.google.com"}
                                         target="_blank"
                                         rel="noreferrer"
                                         className="inline-flex w-full items-center justify-center gap-2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-white dark:hover:bg-primary dark:hover:text-white transition-all duration-300 shadow-md"

@@ -29,3 +29,8 @@ export const removeUserAdminApi = async (id) => {
     const response = await api.put(`/users/${id}/remove-admin`);
     return response.data;
 };
+
+export const updateUserProfileApi = async (data) => {
+    const response = await api.put('/users/profile', data);
+    return response.data;
+};

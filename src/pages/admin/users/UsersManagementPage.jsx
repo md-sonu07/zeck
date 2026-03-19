@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Plus, MoreVertical, Edit, Trash2, Shield, ShieldAlert, CheckCircle, XCircle, Clock, Eye, X, AlertOctagon, ChevronDown, Filter, ArrowUpDown, Check } from 'lucide-react';
+import { Search, Trash2, Shield, ShieldAlert, CheckCircle, Eye, X, AlertOctagon, ChevronDown, Filter, ArrowUpDown, Check } from 'lucide-react';
 import { getAllUsersApi, deleteUserApi, makeUserAdminApi, removeUserAdminApi } from '../../../api/user.api';
 import toast from 'react-hot-toast';
 
@@ -127,7 +127,7 @@ const UsersManagementPage = () => {
     const handleMakeAdmin = (id) => {
         setConfirmModal({
             isOpen: true,
-            title: 'Grant Admin Privileges',
+            title: 'Make an Admin',
             message: 'Are you sure you want to make this user an admin? They will have full access to the portal.',
             variant: 'success',
             onConfirm: async () => {
@@ -145,8 +145,8 @@ const UsersManagementPage = () => {
     const handleRemoveAdmin = (id) => {
         setConfirmModal({
             isOpen: true,
-            title: 'Revoke Admin Privileges',
-            message: 'Are you sure you want to revoke admin rights from this user? They will become a standard user.',
+            title: 'Remove Admin Privileges',
+            message: 'Are you sure you want to remove admin rights from this user? They will become a standard user.',
             variant: 'warning',
             onConfirm: async () => {
                 try {
@@ -465,6 +465,10 @@ const UsersManagementPage = () => {
                                 <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl col-span-2">
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Join Date</p>
                                     <p className="font-bold text-slate-700 dark:text-slate-200">{selectedUser.createdAt ? new Date(selectedUser.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</p>
+                                </div>
+                                <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl col-span-2">
+                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Phone Number</p>
+                                    <p className="font-bold text-slate-700 dark:text-slate-200">{selectedUser.phone || 'Not Provided'}</p>
                                 </div>
                                 <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl col-span-2">
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">User ID</p>

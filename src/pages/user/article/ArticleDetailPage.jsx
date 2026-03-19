@@ -165,7 +165,7 @@ const ArticleDetailPage = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
 
                     {/* LEFT COLUMN: Main Content */}
-                    <main className="lg:col-span-8 space-y-6">
+                    <main className="lg:col-span-9 space-y-6">
 
                         {/* Title + Quick Info */}
                         <div>
@@ -210,17 +210,6 @@ const ArticleDetailPage = () => {
                             </div>
                         )}
 
-                        {/* Banner Image */}
-                        {article.imageUrl && (
-                            <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700">
-                                <img
-                                    src={article.imageUrl}
-                                    alt={article.title}
-                                    className="w-full h-auto object-cover"
-                                />
-                            </div>
-                        )}
-
                         {/* Article Content */}
                         <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 md:p-10">
                             <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-6 pb-3 border-b border-slate-100 dark:border-slate-700">
@@ -232,10 +221,21 @@ const ArticleDetailPage = () => {
                             />
                         </div>
 
+                        {/* Banner Image */}
+                        {article.imageUrl && (
+                            <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700">
+                                <img
+                                    src={article.imageUrl}
+                                    alt={article.title}
+                                    className="w-full h-auto object-cover"
+                                />
+                            </div>
+                        )}
+
                     </main>
 
                     {/* RIGHT COLUMN: Sidebar Widgets */}
-                    <aside className="lg:col-span-4">
+                    <aside className="lg:col-span-3">
                         <div className="flex flex-col gap-6">
 
                             {/* Fee & Apply Widget */}

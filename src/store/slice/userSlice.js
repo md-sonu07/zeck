@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getProfile } from '../thunk/userThunk';
+import { getProfile, updateProfile } from '../thunk/userThunk';
 import { logout } from '../thunk/authThunk';
 
 const userSlice = createSlice({
@@ -25,6 +25,18 @@ const userSlice = createSlice({
                 state.userDetails = action.payload;
             })
             .addCase(getProfile.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            .addCase(updateProfile.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateProfile.fulfilled, (state, action) => {
+                state.loading = false;
+                state.userDetails = action.payload;
+            })
+            .addCase(updateProfile.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })
