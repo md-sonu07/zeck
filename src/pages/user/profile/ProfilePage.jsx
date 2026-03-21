@@ -499,14 +499,14 @@ const ProfilePage = () => {
             {/* Edit Profile Modal */}
             {isEditModalOpen && (
                 <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-slate-900/95 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setIsEditModalOpen(false)}>
-                    <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 relative animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 relative animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
                         <div className="mb-8">
                             <div className="flex justify-between items-start">
                                 <div>
                                     <h2 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight uppercase">Edit Profile</h2>
                                     <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Update your identification</p>
                                 </div>
-                                <button onClick={() => setIsEditModalOpen(false)} className="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-red-500 rounded-2xl transition-all active:scale-90">
+                                <button onClick={() => setIsEditModalOpen(false)} className="p-2.5 cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-red-500 rounded-2xl transition-all active:scale-90">
                                     <X size={20} />
                                 </button>
                             </div>
@@ -517,13 +517,13 @@ const ProfilePage = () => {
                                 {/* Avatar Upload */}
                                 <div className="flex flex-col items-center gap-4 mb-2">
                                     <div className="relative group">
-                                        <div className="size-24 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border-2 border-slate-200 dark:border-slate-700 group-hover:border-primary transition-colors">
+                                        <div className="size-24 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border-2 border-slate-200 dark:border-slate-700 group-hover:border-primary transition-colors">
                                             {avatarPreview ? (
                                                 <img src={avatarPreview} alt="Preview" className="size-full object-cover" />
                                             ) : (
                                                 <User size={32} className="text-slate-300" />
                                             )}
-                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer">
+                                            <div className="absolute rounded-xl inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer">
                                                 <Camera size={20} className="text-white" />
                                             </div>
                                             <input

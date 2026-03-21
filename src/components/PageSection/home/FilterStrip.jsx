@@ -144,7 +144,7 @@ const FilterStrip = () => {
         if (keyword) filters.search = keyword;
         if (category) filters.subCategory = category;
         if (state) filters.location = state;
-        if (resource) filters.mainCategory = resource;
+        if (resource) filters.resourceType = resource;
 
         if (Object.keys(filters).length > 0) {
             dispatch(fetchSearchResults(filters));
