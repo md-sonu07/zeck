@@ -43,7 +43,7 @@ const Sidebar = () => {
         const links = [];
         if (contactSettings.telegramLink) {
             links.push({
-                name: 'Join Telegram Channel',
+                name: 'Join Telegram',
                 icon: Send,
                 color: 'bg-[#2CA5E0]',
                 glow: 'group-hover:shadow-[#2CA5E0]/30',
@@ -53,7 +53,7 @@ const Sidebar = () => {
         }
         if (contactSettings.whatsappLink) {
             links.push({
-                name: 'Join WhatsApp Channel',
+                name: 'Join WhatsApp',
                 icon: WhatsAppIcon,
                 color: 'bg-[#25D366]',
                 glow: 'group-hover:shadow-[#25D366]/30',

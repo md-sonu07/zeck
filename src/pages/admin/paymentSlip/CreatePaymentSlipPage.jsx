@@ -396,7 +396,7 @@ const CreatePaymentSlipPage = () => {
                                     <div className="flex items-center gap-4">
                                         {/* Logo Icon */}
                                         <div className="w-24 h-24 rounded-full bg-[#00196a] flex items-center justify-center overflow-hidden shrink-0">
-                                            <img src="/logo/crop-logoo.png" alt="Logo" className="w-full h-full object-contain p-1 shadow-indigo-800 shadow-2xl" />
+                                            <img src="/logo/light-logo.png" alt="Logo" className="w-full h-full object-contain p-1 shadow-indigo-800 shadow-2xl" />
                                         </div>
                                         <div className="flex-1 text-center pt-1">
                                             <h1 className="text-3xl font-black text-[#00196a] tracking-tight uppercase leading-tight">ZOYA EDUCATION</h1>

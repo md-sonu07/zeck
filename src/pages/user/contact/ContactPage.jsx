@@ -61,6 +61,10 @@ const ContactPage = () => {
     const dispatch = useDispatch();
     const { settings, loading: settingsLoading } = useSelector((state) => state.contact);
 
+    const [form, setForm] = useState({ name: '', phone: '', subject: '', message: '' });
+    const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
+
     if (settingsLoading && !settings) {
         return <ContactSkeleton />;
     }
@@ -95,10 +99,6 @@ const ContactPage = () => {
             href: null,
         },
     ];
-
-    const [form, setForm] = useState({ name: '', phone: '', subject: '', message: '' });
-    const [submitted, setSubmitted] = useState(false);
-    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
     const handleSubmit = async (e) => {
@@ -304,15 +304,14 @@ const ContactPage = () => {
                                         <MapPin size={20} className="text-primary" />
                                     </div>
                                     <div>
-                                        <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider mb-1">Corporate Office</h3>
-                                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400">Patna HQ, Bihar</p>
+                                        <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-wider mb-1">Our Shop</h3>
+                                        <p className="text-xs font-bold text-slate-500 dark:text-slate-400">{settings?.addressSub || 'Kursakanta, Araria, Bihar'}</p>
                                     </div>
                                 </div>
 
                                 <div className="space-y-4">
                                     <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
-                                        Near Gandhi Maidan, Patna<br />
-                                        Bihar – 800001, India
+                                        {settings?.address || 'Man Road, Kursakanta, Araria, Bihar-854331'}
                                     </p>
 
                                     <a
