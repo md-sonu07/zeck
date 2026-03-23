@@ -5,8 +5,6 @@ import { fetchContactSettings } from '../../store/thunk/contactThunk';
 import { fetchAboutSettings } from '../../store/thunk/aboutThunk';
 import { fetchPageSections } from '../../store/thunk/pageSectionThunk';
 import {
-    Facebook,
-    MessageCircle,
     Send,
     ChevronRight,
     MapPin,
@@ -71,7 +69,7 @@ const Footer = () => {
                         Quick Exploration
                     </h4>
                     <ul className="space-y-4">
-                        {(sections.length > 0 ? sections : [
+                        {([
                             { title: 'About Agency', path: '/about' },
                             { title: 'Latest Vacancy', path: '/latest-news' },
                             { title: 'Download Admit Card', path: '/admit-card' },

@@ -40,7 +40,8 @@ const PostManagementPage = ({ categoryTitle }) => {
     const [content, setContent] = useState('');
     const [paymentPrice, setPaymentPrice] = useState('');
     const [paymentDiscountPercent, setPaymentDiscountPercent] = useState('');
-
+    const [submittingAction, setSubmittingAction] = useState(null);
+    
     // Derived Taxonomies
     const [availableResources, setAvailableResources] = useState([]);
     const [availableCategories, setAvailableCategories] = useState([]);
@@ -240,6 +241,8 @@ const PostManagementPage = ({ categoryTitle }) => {
             }
         }
 
+        setSubmittingAction(saveAsDraft ? 'draft' : 'publish');
+
         const postData = {
             title,
             mainCategory: categoryTitle, // Admin section category
@@ -293,6 +296,8 @@ const PostManagementPage = ({ categoryTitle }) => {
             } else {
                 toast.error(msg);
             }
+        } finally {
+            setSubmittingAction(null);
         }
     };
 
@@ -865,17 +870,30 @@ const PostManagementPage = ({ categoryTitle }) => {
                             <button
                                 type="button"
                                 onClick={(e) => handleSubmit(e, true)}
-                                className="flex items-center gap-2 px-8 py-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 font-black rounded-2xl transition-all active:scale-95 uppercase tracking-widest text-xs border border-slate-200 dark:border-slate-600"
+                                disabled={submittingAction !== null}
+                                className={`flex items-center gap-2 px-8 py-4 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 font-black rounded-2xl transition-all active:scale-95 uppercase tracking-widest text-xs border border-slate-200 dark:border-slate-600 ${submittingAction !== null ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
-                                <FileText size={18} />
-                                Save as Draft
+                                {submittingAction === 'draft' ? (
+                                    <CircleDashed size={18} className="animate-spin" />
+                                ) : (
+                                    <FileText size={18} />
+                                )}
+                                {submittingAction === 'draft' ? 'Saving...' : 'Save as Draft'}
                             </button>
                             <button
                                 type="submit"
-                                className="flex items-center gap-2 px-10 py-4 bg-primary hover:bg-primary-dark text-white font-black rounded-2xl shadow-xl shadow-primary/30 transition-all hover:-translate-y-1 active:scale-95 uppercase tracking-widest text-xs"
+                                disabled={submittingAction !== null}
+                                className={`flex items-center gap-2 px-10 py-4 bg-primary hover:bg-primary-dark text-white font-black rounded-2xl shadow-xl shadow-primary/30 transition-all ${submittingAction !== null ? 'opacity-50 cursor-not-allowed' : 'hover:-translate-y-1 active:scale-95'} uppercase tracking-widest text-xs`}
                             >
-                                <Save size={18} />
-                                {editArticleId ? 'Update' : 'Publish'} {categoryTitle} Post
+                                {submittingAction === 'publish' ? (
+                                    <CircleDashed size={18} className="animate-spin" />
+                                ) : (
+                                    <Save size={18} />
+                                )}
+                                {submittingAction === 'publish' 
+                                    ? (editArticleId ? 'Updating...' : 'Publishing...') 
+                                    : `${editArticleId ? 'Update' : 'Publish'} ${categoryTitle} Post`
+                                }
                             </button>
                         </div>
 
