@@ -61,7 +61,7 @@ const InvoiceModal = ({ application, onClose }) => {
                     </style>
                 </head>
                 <body>
-                    <div class="print-container">
+                    <div class="print-container border-2 border-slate-800 rounded-xl p-4">
                         ${printContent.innerHTML}
                     </div>
                 </body>
