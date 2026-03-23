@@ -382,7 +382,7 @@ const CreatePaymentSlipPage = () => {
 
                         {/* Actual Receipt Template Wrapper */}
                         <div className={showPreview ? "py-10 flex justify-center w-full" : ""}>
-                            <div className={`bg-white p-4 relative flex flex-col min-h-[520px] text-slate-800 ${showPreview ? "w-full max-w-[600px] rounded-2xl shadow-sm border border-slate-100" : ""}`} ref={invoiceRef}>
+                            <div className={`bg-white p-4 relative flex flex-col min-h-[520px] border-2 border-slate-800 rounded-xl text-slate-800 ${showPreview ? "w-full max-w-[600px] rounded-2xl shadow-sm border border-slate-100" : ""}`} ref={invoiceRef}>
                                 {/* Watermark Text */}
                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08]">
                                     <div className="transform -rotate-45 text-center select-none">
@@ -392,7 +392,7 @@ const CreatePaymentSlipPage = () => {
                                 </div>
 
                                 {/* Header */}
-                                <div className="relative z-10 border-2 border-slate-800 rounded-xl p-2 mb-2">
+                                <div className="relative z-10 border-b-2 border-slate-800 p-2 mb-2">
                                     <div className="flex items-center gap-4">
                                         {/* Logo Icon */}
                                         <div className="w-24 h-24 rounded-full bg-[#00196a] flex items-center justify-center overflow-hidden shrink-0">
