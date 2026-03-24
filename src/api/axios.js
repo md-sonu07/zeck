@@ -7,6 +7,27 @@ const api = axios.create({
     withCredentials: true,
 });
 
+// Request interceptor to include the Bearer token
+api.interceptors.request.use(
+    (config) => {
+        const userInfo = localStorage.getItem('userInfo');
+        if (userInfo) {
+            try {
+                const parsedInfo = JSON.parse(userInfo);
+                if (parsedInfo.token) {
+                    config.headers.Authorization = `Bearer ${parsedInfo.token}`;
+                }
+            } catch (e) {
+                // Ignore parse errors
+            }
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 // Response interceptor for handling 401 Unauthorized errors
 api.interceptors.response.use(
     (response) => response,
