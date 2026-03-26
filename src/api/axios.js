@@ -32,7 +32,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response && error.response.status === 401) {
+        const isLoginRequest = error.config && error.config.url && error.config.url.includes('/auth/login');
+
+        if (error.response && error.response.status === 401 && !isLoginRequest) {
             // Clear local storage and state if session expires
             localStorage.removeItem('userInfo');
             // Force a reload to clear all state and trigger redirects

@@ -25,6 +25,14 @@ const LoginPage = () => {
         }
     }, [navigate, userInfo, redirect]);
 
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value);
+    };
+
+    const handlePasswordChange = (e) => {
+        setPassword(e.target.value);
+    };
+
     const submitHandler = async (e) => {
         e.preventDefault();
         try {
@@ -32,7 +40,8 @@ const LoginPage = () => {
             toast.success('Login Successful');
             // The useEffect will handle the navigation upon success
         } catch (err) {
-            toast.error(err || 'Login failed');
+            const errorMessage = typeof err === 'string' ? err : (err?.message || 'Invalid credentials');
+            toast.error(errorMessage);
             console.error('Login failed:', err);
         }
     };
@@ -69,7 +78,7 @@ const LoginPage = () => {
                                         className="block w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:focus:border-primary/50 transition-all placeholder:text-slate-400"
                                         placeholder="Enter your email"
                                         value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        onChange={handleEmailChange}
                                     />
                                 </div>
                             </div>
@@ -93,7 +102,7 @@ const LoginPage = () => {
                                         className="block w-full pl-11 pr-12 py-3.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:focus:border-primary/50 transition-all placeholder:text-slate-400"
                                         placeholder="••••••••"
                                         value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        onChange={handlePasswordChange}
                                     />
                                     <button
                                         type="button"

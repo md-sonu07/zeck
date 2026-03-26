@@ -17,6 +17,9 @@ const authSlice = createSlice({
             state.userInfo = null;
             localStorage.removeItem('userInfo');
         },
+        clearError: (state) => {
+            state.error = null;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -46,5 +49,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { setCredentials, clearCredentials } = authSlice.actions;
+export const { setCredentials, clearCredentials, clearError } = authSlice.actions;
 export default authSlice.reducer;
