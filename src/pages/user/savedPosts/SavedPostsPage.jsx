@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
+import { setCredentials } from '../../../store/slice/authSlice';
 import { getSavedPostsApi, toggleSavePostApi } from '../../../api/articleapi';
 import {
     Bookmark, BookmarkX, Calendar, MapPin, Home, ChevronRight,
@@ -12,6 +13,7 @@ import slug from 'slug';
 
 const SavedPostsPage = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const { userInfo } = useSelector((state) => state.auth);
     const [savedPosts, setSavedPosts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -46,8 +48,10 @@ const SavedPostsPage = () => {
     const handleUnsave = async (articleId) => {
         try {
             setRemovingId(articleId);
-            await toggleSavePostApi(articleId);
+            const res = await toggleSavePostApi(articleId);
             setSavedPosts(prev => prev.filter(p => p._id !== articleId));
+            // Update Redux state
+            dispatch(setCredentials({ ...userInfo, savedPosts: res.savedPosts }));
             toast.success('Post removed from saved');
         } catch (error) {
             toast.error('Failed to remove post');
@@ -55,6 +59,8 @@ const SavedPostsPage = () => {
             setRemovingId(null);
         }
     };
+
+    if (loading) return <CategorySkeleton />;
 
     return (
         <div className="pb-16 bg-slate-50 dark:bg-slate-900 min-h-screen">
@@ -77,7 +83,7 @@ const SavedPostsPage = () => {
                                 <BookmarkCheck size={24} /> Saved Posts
                             </h1>
                             <p className="text-blue-200 text-xs mt-1">
-                                {loading ? 'Loading...' : `${savedPosts.length} saved post${savedPosts.length !== 1 ? 's' : ''}`}
+                                {`${savedPosts.length} saved post${savedPosts.length !== 1 ? 's' : ''}`}
                             </p>
                         </div>
                     </div>
@@ -89,9 +95,7 @@ const SavedPostsPage = () => {
                 <div className="flex gap-6">
                     {/* Main Content */}
                     <div className="flex-1 min-w-0">
-                        {loading ? (
-                            <CategorySkeleton />
-                        ) : savedPosts.length === 0 ? (
+                        {savedPosts.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-24 px-4">
                                 <div className="p-6 rounded-full bg-slate-100 dark:bg-slate-800 mb-6">
                                     <Inbox size={48} className="text-slate-300 dark:text-slate-600" />
@@ -214,7 +218,7 @@ const SavedPostsPage = () => {
                             </div>
                             <div className="p-5">
                                 <div className="text-center py-4">
-                                    <p className="text-4xl font-black text-primary mb-1">{loading ? '–' : savedPosts.length}</p>
+                                    <p className="text-4xl font-black text-primary mb-1">{savedPosts.length}</p>
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Posts Saved</p>
                                 </div>
                                 <div className="border-t border-slate-100 dark:border-slate-700 pt-4 mt-2">

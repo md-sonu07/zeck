@@ -115,7 +115,7 @@ const ProfilePage = () => {
         }
     };
 
-    const savedCount = userDetails?.savedPosts?.length || userInfo?.savedPosts?.length || 0;
+    const savedCount = userDetails?.savedPosts?.length ?? userInfo?.savedPosts?.length ?? 0;
 
     if (loading) {
         return <ProfileSkeleton />;

@@ -42,7 +42,15 @@ const userSlice = createSlice({
             })
             .addCase(logout.fulfilled, (state) => {
                 state.userDetails = null;
-            });
+            })
+            .addMatcher(
+                (action) => action.type === 'auth/setCredentials',
+                (state, action) => {
+                    if (state.userDetails && action.payload.savedPosts) {
+                        state.userDetails.savedPosts = action.payload.savedPosts;
+                    }
+                }
+            );
     },
 });
 
