@@ -45,6 +45,8 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
     const dispatch = useDispatch();
     const [articles, setArticles] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
 
     // Read from search Redux state
     const { results: searchResults, loading: searchLoading, activeFilters } = useSelector((state) => state.search);
@@ -64,6 +66,7 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
                 }
 
                 setArticles(filteredResult);
+                setCurrentPage(1); // Reset to page 1 on category change
             } catch (error) {
                 console.error(`Failed to fetch ${category || 'articles'}:`, error);
             } finally {
@@ -88,6 +91,17 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
     const currentTheme = themeClasses[theme] || themeClasses.primary;
     const [bgClass, textColor] = currentTheme.split(' ');
 
+    // Pagination logic
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentArticles = displayArticles.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(displayArticles.length / itemsPerPage);
+
+    const paginate = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     if (isLoading) {
         return <CategorySkeleton />;
     }
@@ -111,53 +125,102 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
                 <div className="flex flex-col lg:flex-row gap-6">
                     <div className="flex-1 min-w-0 space-y-4">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                            {isLoading ? 'Fetching Updates...' : `Showing ${displayArticles.length} ${activeFilters ? 'Search Results' : (category || 'Updates')}`}
+                            {isLoading ? 'Fetching Updates...' : `Showing ${indexOfFirstItem + 1}-${Math.min(indexOfLastItem, displayArticles.length)} of ${displayArticles.length} ${activeFilters ? 'Results' : (category || 'Updates')}`}
                         </p>
 
-                        {displayArticles.length > 0 ? (
-                            displayArticles.map(article => (
-                                <div key={article._id} className={`bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-${theme}-400/30 transition-all duration-200`}>
-                                    <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-700">
-                                        <div className="flex-1 px-5 py-6 md:px-6 md:py-8">
-                                            <div className="flex flex-wrap items-center gap-1.5 mb-3">
-                                                <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300`}>{article.subCategory}</span>
-                                                <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider bg-blue-100 text-blue-700`}>{article.location}</span>
-                                                <div className="shrink-0">
-                                                    <span className={`text-[9px] font-extrabold ${getStatusStyles(article.status).bg} text-white px-2 py-0.5 rounded-md tracking-wide animate-pulse uppercase`}>
-                                                        {article.status || 'NEW'}
-                                                    </span>
+                        {currentArticles.length > 0 ? (
+                            <>
+                                {currentArticles.map(article => (
+                                    <div key={article._id} className={`bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:shadow-md hover:border-${theme}-400/30 transition-all duration-200`}>
+                                        <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-700">
+                                            <div className="flex-1 px-5 py-6 md:px-6 md:py-8">
+                                                <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                                                    <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300`}>{article.subCategory}</span>
+                                                    <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider bg-blue-100 text-blue-700`}>{article.location}</span>
+                                                    <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider text-white animate-pulse ${getStatusStyles(article.status).bg}`}>{article.status || 'NEW'}</span>
+
+                                                </div>
+                                                <Link to={`/${(category || article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug}`}>
+                                                    <h2 className={`text-lg font-bold text-slate-800 dark:text-slate-100 leading-snug hover:${textColor} cursor-pointer transition-colors mb-4`}>{article.title}</h2>
+                                                </Link>
+                                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                                    <div>
+                                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Post Date</p>
+                                                        <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                                                            {new Date(article.postDate || article.createdAt).toLocaleDateString()}
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Location</p>
+                                                        <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{article.location || 'India'}</p>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <Link to={`/${(category || article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug}`}>
-                                                <h2 className={`text-lg font-bold text-slate-800 dark:text-slate-100 leading-snug hover:${textColor} cursor-pointer transition-colors mb-4`}>{article.title}</h2>
-                                            </Link>
-                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                                                <div>
-                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Post Date</p>
-                                                    <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                                                        {new Date(article.postDate || article.createdAt).toLocaleDateString()}
+                                            <div className="w-full md:w-48 xl:w-56 shrink-0 bg-slate-50/50 dark:bg-slate-900/10 px-5 py-6 md:px-6 md:py-8 flex flex-col items-center justify-center text-center gap-4">
+                                                <div className="space-y-1">
+                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Status</p>
+                                                    <p className={`text-xs font-black uppercase tracking-wider ${getStatusStyles(article.status).text}`}>
+                                                        {article.status || 'New'}
                                                     </p>
                                                 </div>
-                                                <div>
-                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Location</p>
-                                                    <p className="text-xs font-bold text-slate-700 dark:text-slate-300">{article.location || 'India'}</p>
-                                                </div>
+                                                <Link to={`/${(category || article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug}`} className={`w-full text-[10px] font-black px-4 py-2.5 rounded-lg uppercase tracking-wider transition-all duration-200 whitespace-nowrap text-center shadow-sm hover:shadow-md bg-${theme === 'primary' ? 'primary' : theme + '-600'} text-white hover:opacity-90`}>
+                                                    View Details
+                                                </Link>
                                             </div>
-                                        </div>
-                                        <div className="w-full md:w-48 xl:w-56 shrink-0 bg-slate-50/50 dark:bg-slate-900/10 px-5 py-6 md:px-6 md:py-8 flex flex-col items-center justify-center text-center gap-4">
-                                            <div className="space-y-1">
-                                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Status</p>
-                                                <p className={`text-xs font-black uppercase tracking-wider ${getStatusStyles(article.status).text}`}>
-                                                    {article.status || 'New'}
-                                                </p>
-                                            </div>
-                                            <Link to={`/${(category || article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug}`} className={`w-full text-[10px] font-black px-4 py-2.5 rounded-lg uppercase tracking-wider transition-all duration-200 whitespace-nowrap text-center shadow-sm hover:shadow-md bg-${theme === 'primary' ? 'primary' : theme + '-600'} text-white hover:opacity-90`}>
-                                                View Details
-                                            </Link>
                                         </div>
                                     </div>
-                                </div>
-                            ))
+                                ))}
+
+                                {/* Pagination UI */}
+                                {totalPages > 1 && (
+                                    <div className="flex flex-wrap justify-center items-center gap-2 pt-8 pb-4">
+                                        <button
+                                            onClick={() => paginate(Math.max(1, currentPage - 1))}
+                                            disabled={currentPage === 1}
+                                            className="size-10 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                        >
+                                            <ChevronLeft size={18} />
+                                        </button>
+
+                                        {[...Array(totalPages)].map((_, i) => {
+                                            const page = i + 1;
+                                            // Show first, last, current, and pages around current
+                                            if (
+                                                page === 1 ||
+                                                page === totalPages ||
+                                                (page >= currentPage - 1 && page <= currentPage + 1)
+                                            ) {
+                                                return (
+                                                    <button
+                                                        key={page}
+                                                        onClick={() => paginate(page)}
+                                                        className={`size-10 flex items-center justify-center rounded-xl text-xs font-bold transition-all ${currentPage === page
+                                                            ? `bg-${theme === 'primary' ? 'primary' : theme + '-600'} text-white shadow-lg shadow-${theme === 'primary' ? 'primary' : theme + '-600'}/25`
+                                                            : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary'
+                                                            }`}
+                                                    >
+                                                        {page}
+                                                    </button>
+                                                );
+                                            } else if (
+                                                page === currentPage - 2 ||
+                                                page === currentPage + 2
+                                            ) {
+                                                return <span key={page} className="text-slate-400 px-1">...</span>;
+                                            }
+                                            return null;
+                                        })}
+
+                                        <button
+                                            onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
+                                            disabled={currentPage === totalPages}
+                                            className="size-10 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                        >
+                                            <ChevronRight size={18} />
+                                        </button>
+                                    </div>
+                                )}
+                            </>
                         ) : (
                             <div className="py-20 text-center bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700">
                                 <p className="text-slate-400 font-bold">{activeFilters ? 'No results found for your filters.' : `No ${category || 'Updates'} found at the moment.`}</p>
@@ -165,7 +228,7 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
                         )}
                     </div>
 
-                    <aside className="w-full lg:w-80 shrink-0 space-y-6">
+                    <aside className="w-full lg:w-80 shrink-0 space-y-4">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                             Quick Links
                         </p>
