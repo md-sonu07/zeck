@@ -58,6 +58,8 @@ const AdmitCardSection = () => {
                             <span className="absolute inset-0 bg-linear-to-r from-blue-50 to-transparent dark:from-blue-950/20 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
                             <Link
                                 to={`/${card.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${card.slug}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="relative flex items-center gap-2.5 px-4 py-[11px]"
                             >
                                 <ChevronRight

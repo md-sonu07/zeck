@@ -71,6 +71,8 @@ const LatestNewsSection = () => {
 
                             <Link
                                 to={`/${(article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="relative flex items-center justify-between gap-3 px-4 py-[11px]"
                             >
                                 <div className="flex items-center gap-2.5 min-w-0">

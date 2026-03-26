@@ -71,6 +71,8 @@ const AnswerKeySyllabus = () => {
                                     <span className="absolute inset-0 bg-linear-to-r from-blue-50 to-transparent dark:from-primary/5 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-r-md" />
                                     <Link
                                         to={`/${item.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${item.slug}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         className="relative flex items-start gap-2 px-2 py-2.5"
                                     >
                                         <ChevronRight
@@ -117,6 +119,8 @@ const AnswerKeySyllabus = () => {
                                     <span className="absolute inset-0 bg-linear-to-r from-blue-50 to-transparent dark:from-primary/5 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-r-md" />
                                     <Link
                                         to={`/${item.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${item.slug}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         className="relative flex items-start gap-2 px-2 py-2.5"
                                     >
                                         <BookOpen

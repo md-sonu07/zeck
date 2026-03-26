@@ -58,6 +58,8 @@ const ResultsSection = () => {
                             <span className="absolute inset-0 bg-linear-to-r from-green-50 to-transparent dark:from-green-950/20 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
                             <Link
                                 to={`/${result.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${result.slug}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="relative flex items-center justify-between gap-2.5 px-4 py-[11px]"
                             >
                                 <div className="flex items-center gap-2.5 min-w-0">
