@@ -8,6 +8,7 @@ import AdmitCardSection from '../../../components/PageSection/home/linkSection/A
 import ResultsSection from '../../../components/PageSection/home/linkSection/ResultsSection';
 import AnswerKeySyllabus from '../../../components/PageSection/home/linkSection/AnswerKeySyllabus';
 import UniversityBoardUpdates from '../../../components/PageSection/home/linkSection/UniversityBoardUpdates';
+import OtherNewsTable from '../../../components/PageSection/home/linkSection/OtherNewsTable';
 import Sidebar from '../../../components/PageSection/home/Sidebar';
 import MobileQuickMenu from '../../../components/PageSection/home/MobileQuickMenu';
 import SEO from '../../../components/common/SEO';
@@ -51,6 +52,9 @@ const HomePage = () => {
                         </div>
                         {/* University & Board Updates */}
                         <UniversityBoardUpdates />
+
+                        {/* Other News Table (Dynamic Sections) */}
+                        <OtherNewsTable />
 
                         {/* Section Label */}
                         <div className="section-label mt-4">

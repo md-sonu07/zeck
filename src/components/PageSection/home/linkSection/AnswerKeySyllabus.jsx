@@ -5,6 +5,15 @@ import { ListItemsSkeleton } from '../../../common/Skeleton';
 import { fetchArticles } from '../../../../store/thunk/articleThunk';
 import { Link } from 'react-router-dom';
 
+const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+        case 'started': return 'bg-green-500';
+        case 'completed': return 'bg-blue-500';
+        case 'data expand': return 'bg-orange-500';
+        default: return 'bg-red-500';
+    }
+};
+
 const AnswerKeySyllabus = () => {
     const dispatch = useDispatch();
     const [answerKeys, setAnswerKeys] = useState([]);
@@ -73,14 +82,19 @@ const AnswerKeySyllabus = () => {
                                         to={`/${item.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${item.slug}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="relative flex items-start gap-2 px-2 py-2.5"
+                                        className="relative flex items-start justify-between gap-2 px-2 py-2.5"
                                     >
-                                        <ChevronRight
-                                            size={13}
-                                            className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-primary group-hover:translate-x-0.5 mt-0.5 transition-all duration-200"
-                                        />
-                                        <span className="text-[14px] font-semibold text-slate-700 dark:text-slate-200 group-hover:text-primary transition-all duration-200 leading-snug truncate block w-full">
-                                            {item.title}
+                                        <div className="flex items-start gap-2 min-w-0">
+                                            <ChevronRight
+                                                size={13}
+                                                className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-primary group-hover:translate-x-0.5 mt-0.5 transition-all duration-200"
+                                            />
+                                            <span className="text-[14px] font-semibold text-slate-700 dark:text-slate-200 group-hover:text-primary transition-all duration-200 leading-snug truncate block w-full">
+                                                {item.title}
+                                            </span>
+                                        </div>
+                                        <span className={`shrink-0 text-[8px] font-black px-1.5 py-0.5 rounded-sm h-fit uppercase tracking-tighter text-white ${getStatusColor(item.status)}`}>
+                                            {item.status || 'NEW'}
                                         </span>
                                     </Link>
                                 </li>
@@ -121,14 +135,19 @@ const AnswerKeySyllabus = () => {
                                         to={`/${item.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${item.slug}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="relative flex items-start gap-2 px-2 py-2.5"
+                                        className="relative flex items-start justify-between gap-2 px-2 py-2.5"
                                     >
-                                        <BookOpen
-                                            size={13}
-                                            className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-primary mt-0.5 transition-colors duration-200"
-                                        />
-                                        <span className="text-[14px] font-semibold text-slate-700 dark:text-slate-200 group-hover:text-primary transition-all duration-200 leading-snug truncate block w-full">
-                                            {item.title}
+                                        <div className="flex items-start gap-2 min-w-0">
+                                            <BookOpen
+                                                size={13}
+                                                className="shrink-0 text-slate-300 dark:text-slate-600 group-hover:text-primary mt-0.5 transition-colors duration-200"
+                                            />
+                                            <span className="text-[14px] font-semibold text-slate-700 dark:text-slate-200 group-hover:text-primary transition-all duration-200 leading-snug truncate block w-full">
+                                                {item.title}
+                                            </span>
+                                        </div>
+                                        <span className={`shrink-0 text-[8px] font-black px-1.5 py-0.5 rounded-sm h-fit uppercase tracking-tighter text-white ${getStatusColor(item.status)}`}>
+                                            {item.status || 'NEW'}
                                         </span>
                                     </Link>
                                 </li>

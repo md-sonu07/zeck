@@ -25,6 +25,7 @@ import {
     CreditCard,
     MessageSquare
 } from 'lucide-react';
+import { logout as logoutUser } from '../../store/thunk/authThunk';
 
 
 
@@ -75,8 +76,8 @@ const AdminLayout = () => {
     const directNavItem = navItems.find(item => location.pathname === item.path || (item.path !== '/admin' && location.pathname.startsWith(item.path)));
 
     const handleLogout = () => {
-        // Handle logout logic, then navigate
-        navigate('/');
+        dispatch(logoutUser());
+        navigate('/login');
     };
 
     return (

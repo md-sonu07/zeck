@@ -5,6 +5,15 @@ import { ListItemsSkeleton } from '../../../common/Skeleton';
 import { fetchArticles } from '../../../../store/thunk/articleThunk';
 import { Link } from 'react-router-dom';
 
+const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+        case 'started': return 'bg-green-500';
+        case 'completed': return 'bg-blue-500';
+        case 'data expand': return 'bg-orange-500';
+        default: return 'bg-red-500';
+    }
+};
+
 const ResultsSection = () => {
     const dispatch = useDispatch();
     const [results, setResults] = useState([]);
@@ -56,27 +65,27 @@ const ResultsSection = () => {
                         >
                             {/* Hover glow strip */}
                             <span className="absolute inset-0 bg-linear-to-r from-green-50 to-transparent dark:from-green-950/20 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
-                            <Link
-                                to={`/${result.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${result.slug}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="relative flex items-center justify-between gap-2.5 px-4 py-[11px]"
-                            >
-                                <div className="flex items-center gap-2.5 min-w-0">
-                                    <ChevronRight
-                                        size={13}
-                                        className="shrink-0 text-green-300 dark:text-green-600 group-hover:text-green-600 dark:group-hover:text-green-400 group-hover:translate-x-1 transition-all duration-200"
-                                    />
-                                    <span className="text-[14px] font-semibold text-slate-700 dark:text-slate-200 group-hover:text-green-700 dark:group-hover:text-green-300 transition-all duration-200 leading-snug truncate">
-                                        {result.title}
-                                    </span>
-                                </div>
-                                {result.status?.toLowerCase() === 'new' && (
-                                    <span className="shrink-0 bg-red-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-md animate-pulse">
-                                        NEW
-                                    </span>
-                                )}
-                            </Link>
+                                <Link
+                                    to={`/${result.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${result.slug}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="relative flex items-center justify-between gap-2.5 px-4 py-[11px]"
+                                >
+                                    <div className="flex items-center gap-2.5 min-w-0">
+                                        <ChevronRight
+                                            size={13}
+                                            className="shrink-0 text-green-300 dark:text-green-600 group-hover:text-green-600 dark:group-hover:text-green-400 group-hover:translate-x-1 transition-all duration-200"
+                                        />
+                                        <span className="text-[14px] font-semibold text-slate-700 dark:text-slate-200 group-hover:text-green-700 dark:group-hover:text-green-300 transition-all duration-200 leading-snug truncate">
+                                            {result.title}
+                                        </span>
+                                    </div>
+                                    <div className="shrink-0">
+                                        <span className={`text-[9px] font-extrabold ${getStatusColor(result.status)} text-white px-2 py-0.5 rounded-md tracking-wide animate-pulse uppercase`}>
+                                            {result.status || 'NEW'}
+                                        </span>
+                                    </div>
+                                </Link>
                         </li>
                     ))
                 ) : (

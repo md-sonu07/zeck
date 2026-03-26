@@ -25,6 +25,9 @@ import SearchResultsPage from '../pages/user/search/SearchResultsPage';
 import ApplicationPage from '../pages/user/apply/ApplicationPage';
 
 
+import DynamicCategoryPage from '../pages/user/dynamic/DynamicCategoryPage';
+
+
 const AppRoutes = () => {
     return (
         <Routes>
@@ -59,6 +62,9 @@ const AppRoutes = () => {
 
             {/* Dynamic Article Detail Page Route */}
             <Route path="/:category/:slug" element={<ArticleDetailPage />} />
+
+            {/* Dynamic Category Page Route (handles sections like /bca-batch) */}
+            <Route path="/:categorySlug" element={<DynamicCategoryPage />} />
 
             {/* Catch all 404 */}
             <Route path="*" element={<HomePage />} />

@@ -329,8 +329,12 @@ const UsersManagementPage = () => {
                                     <tr key={user._id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors group">
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="size-10 rounded-full bg-linear-to-br from-primary to-blue-600 text-white flex items-center justify-center font-bold shadow-sm">
-                                                    {user.name.charAt(0).toUpperCase()}
+                                                <div className="size-10 rounded-full bg-linear-to-br from-primary to-blue-600 text-white flex items-center justify-center font-bold shadow-sm overflow-hidden">
+                                                    {user.avatar ? (
+                                                        <img src={user.avatar} alt={user.name} className="size-full object-cover " />
+                                                    ) : (
+                                                        user.name.charAt(0).toUpperCase()
+                                                    )}
                                                 </div>
                                                 <div>
                                                     <p className="font-bold text-slate-800 dark:text-white">{user.name}</p>
@@ -444,8 +448,12 @@ const UsersManagementPage = () => {
                         </div>
                         <div className="p-6 space-y-4">
                             <div className="flex items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
-                                <div className="size-16 rounded-full bg-linear-to-br from-primary to-blue-600 text-white flex items-center justify-center text-2xl font-black shadow-lg">
-                                    {selectedUser.name.charAt(0).toUpperCase()}
+                                <div className="size-20 rounded-full bg-linear-to-br from-primary to-blue-600 text-white flex items-center justify-center text-2xl font-black shadow-lg overflow-hidden">
+                                    {selectedUser.avatar ? (
+                                        <img src={selectedUser.avatar} alt={selectedUser.name} className="size-full object-cover" />
+                                    ) : (
+                                        selectedUser.name.charAt(0).toUpperCase()
+                                    )}
                                 </div>
                                 <div>
                                     <h4 className="text-lg font-bold text-slate-800 dark:text-white">{selectedUser.name}</h4>
@@ -469,10 +477,6 @@ const UsersManagementPage = () => {
                                 <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl col-span-2">
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Phone Number</p>
                                     <p className="font-bold text-slate-700 dark:text-slate-200">{selectedUser.phone || 'Not Provided'}</p>
-                                </div>
-                                <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl col-span-2">
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">User ID</p>
-                                    <p className="font-bold text-slate-700 dark:text-slate-200 text-sm">{selectedUser._id}</p>
                                 </div>
                             </div>
                         </div>

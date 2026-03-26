@@ -515,30 +515,32 @@ const ProfilePage = () => {
                         <form onSubmit={handleUpdateProfile} className="space-y-6">
                             <div className="space-y-5">
                                 {/* Avatar Upload */}
-                                <div className="flex flex-col items-center gap-4 mb-2">
-                                    <div className="relative group">
-                                        <div className="size-24 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border-2 border-slate-200 dark:border-slate-700 group-hover:border-primary transition-colors">
-                                            {avatarPreview ? (
-                                                <img src={avatarPreview} alt="Preview" className="size-full object-cover" />
-                                            ) : (
-                                                <User size={32} className="text-slate-300" />
-                                            )}
-                                            <div className="absolute rounded-xl inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer">
-                                                <Camera size={20} className="text-white" />
+                                {userDetails?.isAdmin && (
+                                    <div className="flex flex-col items-center gap-4 mb-2">
+                                        <div className="relative group">
+                                            <div className="size-24 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border-2 border-slate-200 dark:border-slate-700 group-hover:border-primary transition-colors">
+                                                {avatarPreview ? (
+                                                    <img src={avatarPreview} alt="Preview" className="size-full object-cover" />
+                                                ) : (
+                                                    <User size={32} className="text-slate-300" />
+                                                )}
+                                                <div className="absolute rounded-xl inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer">
+                                                    <Camera size={20} className="text-white" />
+                                                </div>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="absolute inset-0 opacity-0 cursor-pointer"
+                                                    onChange={handleAvatarChange}
+                                                />
                                             </div>
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                className="absolute inset-0 opacity-0 cursor-pointer"
-                                                onChange={handleAvatarChange}
-                                            />
+                                            <div className="absolute -bottom-2 -right-2 p-1.5 bg-primary text-white rounded-lg shadow-lg">
+                                                <Upload size={12} />
+                                            </div>
                                         </div>
-                                        <div className="absolute -bottom-2 -right-2 p-1.5 bg-primary text-white rounded-lg shadow-lg">
-                                            <Upload size={12} />
-                                        </div>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Profile Photo</p>
                                     </div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Profile Photo</p>
-                                </div>
+                                )}
 
                                 <div>
                                     <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Full Name</label>

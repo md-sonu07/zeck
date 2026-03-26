@@ -42,7 +42,7 @@ const CardSkeleton = ({ height = "120px", className = "" }) => (
 const ListItemSkeleton = () => (
     <div className="flex items-center justify-between gap-4 p-4 border-b border-slate-50 dark:border-slate-800 last:border-0">
         <div className="flex items-center gap-3 flex-1">
-            <Skeleton width="24px" height="14px" />
+            {/* <Skeleton width="24px" height="14px" /> */}
             <Skeleton width="14px" height="14px" />
             <div className="flex-1 max-w-md">
                 <Skeleton width="90%" height="16px" />
@@ -115,28 +115,97 @@ export const ProfileSkeleton = () => {
         <div className="min-h-[80vh] bg-slate-100 dark:bg-slate-950 py-10 px-4">
             <div className="max-w-6xl mx-auto">
                 <div className="flex flex-col lg:flex-row gap-5">
-                    <div className="flex-1 min-w-0">
+                    {/* Main Content */}
+                    <div className="flex-1 min-w-0 space-y-6">
+                        {/* Profile Box */}
                         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-                            <div className="bg-slate-200 dark:bg-slate-800 p-6 md:p-8">
-                                <div className="flex flex-col md:flex-row items-center gap-5">
+                            {/* Banner */}
+                            <div className="bg-slate-200 dark:bg-slate-800 p-6 md:p-8 animate-pulse">
+                                <div className="flex flex-col md:flex-row items-center gap-5 md:gap-6">
                                     <Skeleton width="144px" height="144px" className="rounded-3xl shrink-0" />
                                     <div className="flex-1 text-center md:text-left space-y-3">
-                                        <Skeleton width="200px" height="32px" className="hidden md:block" />
-                                        <Skeleton width="150px" height="16px" className="hidden md:block" />
-                                        <div className="flex gap-2 justify-center md:justify-start">
-                                            <Skeleton width="80px" height="40px" />
-                                            <Skeleton width="80px" height="40px" />
-                                        </div>
+                                        <Skeleton width="220px" height="32px" className="rounded-lg mx-auto md:mx-0" />
+                                        <Skeleton width="150px" height="16px" className="rounded-md mx-auto md:mx-0" />
+                                        <Skeleton width="80px" height="18px" className="rounded-full mx-auto md:mx-0 mt-2" />
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <Skeleton width="75px" height="60px" className="rounded-xl" />
+                                        <Skeleton width="75px" height="60px" className="rounded-xl" />
+                                        <Skeleton width="75px" height="60px" className="rounded-xl" />
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Info Rows */}
                             <div className="divide-y divide-slate-50 dark:divide-slate-800">
-                                {[1, 2, 3].map(i => (
+                                {[1, 2, 3, 4].map(i => (
                                     <div key={i} className="flex items-center justify-between px-6 md:px-8 py-4">
-                                        <Skeleton width="150px" height="14px" />
-                                        <Skeleton width="100px" height="14px" />
+                                        <div className="flex items-center gap-3">
+                                            <Skeleton width="15px" height="15px" circle />
+                                            <Skeleton width="100px" height="12px" />
+                                        </div>
+                                        <Skeleton width="120px" height="14px" />
                                     </div>
                                 ))}
+                            </div>
+
+                            {/* Buttons Area */}
+                            <div className="border-t border-slate-100 dark:border-slate-800 px-4 md:px-8 py-5 flex flex-col md:flex-row gap-3">
+                                <Skeleton width="140px" height="40px" className="rounded-xl" />
+                                <Skeleton width="140px" height="40px" className="rounded-xl" />
+                                <div className="flex gap-3 w-full md:w-auto md:ml-auto">
+                                    <Skeleton width="140px" height="40px" className="rounded-xl flex-1 md:flex-none" />
+                                    <Skeleton width="140px" height="40px" className="rounded-xl flex-1 md:flex-none" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Activities Section */}
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                            <div className="px-6 md:px-8 py-5 border-b border-slate-50 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+                                <Skeleton width="150px" height="24px" className="rounded-lg" />
+                                <Skeleton width="220px" height="45px" className="rounded-[1.25rem]" />
+                            </div>
+                            <div className="p-2">
+                                {[1, 2, 3].map(i => (
+                                    <div key={i} className="px-6 md:px-8 py-5 flex items-center justify-between gap-4">
+                                        <div className="flex items-center gap-4 flex-1">
+                                            <Skeleton width="48px" height="48px" className="rounded-xl shrink-0" />
+                                            <div className="space-y-2 flex-1">
+                                                <Skeleton width="60%" height="16px" className="rounded-md" />
+                                                <div className="flex gap-2">
+                                                    <Skeleton width="80px" height="10px" className="rounded-md" />
+                                                    <Skeleton width="60px" height="10px" className="rounded-md" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <Skeleton width="20px" height="20px" circle />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Sidebar */}
+                    <div className="w-full lg:w-72 shrink-0 space-y-5">
+                        <Skeleton height="160px" className="rounded-2xl" />
+                        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden p-4 space-y-4">
+                            <Skeleton width="100px" height="12px" className="rounded-md" />
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-3 p-2">
+                                    <Skeleton width="32px" height="32px" className="rounded-lg shrink-0" />
+                                    <div className="space-y-2 flex-1">
+                                        <Skeleton width="60%" height="12px" className="rounded-md" />
+                                        <Skeleton width="40%" height="10px" className="rounded-md" />
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-3 p-2">
+                                    <Skeleton width="32px" height="32px" className="rounded-lg shrink-0" />
+                                    <div className="space-y-2 flex-1">
+                                        <Skeleton width="60%" height="12px" className="rounded-md" />
+                                        <Skeleton width="40%" height="10px" className="rounded-md" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

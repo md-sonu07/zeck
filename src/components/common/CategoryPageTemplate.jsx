@@ -15,6 +15,31 @@ const isNew = (article) => {
     return diffInDays <= 2;
 };
 
+const getStatusStyles = (status) => {
+    switch (status?.toLowerCase()) {
+        case 'started':
+            return {
+                bg: 'bg-green-500',
+                text: 'text-green-600'
+            };
+        case 'completed':
+            return {
+                bg: 'bg-blue-500',
+                text: 'text-blue-600'
+            };
+        case 'data expand':
+            return {
+                bg: 'bg-orange-500',
+                text: 'text-orange-600'
+            };
+        default:
+            return {
+                bg: 'bg-red-500',
+                text: 'text-rose-600'
+            };
+    }
+};
+
 const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, title: pageTitle, description, filter: customFilter, limit = 40 }) => {
     const dispatch = useDispatch();
     const [articles, setArticles] = useState([]);
@@ -96,7 +121,11 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
                                             <div className="flex flex-wrap items-center gap-1.5 mb-3">
                                                 <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300`}>{article.subCategory}</span>
                                                 <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider bg-blue-100 text-blue-700`}>{article.location}</span>
-                                                {isNew(article) && <span className="bg-green-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider">New</span>}
+                                                <div className="shrink-0">
+                                                    <span className={`text-[9px] font-extrabold ${getStatusStyles(article.status).bg} text-white px-2 py-0.5 rounded-md tracking-wide animate-pulse uppercase`}>
+                                                        {article.status || 'NEW'}
+                                                    </span>
+                                                </div>
                                             </div>
                                             <Link to={`/${(category || article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug}`}>
                                                 <h2 className={`text-lg font-bold text-slate-800 dark:text-slate-100 leading-snug hover:${textColor} cursor-pointer transition-colors mb-4`}>{article.title}</h2>
@@ -117,7 +146,9 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
                                         <div className="w-full md:w-48 xl:w-56 shrink-0 bg-slate-50/50 dark:bg-slate-900/10 px-5 py-6 md:px-6 md:py-8 flex flex-col items-center justify-center text-center gap-4">
                                             <div className="space-y-1">
                                                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Status</p>
-                                                <p className={`text-xs font-black uppercase tracking-wider text-green-600`}>Active</p>
+                                                <p className={`text-xs font-black uppercase tracking-wider ${getStatusStyles(article.status).text}`}>
+                                                    {article.status || 'New'}
+                                                </p>
                                             </div>
                                             <Link to={`/${(category || article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug}`} className={`w-full text-[10px] font-black px-4 py-2.5 rounded-lg uppercase tracking-wider transition-all duration-200 whitespace-nowrap text-center shadow-sm hover:shadow-md bg-${theme === 'primary' ? 'primary' : theme + '-600'} text-white hover:opacity-90`}>
                                                 View Details

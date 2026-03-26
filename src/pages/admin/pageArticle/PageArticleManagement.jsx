@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { fetchPageSections, createPageSection, deletePageSection } from '../../../store/thunk/pageSectionThunk';
+import { fetchArticles } from '../../../store/thunk/articleThunk';   // Other News Table
 
 const defaultSections = [
     { id: '1', title: 'Latest News', path: '/admin/latest-news', iconName: 'Newspaper', color: 'bg-blue-500', description: 'Manage new and recent updates', isDefault: true },
@@ -37,6 +38,7 @@ const iconMap = {
 const PageArticleManagement = () => {
     const dispatch = useDispatch();
     const { sections: customSections, loading } = useSelector((state) => state.pageSections);
+    const { items: allArticles } = useSelector((state) => state.articles);   // Other News Table
 
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [newTitle, setNewTitle] = useState('');
@@ -46,6 +48,7 @@ const PageArticleManagement = () => {
 
     useEffect(() => {
         dispatch(fetchPageSections());
+        dispatch(fetchArticles({ includeDrafts: 'true' }));  //Other News Table
     }, [dispatch]);
 
     const handleAddClick = () => {
@@ -236,6 +239,79 @@ const PageArticleManagement = () => {
                     <span className="text-xs font-bold text-slate-600 dark:text-slate-300 tracking-tight">Syncing with server...</span>
                 </div>
             )}
+
+            {/* Other News Table */}
+            <div className="mt-12 space-y-4">
+                <div className="flex items-center gap-3 px-1">
+                    <div className="size-10 rounded-xl bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/20">
+                        <Newspaper size={20} />
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-black text-slate-800 dark:text-white tracking-tight">Other News</h2>
+                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Custom Section Overview</p>
+                    </div>
+                </div>
+
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/60 overflow-hidden">
+                    <div className="overflow-x-auto custom-scrollbar">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700">
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest w-1/4">Page Title</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest w-3/4">Article Links</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50 dark:divide-slate-700">
+                                {customSections.length > 0 ? (
+                                    customSections.map((section) => {
+                                        const sectionArticles = allArticles.filter(art => 
+                                            art.mainCategory?.toLowerCase() === section.title?.toLowerCase()
+                                        );
+
+                                        return (
+                                            <tr key={section._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/20 transition-all">
+                                                <td className="px-8 py-6 align-top">
+                                                    <div className="flex flex-col gap-1">
+                                                        <span className="text-sm font-black text-slate-800 dark:text-white">{section.title}</span>
+                                                        <span className="text-[10px] font-bold text-primary uppercase tracking-wider">Custom Section</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-8 py-6">
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {sectionArticles.length > 0 ? (
+                                                            sectionArticles.map((art) => (
+                                                                <Link
+                                                                    key={art._id}
+                                                                    to={`/admin/custom/${encodeURIComponent(section.title)}`}
+                                                                    className="group flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg hover:border-primary hover:bg-white dark:hover:bg-slate-800 transition-all shadow-sm"
+                                                                >
+                                                                    <div className="size-1.5 rounded-full bg-primary/40 group-hover:bg-primary group-hover:animate-pulse transition-all"></div>
+                                                                    <span className="text-xs font-bold text-slate-600 dark:text-slate-300 group-hover:text-primary transition-colors">
+                                                                        {art.title}
+                                                                    </span>
+                                                                    <ArrowRight size={12} className="text-slate-300 dark:text-slate-600 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                                                                </Link>
+                                                            ))
+                                                        ) : (
+                                                            <span className="text-xs font-semibold text-slate-400 dark:text-slate-500 italic">No articles found in this section.</span>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                ) : (
+                                    <tr>
+                                        <td colSpan="2" className="px-8 py-10 text-center text-sm font-semibold text-slate-400 dark:text-slate-500 italic">
+                                            No custom sections created yet. Use "Create New Page" to get started.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

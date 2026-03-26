@@ -517,20 +517,22 @@ const PostManagementPage = ({ categoryTitle }) => {
                                                     <>
                                                         <div className="fixed inset-0 z-10" onClick={() => setIsDropdownOpen(false)}></div>
                                                         <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl shadow-xl py-2 z-20 animate-in fade-in slide-in-from-top-2 duration-200">
-                                                            {availableCategories.map((cat, i) => {
-                                                                const isSelected = selectedCategory === cat.toLowerCase();
-                                                                return (
-                                                                    <button
-                                                                        key={i}
-                                                                        type="button"
-                                                                        onClick={() => { setSelectedCategory(cat.toLowerCase()); setIsDropdownOpen(false); }}
-                                                                        className={`w-full text-left px-4 py-2 text-sm font-semibold transition-colors flex items-center justify-between ${isSelected ? 'bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'}`}
-                                                                    >
-                                                                        <span>{cat}</span>
-                                                                        {isSelected && <span className="text-orange-500">✓</span>}
-                                                                    </button>
-                                                                );
-                                                            })}
+                                                            <div className="max-h-52 overflow-y-auto custom-scrollbar">
+                                                                {availableCategories.map((cat, i) => {
+                                                                    const isSelected = selectedCategory === cat.toLowerCase();
+                                                                    return (
+                                                                        <button
+                                                                            key={i}
+                                                                            type="button"
+                                                                            onClick={() => { setSelectedCategory(cat.toLowerCase()); setIsDropdownOpen(false); }}
+                                                                            className={`w-full text-left px-4 py-2 text-sm font-semibold transition-colors flex items-center justify-between ${isSelected ? 'bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'}`}
+                                                                        >
+                                                                            <span>{cat}</span>
+                                                                            {isSelected && <span className="text-orange-500">✓</span>}
+                                                                        </button>
+                                                                    );
+                                                                })}
+                                                            </div>
                                                         </div>
                                                     </>
                                                 )}
@@ -559,20 +561,22 @@ const PostManagementPage = ({ categoryTitle }) => {
                                                     <>
                                                         <div className="fixed inset-0 z-10" onClick={() => setIsResourceDropdownOpen(false)}></div>
                                                         <div className="absolute top-[calc(100%+8px)] left-0 w-full bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl shadow-xl py-2 z-20 animate-in fade-in slide-in-from-top-2 duration-200">
-                                                            {availableResources.map((res, i) => {
-                                                                const isSelected = selectedResource === res.toLowerCase();
-                                                                return (
-                                                                    <button
-                                                                        key={i}
-                                                                        type="button"
-                                                                        onClick={() => { setSelectedResource(res.toLowerCase()); setIsResourceDropdownOpen(false); }}
-                                                                        className={`w-full text-left px-4 py-2 text-sm font-semibold transition-colors flex items-center justify-between ${isSelected ? 'bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'}`}
-                                                                    >
-                                                                        <span>{res}</span>
-                                                                        {isSelected && <span className="text-violet-500">✓</span>}
-                                                                    </button>
-                                                                );
-                                                            })}
+                                                            <div className="max-h-52 overflow-y-auto custom-scrollbar">
+                                                                {availableResources.map((res, i) => {
+                                                                    const isSelected = selectedResource === res.toLowerCase();
+                                                                    return (
+                                                                        <button
+                                                                            key={i}
+                                                                            type="button"
+                                                                            onClick={() => { setSelectedResource(res.toLowerCase()); setIsResourceDropdownOpen(false); }}
+                                                                            className={`w-full text-left px-4 py-2 text-sm font-semibold transition-colors flex items-center justify-between ${isSelected ? 'bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400' : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'}`}
+                                                                        >
+                                                                            <span>{res}</span>
+                                                                            {isSelected && <span className="text-violet-500">✓</span>}
+                                                                        </button>
+                                                                    );
+                                                                })}
+                                                            </div>
                                                         </div>
                                                     </>
                                                 )}

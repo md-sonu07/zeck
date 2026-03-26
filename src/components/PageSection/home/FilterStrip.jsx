@@ -47,7 +47,7 @@ const CustomSelect = ({ label, options, value, onChange }) => {
 
             {/* Dropdown Panel */}
             {open && (
-                <div className="absolute z-200 mt-1.5 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl shadow-slate-200/60 dark:shadow-black/40 overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
+                <div className="absolute z-200 mt-1.5 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl shadow-slate-200/60 dark:shadow-black/40 overflow-y-auto custom-scrollbar max-h-64 animate-in fade-in slide-in-from-top-1 duration-150">
                     {options.map((opt) => (
                         <button
                             key={opt.value}
@@ -205,6 +205,14 @@ const FilterStrip = () => {
                         onChange={setCategory}
                     />
 
+                    {/* Resource Type */}
+                    <CustomSelect
+                        label="Resource"
+                        options={RESOURCES}
+                        value={resource}
+                        onChange={setResource}
+                    />
+                    
                     {/* Location */}
                     <CustomSelect
                         label="Location"
@@ -213,13 +221,7 @@ const FilterStrip = () => {
                         onChange={setState}
                     />
 
-                    {/* Resource Type */}
-                    <CustomSelect
-                        label="Resource"
-                        options={RESOURCES}
-                        value={resource}
-                        onChange={setResource}
-                    />
+                    
 
                     {/* Apply Button */}
                     <button
@@ -254,14 +256,14 @@ const FilterStrip = () => {
                                         Category: {category}
                                     </span>
                                 )}
-                                {state && (
-                                    <span className="text-[10px] font-bold bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-lg">
-                                        Location: {state}
-                                    </span>
-                                )}
                                 {resource && (
                                     <span className="text-[10px] font-bold bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-2.5 py-1 rounded-lg">
                                         Resource: {resource}
+                                    </span>
+                                )}
+                                {state && (
+                                    <span className="text-[10px] font-bold bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-lg">
+                                        Location: {state}
                                     </span>
                                 )}
                             </>
