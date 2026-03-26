@@ -5,6 +5,7 @@ import { ChevronRight, Home, MessageCircle, ChevronLeft, Send, MapPin, Calendar,
 import { CategorySkeleton } from './Skeleton';
 import FilterStrip from '../PageSection/home/FilterStrip';
 import { Link } from 'react-router-dom';
+import QuickLinksWidget from './QuickLinksWidget';
 
 const isNew = (article) => {
     const date = article?.postDate || article?.createdAt;
@@ -165,6 +166,10 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
                     </div>
 
                     <aside className="w-full lg:w-80 shrink-0 space-y-6">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Quick Links
+                        </p>
+                        <QuickLinksWidget />
                         <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm">
                             <div className={`${bgClass} px-4 py-3 flex items-center gap-2`}>
 

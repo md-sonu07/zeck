@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 import './quill-content.css';
 import SEO from '../../../components/common/SEO';
 import { ArticleSkeleton } from '../../../components/common/Skeleton';
+import QuickLinksWidget from '../../../components/common/QuickLinksWidget';
 
 const ArticleDetailPage = () => {
     const { slug } = useParams();
@@ -356,7 +357,7 @@ const ArticleDetailPage = () => {
                                 </div>
                             )}
 
-                            {/* Tags Widget */}
+                            {/* Related Keywords Widgets */}
                             {article.tags && article.tags.length > 0 && (
                                 <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
                                     <div className="bg-slate-800 dark:bg-slate-700 px-5 py-3 flex items-center gap-2">
@@ -375,6 +376,9 @@ const ArticleDetailPage = () => {
                                     </div>
                                 </div>
                             )}
+
+                            {/* Quick Links Widget */}
+                            <QuickLinksWidget />
 
                         </div>
                     </aside>
