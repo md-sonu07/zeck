@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Newspaper, CheckCircle, IdCard, GraduationCap } from 'lucide-react';
+import { Newspaper, CheckCircle, IdCard, GraduationCap, ShieldCheck } from 'lucide-react';
 
 const HeroBanner = () => {
     return (
@@ -30,9 +30,19 @@ const HeroBanner = () => {
                                     ZOYA EDUCATION CENTER
                                 </span>
                             </h1>
-                            <h2 className="text-2xl md:text-3xl font-black text-white leading-tight max-w-4xl">
+                            {/* Minimalist Bold Certification - Clean & Authoritative */}
+                            <div className="mb-8 border-l-4 border-yellow-400 pl-5 py-0.5 group cursor-default">
+                                <h3 className="text-white text-xl font-black tracking-tight uppercase leading-none group-hover:translate-x-1 transition-transform duration-300">
+                                    ISO 9001:2015 <span className="text-yellow-300 font-mono italic">Certified</span>
+                                </h3>
+                                <p className="text-white/90 text-[10px] font-bold tracking-[0.3em] uppercase mt-2 font-mono">
+                                    License: Q2A-2026-0330T117681
+                                </p>
+                            </div>
+
+                            <h2 className="text-2xl md:text-4xl font-black text-white leading-tight max-w-4xl tracking-tight -mt-4">
                                 India's Most Trusted {" "}
-                                <span className="text-yellow-300 drop-shadow-sm block sm:inline">Latest News & Recruitment Portal</span>
+                                <span className="text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,0.4)] block sm:inline">Latest News & Recruitment Portal</span>
                             </h2>
                         </div>
 
