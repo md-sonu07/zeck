@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { initTheme } from './store/slice/themeSlice';
@@ -8,6 +8,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import AppRoutes from './routes/AppRoutes';
 import { Toaster } from 'react-hot-toast';
+import UpgradeModal from './components/common/UpgradeModal';
 
 const AppContent = () => {
   const { darkMode } = useSelector((state) => state.theme);
@@ -28,11 +29,17 @@ const AppContent = () => {
   }, [location.pathname]);
 
   if (isAdminRoute) {
-    return <AppRoutes />;
+    return (
+      <>
+        <UpgradeModal />
+        <AppRoutes />
+      </>
+    );
   }
 
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark flex flex-col transition-colors duration-300">
+      <UpgradeModal />
       <TopBar />
       {/* Sticky Header & Navbar Wrapper */}
       <div className="sticky top-0 z-50 w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
