@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAboutSettings, updateAboutSettings } from '../../../store/thunk/aboutThunk';
-import { Save, Image as ImageIcon, FileText, Upload, Loader2, Info } from 'lucide-react';
+import { Save, Image as ImageIcon, Upload, Info } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Button from '../../../components/ui/Button';
 
 const AboutManagementPage = () => {
     const dispatch = useDispatch();
@@ -80,14 +81,13 @@ const AboutManagementPage = () => {
         setSaving(true);
         const toastId = toast.loading('Saving about page settings...');
         try {
-            const formData = {
-                title,
-                description,
-                imageUrl: imagePreview || imageUrl,
-                banner1Url: banner1Preview || banner1Url,
-                banner2Url: banner2Preview || banner2Url,
-                whatsappGroupUrl: whatsappPreview || whatsappGroupUrl,
-            };
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('description', description);
+            if (imageFile) formData.append('image', imageFile);
+            if (banner1File) formData.append('banner1', banner1File);
+            if (banner2File) formData.append('banner2', banner2File);
+            if (whatsappFile) formData.append('whatsapp', whatsappFile);
             await dispatch(updateAboutSettings(formData)).unwrap();
             toast.success('About page updated successfully!', { id: toastId });
         } catch (error) {
@@ -215,14 +215,9 @@ const AboutManagementPage = () => {
                         </div>
 
                         <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end">
-                            <button
-                                type="submit"
-                                disabled={saving}
-                                className="flex items-center gap-2 px-8 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold transition-all shadow-md disabled:opacity-50"
-                            >
-                                {saving ? <Loader2 className="animate-spin size-4" /> : <Save className="size-4" />}
+                            <Button type="submit" loading={saving} icon={Save}>
                                 {saving ? 'Saving...' : 'Save Settings'}
-                            </button>
+                            </Button>
                         </div>
                     </form>
                 </div>

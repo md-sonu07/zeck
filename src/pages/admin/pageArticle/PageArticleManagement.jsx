@@ -26,7 +26,6 @@ const defaultSections = [
     { id: '2', title: 'Admit Card', path: '/admin/admit-cards', iconName: 'FileText', color: 'bg-amber-500', description: 'Update examination admit card releases', isDefault: true },
     { id: '3', title: 'Result', path: '/admin/results', iconName: 'CheckCircle', color: 'bg-green-500', description: 'Publish final or preliminary exam results', isDefault: true },
     { id: '4', title: 'Answer Key', path: '/admin/answer-key', iconName: 'Key', color: 'bg-teal-500', description: 'Upload official answer keys and objections', isDefault: true },
-    { id: '5', title: 'Syllabus', path: '/admin/syllabus', iconName: 'BookOpen', color: 'bg-purple-500', description: 'Manage detailed exam syllabi and patterns', isDefault: true },
     { id: '6', title: 'Admission', path: '/admin/admission', iconName: 'GraduationCap', color: 'bg-indigo-500', description: 'Update college and entrance admissions', isDefault: true },
     { id: '7', title: 'University', path: '/admin/university', iconName: 'School', color: 'bg-rose-500', description: 'Handle university-specific updates', isDefault: true },
 ];

@@ -461,4 +461,54 @@ export const ApplicationSkeleton = () => (
     </div>
 );
 
+/**
+ * Gallery Page Skeleton
+ */
+export const GallerySkeleton = () => (
+    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8">
+        <div className="flex items-center gap-4 mb-10">
+            <Skeleton width="56px" height="56px" className="rounded-2xl" />
+            <div className="space-y-2">
+                <Skeleton width="200px" height="28px" />
+                <Skeleton width="140px" height="14px" />
+            </div>
+        </div>
+        <div className="mb-14">
+            <div className="flex items-center gap-3 mb-6">
+                <Skeleton width="40px" height="40px" className="rounded-xl" />
+                <Skeleton width="120px" height="24px" />
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {[1, 2, 3, 4, 5].map(i => (
+                    <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                        <Skeleton height="280px" className="rounded-none" />
+                        <div className="p-3 space-y-2">
+                            <Skeleton width="70%" height="14px" />
+                            <Skeleton width="50%" height="10px" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+        <div>
+            <div className="flex items-center gap-3 mb-6">
+                <Skeleton width="40px" height="40px" className="rounded-xl" />
+                <Skeleton width="180px" height="24px" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                    <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                        <Skeleton height="200px" className="rounded-none" />
+                        <div className="p-4 space-y-3">
+                            <Skeleton width="80px" height="16px" className="rounded-lg" />
+                            <Skeleton width="70%" height="18px" />
+                            <Skeleton width="50%" height="12px" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+);
+
 export default Skeleton;

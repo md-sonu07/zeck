@@ -12,7 +12,7 @@ import {
     House,
     FileText,
     CheckCircle,
-    Book,
+    Image,
     GraduationCap,
     Mail,
     Newspaper,
@@ -36,7 +36,7 @@ const Header = () => {
         { name: 'Latest News', path: '/latest-news', icon: Newspaper },
         { name: 'Admit Card', path: '/admit-card', icon: FileText },
         { name: 'Result', path: '/result', icon: CheckCircle },
-        { name: 'Syllabus', path: '/syllabus', icon: Book },
+        { name: 'Gallery', path: '/gallery', icon: Image },
         { name: 'Service', path: '/service', icon: Briefcase },
         { name: 'About Us', path: '/about', icon: Info },
         { name: 'Contact Us', path: '/contact', icon: Mail },
@@ -79,7 +79,7 @@ const Header = () => {
                     <div className="leading-tight hidden sm:block">
                         <h1 className="text-lg md:text-[1.35rem] font-black tracking-tighter flex items-center">
                             <span className="text-primary">Zoya</span>
-                            <span className="text-slate-800 dark:text-white ml-1">Education Centre</span>
+                            <span className="text-slate-800 dark:text-white ml-1">Education Centre & Trust</span>
                         </h1>
                         <p className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-[0.15em] mt-0.5">
                             Recent Updates · Results · Admit Cards

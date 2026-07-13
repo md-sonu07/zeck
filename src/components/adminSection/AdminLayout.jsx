@@ -23,7 +23,8 @@ import {
     Megaphone,
     History,
     CreditCard,
-    MessageSquare
+    MessageSquare,
+    Image
 } from 'lucide-react';
 import { logout as logoutUser } from '../../store/thunk/authThunk';
 
@@ -48,6 +49,7 @@ const AdminLayout = () => {
         { path: '/admin/page-articles', label: 'Page Articles', icon: FileText },
 
         { path: '/admin/marquee', label: 'Announcement Bar', icon: Megaphone },
+        { path: '/admin/gallery', label: 'Gallery', icon: Image },
         { path: '/admin/important-services', label: 'Important Services', icon: Sparkles },
         { path: '/admin/about-us', label: 'About Us', icon: Info },
         { path: '/admin/contact-messages', label: 'User Messages', icon: MessageSquare },
@@ -60,9 +62,9 @@ const AdminLayout = () => {
         '/admin/admission': 'Admission Management',
         '/admin/admit-cards': 'Admit Card Management',
         '/admin/results': 'Result Management',
-        '/admin/syllabus': 'Syllabus Management',
         '/admin/answer-key': 'Answer Key Management',
         '/admin/latest-news': 'Latest News Management',
+        '/admin/gallery': 'Gallery Management',
     };
 
     let currentSubPageTitle = subPageNames[location.pathname];
@@ -109,6 +111,13 @@ const AdminLayout = () => {
                 {/* Sidebar Nav */}
                 <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1 custom-scrollbar pr-1">
                     <p className="px-3 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 mt-2">Menu</p>
+                    <Link
+                        to="/"
+                        className="flex items-center gap-3 px-3 py-2.5 w-full rounded-md font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200"
+                    >
+                        <Home size={18} />
+                        Back to Website
+                    </Link>
                     {navItems.map((item) => {
                         const isActive = location.pathname === item.path || (item.path !== '/admin' && location.pathname.startsWith(item.path));
                         return (
@@ -116,7 +125,7 @@ const AdminLayout = () => {
                                 key={item.path}
                                 to={item.path}
                                 onClick={() => setSidebarOpen(false)}
-                                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold transition-all duration-200 ${isActive ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-200'}`}
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-semibold transition-all duration-200 ${isActive ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-200'}`}
                             >
                                 <item.icon size={18} className={isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'} />
                                 {item.label}
@@ -127,13 +136,6 @@ const AdminLayout = () => {
 
                 {/* Sidebar Footer */}
                 <div className="p-4 border-t border-slate-200 dark:border-slate-700 space-y-2">
-                    <Link
-                        to="/"
-                        className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-slate-200 transition-all duration-200"
-                    >
-                        <Home size={18} />
-                        Back to Website
-                    </Link>
                     <button
                         onClick={handleLogout}
                         className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
     GraduationCap, UserPlus, Flame, IdCard, 
-    FileCheck, BookOpen, Gem, Info, Phone,
+    FileCheck, Image, Gem, Info, Phone,
     LayoutGrid, Compass
 } from 'lucide-react';
 
@@ -12,7 +12,7 @@ const menuItems = [
     { label: 'Latest News', icon: Flame, path: '/latest-news', color: 'bg-orange-500' },
     { label: 'Admit Card', icon: IdCard, path: '/admit-card', color: 'bg-blue-600' },
     { label: 'Result', icon: FileCheck, path: '/result', color: 'bg-purple-500' },
-    { label: 'Syllabus', icon: BookOpen, path: '/syllabus', color: 'bg-indigo-500' },
+    { label: 'Gallery', icon: Image, path: '/gallery', color: 'bg-indigo-500' },
     { label: 'Service', icon: Gem, path: '/service', color: 'bg-pink-500' },
     { label: 'About Us', icon: Info, path: '/about', color: 'bg-slate-600' },
     { label: 'Contact Us', icon: Phone, path: '/contact', color: 'bg-red-500' },

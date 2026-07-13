@@ -5,7 +5,9 @@ export const getAboutSettingsApi = async () => {
     return response.data;
 };
 
-export const updateAboutSettingsApi = async (updates) => {
-    const response = await api.put('/about', updates);
+export const updateAboutSettingsApi = async (formData) => {
+    const response = await api.put('/about', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
     return response.data;
 };

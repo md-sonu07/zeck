@@ -190,7 +190,6 @@ const RecentActivityPage = () => {
             case 'Latest News': return '/admin/latest-news';
             case 'University': return '/admin/university';
             case 'Admission': return '/admin/admission';
-            case 'Syllabus': return '/admin/syllabus';
             case 'Answer Key': return '/admin/answer-key';
             default: return '/admin/page-articles';
         }

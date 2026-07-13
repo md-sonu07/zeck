@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import {
     Save,
     Image as ImageIcon,
-    FileText,
     List,
     PlusCircle,
     Trash2,
@@ -16,6 +15,8 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
+import Button from '../../../components/ui/Button';
+import TabButton from '../../../components/ui/TabButton';
 import {
     fetchImportantServices,
     createImportantService,
@@ -149,34 +150,32 @@ const ImportantServicesManagementPage = () => {
                     <p className="text-slate-500 text-sm mt-1">Manage core services displayed on the website.</p>
                 </div>
 
-                <div className="flex items-center p-1 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <button
+                <div className="flex items-center gap-3">
+                    <TabButton
+                        active={activeTab === 'manage'}
                         onClick={() => setActiveTab('manage')}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === 'manage'
-                            ? 'bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm'
-                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                        icon={List}
                     >
-                        <List size={16} /> Manage
-                    </button>
-                    <button
+                        Manage
+                    </TabButton>
+                    <TabButton
+                        active={activeTab === 'add'}
                         onClick={startAdd}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-sm transition-all ${activeTab === 'add'
-                            ? 'bg-primary text-white shadow-md shadow-primary/20'
-                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
+                        icon={PlusCircle}
                     >
-                        <PlusCircle size={16} /> Add New
-                    </button>
+                        Add New
+                    </TabButton>
                 </div>
             </div>
 
-            {activeTab === 'add' ? (
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in zoom-in-95 duration-200">
+            <div className={`transition-all duration-300 ${activeTab === 'add' ? 'block' : 'hidden'}`}>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Form Section */}
                     <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
                         <div className="flex items-center gap-2 mb-6 text-slate-400">
-                            <button onClick={() => setActiveTab('manage')} className="hover:text-primary transition-colors pr-2 border-r border-slate-100 dark:border-slate-700">
+                            <Button variant="ghost" size="sm" onClick={() => setActiveTab('manage')} className="border-r border-slate-100 dark:border-slate-700 rounded-none pr-2">
                                 <ChevronLeft size={20} />
-                            </button>
+                            </Button>
                             <span className="text-xs font-bold uppercase tracking-widest">
                                 {editingId ? 'Edit Service' : 'Configure New Service'}
                             </span>
@@ -230,21 +229,12 @@ const ImportantServicesManagementPage = () => {
                             </div>
 
                             <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setActiveTab('manage')}
-                                    className="px-6 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-bold hover:bg-slate-200 transition-all text-sm"
-                                >
+                                <Button type="button" variant="secondary" onClick={() => setActiveTab('manage')}>
                                     Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={saving}
-                                    className="flex items-center gap-2 px-8 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold transition-all shadow-md disabled:opacity-50 text-sm"
-                                >
-                                    {saving ? <Loader2 className="animate-spin size-4" /> : <Save className="size-4" />}
+                                </Button>
+                                <Button type="submit" loading={saving} icon={Save}>
                                     {editingId ? 'Update Service' : 'Publish Service'}
-                                </button>
+                                </Button>
                             </div>
                         </form>
                     </div>
@@ -287,8 +277,9 @@ const ImportantServicesManagementPage = () => {
                         </div>
                     </div>
                 </div>
-            ) : (
-                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-300">
+            </div>
+            <div className={`transition-all duration-300 ${activeTab === 'manage' ? 'block' : 'hidden'}`}>
+                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                     <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col md:flex-row gap-4 justify-between items-center">
                         <div className="relative w-full md:w-80">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
@@ -300,9 +291,9 @@ const ImportantServicesManagementPage = () => {
                                 className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary text-sm font-medium"
                             />
                         </div>
-                        <button onClick={startAdd} className="w-full md:w-auto flex items-center justify-center gap-2 bg-primary text-white px-5 py-2 rounded-xl text-sm font-bold shadow-md shadow-primary/20 hover:bg-primary/90 transition-all">
-                            <PlusCircle size={16} /> Add Service
-                        </button>
+                        <Button onClick={startAdd} icon={PlusCircle} className="w-full md:w-auto">
+                            Add Service
+                        </Button>
                     </div>
 
                     <div className="overflow-x-auto">
@@ -330,7 +321,7 @@ const ImportantServicesManagementPage = () => {
                                                     <Sparkles size={32} />
                                                 </div>
                                                 <p className="text-sm font-bold text-slate-400">No services found.</p>
-                                                <button onClick={startAdd} className="text-primary text-xs font-bold hover:underline uppercase tracking-widest">Add your first service</button>
+                                                <Button variant="link" size="sm" onClick={startAdd}>Add your first service</Button>
                                             </div>
                                         </td>
                                     </tr>
@@ -362,20 +353,12 @@ const ImportantServicesManagementPage = () => {
                                             </td>
                                             <td className="p-4 text-right">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    <button
-                                                        onClick={() => startEdit(service)}
-                                                        className="p-2.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-xl transition-all"
-                                                        title="Edit Service"
-                                                    >
+                                                    <Button variant="ghost" size="sm" onClick={() => startEdit(service)} title="Edit Service">
                                                         <Edit size={16} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setItemToDelete(service._id)}
-                                                        className="p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                                                        title="Delete Service"
-                                                    >
+                                                    </Button>
+                                                    <Button variant="ghost" size="sm" onClick={() => setItemToDelete(service._id)} title="Delete Service" className="hover:text-red-500 hover:bg-red-50">
                                                         <Trash2 size={16} />
-                                                    </button>
+                                                    </Button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -385,7 +368,7 @@ const ImportantServicesManagementPage = () => {
                         </table>
                     </div>
                 </div>
-            )}
+            </div>
 
             {/* Delete Confirmation Modal */}
             {itemToDelete && (
@@ -400,18 +383,12 @@ const ImportantServicesManagementPage = () => {
                             <p className="text-sm font-medium text-slate-500 mt-2">Are you sure? This action cannot be undone and will permanently remove this service from your website.</p>
 
                             <div className="grid grid-cols-2 gap-3 w-full mt-8">
-                                <button
-                                    onClick={() => setItemToDelete(null)}
-                                    className="py-3.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-600 transition-all"
-                                >
+                                <Button variant="secondary" onClick={() => setItemToDelete(null)} className="w-full py-3.5 text-xs uppercase tracking-widest">
                                     Cancel
-                                </button>
-                                <button
-                                    onClick={confirmDelete}
-                                    className="py-3.5 bg-red-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-red-500/30 hover:bg-red-600 hover:-translate-y-0.5 transition-all"
-                                >
+                                </Button>
+                                <Button variant="danger" onClick={confirmDelete} className="w-full py-3.5 text-xs uppercase tracking-widest hover:-translate-y-0.5">
                                     Delete
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </div>

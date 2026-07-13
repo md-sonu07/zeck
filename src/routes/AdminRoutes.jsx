@@ -11,6 +11,7 @@ import PageArticleManagement from '../pages/admin/pageArticle/PageArticleManagem
 import ImportantServicesManagementPage from '../pages/admin/importantServices/ImportantServicesManagementPage';
 import MarqueeManagementPage from '../pages/admin/marquee/MarqueeManagementPage';
 import RecentActivityPage from '../pages/admin/activities/RecentActivityPage';
+import GalleryManagementPage from '../pages/admin/gallery/GalleryManagementPage';
 import PaymentManagementPage from '../pages/admin/payment/PaymentManagementPage';
 
 
@@ -44,9 +45,9 @@ const AdminRoutes = () => {
                 <Route path="admission" element={<PostManagementPage categoryTitle="Admission" />} />
                 <Route path="admit-cards" element={<PostManagementPage categoryTitle="Admit Card" />} />
                 <Route path="results" element={<PostManagementPage categoryTitle="Result" />} />
-                <Route path="syllabus" element={<PostManagementPage categoryTitle="Syllabus" />} />
                 <Route path="answer-key" element={<PostManagementPage categoryTitle="Answer Key" />} />
                 <Route path="latest-news" element={<PostManagementPage categoryTitle="Latest News" />} />
+                <Route path="gallery" element={<GalleryManagementPage />} />
                 <Route path="custom/:slug" element={<DynamicCustomRoute />} />
 
                 {/* Specific Management Pages */}

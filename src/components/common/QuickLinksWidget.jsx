@@ -8,7 +8,7 @@ const QuickLinksWidget = () => {
         { label: 'Admit Card', to: '/admit-card', color: 'text-orange-500' },
         { label: 'Results', to: '/result', color: 'text-green-500' },
         { label: 'Answer Key', to: '/answer-key', color: 'text-purple-500' },
-        { label: 'Syllabus', to: '/syllabus', color: 'text-cyan-500' },
+        { label: 'Gallery', to: '/gallery', color: 'text-cyan-500' },
         { label: 'Admission', to: '/admission', color: 'text-pink-500' },
     ];
 

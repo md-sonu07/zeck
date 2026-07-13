@@ -5,7 +5,7 @@ import {
     Briefcase,
     FileText,
     CheckCircle,
-    Book,
+    Image,
     GraduationCap,
     School,
     Info,
@@ -23,8 +23,8 @@ const Navbar = () => {
         { name: 'Latest News', path: '/latest-news', icon: Newspaper },
         { name: 'Admit Card', path: '/admit-card', icon: FileText },
         { name: 'Result', path: '/result', icon: CheckCircle },
-        { name: 'Syllabus', path: '/syllabus', icon: Book },
         { name: 'Service', path: '/service', icon: Briefcase },
+        { name: 'Gallery', path: '/gallery', icon: Image },
         { name: 'About Us', path: '/about', icon: Info },
         { name: 'Contact Us', path: '/contact', icon: Mail },
     ];

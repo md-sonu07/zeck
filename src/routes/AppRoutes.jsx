@@ -10,7 +10,6 @@ import LatestNewsPage from '../pages/user/latestNews/LatestNewsPage';
 import AdmitCardPage from '../pages/user/admitCard/AdmitCardPage';
 import ResultPage from '../pages/user/result/ResultPage';
 import AnswerKeyPage from '../pages/user/answerKey/AnswerKeyPage';
-import SyllabusPage from '../pages/user/syllabus/SyllabusPage';
 import AdmissionPage from '../pages/user/admission/AdmissionPage';
 import UniversityPage from '../pages/user/university/UniversityPage';
 import AboutPage from '../pages/user/about/AboutPage';
@@ -25,6 +24,7 @@ import SearchResultsPage from '../pages/user/search/SearchResultsPage';
 import ApplicationPage from '../pages/user/apply/ApplicationPage';
 
 
+import GalleryPage from '../pages/user/gallery/GalleryPage';
 import DynamicCategoryPage from '../pages/user/dynamic/DynamicCategoryPage';
 
 
@@ -39,13 +39,13 @@ const AppRoutes = () => {
             <Route path="/admit-card" element={<AdmitCardPage />} />
             <Route path="/result" element={<ResultPage />} />
             <Route path="/answer-key" element={<AnswerKeyPage />} />
-            <Route path="/syllabus" element={<SyllabusPage />} />
             <Route path="/admission" element={<AdmissionPage />} />
             <Route path="/university" element={<UniversityPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/service" element={<ServicesPage />} />
             <Route path="/search" element={<SearchResultsPage />} />
             <Route path="/apply/:slug" element={<ApplicationPage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
 
 
             {/* Admin Panel Routes */}

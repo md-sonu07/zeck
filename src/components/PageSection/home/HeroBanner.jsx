@@ -41,9 +41,12 @@ const HeroBanner = () => {
                             </div>
 
                             <h2 className="text-2xl md:text-4xl font-black text-white leading-tight max-w-4xl tracking-tight -mt-4">
-                                India's Most Trusted {" "}
-                                <span className="text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,0.4)] block sm:inline">Latest News & Recruitment Portal</span>
+                                किसी भी कोर्स के लिए संपर्क करें {" "}
+                                <span className="text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,0.4)] block sm:inline">+91 9876543210</span>
                             </h2>
+                            <p className="text-white/80 text-sm md:text-xl font-medium mt-3 max-w-2xl">
+                                बिहार स्टूडेंट क्रेडिट कार्ड योजना के माध्यम से
+                            </p>
                         </div>
 
                         {/* Stats cards moved after headings */}

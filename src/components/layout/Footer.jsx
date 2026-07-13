@@ -74,7 +74,7 @@ const Footer = () => {
                             { title: 'Latest Vacancy', path: '/latest-news' },
                             { title: 'Download Admit Card', path: '/admit-card' },
                             { title: 'Checked Results', path: '/result' },
-                            { title: 'Syllabus Updates', path: '/syllabus' },
+                            { title: 'Photo Gallery', path: '/gallery' },
                         ]).map((link, idx) => (
                             <li key={idx}>
                                 <Link to={link.path} className="text-slate-400 hover:text-primary transition-colors text-sm font-bold flex items-center gap-2 group">
