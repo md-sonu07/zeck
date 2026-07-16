@@ -24,7 +24,8 @@ import {
     History,
     CreditCard,
     MessageSquare,
-    Image
+    Image,
+    BadgeCheck
 } from 'lucide-react';
 import { logout as logoutUser } from '../../store/thunk/authThunk';
 
@@ -47,6 +48,7 @@ const AdminLayout = () => {
         { path: '/admin/payment-slips', label: 'Payment Slips', icon: FileText },
         { path: '/admin/payments', label: 'Online Payments', icon: CreditCard },
         { path: '/admin/page-articles', label: 'Page Articles', icon: FileText },
+        { path: '/admin/admit-card-pages', label: 'Admit Card Pages', icon: BadgeCheck },
 
         { path: '/admin/marquee', label: 'Announcement Bar', icon: Megaphone },
         { path: '/admin/gallery', label: 'Gallery', icon: Image },

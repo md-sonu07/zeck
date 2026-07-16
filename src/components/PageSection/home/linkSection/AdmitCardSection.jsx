@@ -1,37 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { BadgeCheck, ArrowRight, ChevronRight, Loader2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { BadgeCheck, ArrowRight, ChevronRight, Search, BookOpen } from 'lucide-react';
 import { ListItemsSkeleton } from '../../../common/Skeleton';
-import { fetchArticles } from '../../../../store/thunk/articleThunk';
+import { fetchAdmitCardPages } from '../../../../store/thunk/admitCardPageThunk';
 import { Link } from 'react-router-dom';
-
-const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-        case 'started': return 'bg-green-500';
-        case 'completed': return 'bg-blue-500';
-        case 'data expand': return 'bg-orange-500';
-        default: return 'bg-red-500';
-    }
-};
 
 const AdmitCardSection = () => {
     const dispatch = useDispatch();
-    const [admitCards, setAdmitCards] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { pages, loading } = useSelector((state) => state.admitCardPages);
 
     useEffect(() => {
-        const getAdmitCards = async () => {
-            try {
-                setLoading(true);
-                const result = await dispatch(fetchArticles({ mainCategory: 'Admit Card', limit: 10 })).unwrap();
-                setAdmitCards(result || []);
-            } catch (error) {
-                console.error('Failed to fetch admit cards:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        getAdmitCards();
+        dispatch(fetchAdmitCardPages());
     }, [dispatch]);
 
     return (
@@ -43,7 +22,7 @@ const AdmitCardSection = () => {
                     <BadgeCheck size={16} /> Admit Card
                 </h2>
                 <Link
-                    to="/admit-card"
+                    to="/admit-cards"
                     className="group/btn text-[11px] text-white/75 hover:text-white border border-white/30 hover:border-white/70 hover:bg-white/10 px-2.5 py-0.5 rounded-full transition-all duration-200 inline-flex items-center gap-1.5"
                 >
                     View All
@@ -51,46 +30,54 @@ const AdmitCardSection = () => {
                 </Link>
             </div>
 
-            {/* Admit Card List */}
+            {/* Admit Card Pages List */}
             <ul className="text-sm min-h-[100px]">
                 {loading ? (
                     <div className="p-0">
-                        <ListItemsSkeleton count={6} />
+                        <ListItemsSkeleton count={4} />
                     </div>
-                ) : admitCards.length > 0 ? (
-                    admitCards.map((card, index) => (
+                ) : pages.length > 0 ? (
+                    pages.map((page) => (
                         <li
-                            key={card._id}
+                            key={page._id}
                             className="group relative border-l-[3px] border-transparent hover:border-blue-500 transition-all duration-200"
                         >
-                            {/* Hover glow strip */}
                             <span className="absolute inset-0 bg-linear-to-r from-blue-50 to-transparent dark:from-blue-950/20 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
-                                <Link
-                                    to={`/${card.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${card.slug}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="relative flex items-center justify-between gap-2.5 px-4 py-[11px]"
-                                >
-                                    <div className="flex items-center gap-2.5 min-w-0">
-                                        <ChevronRight
-                                            size={13}
-                                            className="shrink-0 text-blue-300 dark:text-blue-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all duration-200"
-                                        />
-                                        <span className="text-[14px] font-semibold text-slate-700 dark:text-slate-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-all duration-200 leading-snug truncate">
-                                            {card.title}
+                            <Link
+                                to={'/admit-cards/' + page.slug}
+                                className="relative flex items-center justify-between gap-2.5 px-4 py-[11px]"
+                            >
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                    <ChevronRight
+                                        size={13}
+                                        className="shrink-0 text-blue-300 dark:text-blue-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:translate-x-1 transition-all duration-200"
+                                    />
+                                    <div className="min-w-0">
+                                        <span className="text-[14px] font-semibold text-slate-700 dark:text-slate-200 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-all duration-200 leading-snug truncate block">
+                                            {page.title}
                                         </span>
+                                        {page.description && (
+                                            <span className="text-[11px] text-slate-400 dark:text-slate-500 truncate block mt-0.5">
+                                                {page.description}
+                                            </span>
+                                        )}
                                     </div>
-                                    <div className="shrink-0">
-                                        <span className={`text-[9px] font-extrabold ${getStatusColor(card.status)} text-white px-2 py-0.5 rounded-md tracking-wide animate-pulse uppercase`}>
-                                            {card.status || 'NEW'}
+                                </div>
+                                <div className="shrink-0 flex items-center gap-2">
+                                    {page.cardCount > 0 && (
+                                        <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 px-2 py-0.5 rounded-full">
+                                            {page.cardCount} cards
                                         </span>
-                                    </div>
-                                </Link>
+                                    )}
+                                    <Search size={14} className="text-blue-300 dark:text-blue-600 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                                </div>
+                            </Link>
                         </li>
                     ))
                 ) : (
                     <div className="py-8 text-center text-slate-400 text-xs font-medium">
-                        No admit cards found.
+                        <BookOpen size={24} className="mx-auto mb-2 opacity-50" />
+                        No admit card pages available.
                     </div>
                 )}
             </ul>
@@ -98,10 +85,10 @@ const AdmitCardSection = () => {
             {/* Footer */}
             <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-700/30 border-t border-slate-100 dark:border-slate-700 text-center">
                 <Link
-                    to="/admit-card"
+                    to="/admit-cards"
                     className="group/footer text-xs font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 inline-flex items-center gap-1.5 transition-colors duration-200 no-underline"
                 >
-                    View All Admit Cards
+                    Search Your Admit Card
                     <ArrowRight size={11} className="transition-transform duration-200 group-hover/footer:translate-x-1" />
                 </Link>
             </div>

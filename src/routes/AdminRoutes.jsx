@@ -13,6 +13,8 @@ import MarqueeManagementPage from '../pages/admin/marquee/MarqueeManagementPage'
 import RecentActivityPage from '../pages/admin/activities/RecentActivityPage';
 import GalleryManagementPage from '../pages/admin/gallery/GalleryManagementPage';
 import PaymentManagementPage from '../pages/admin/payment/PaymentManagementPage';
+import AdmitCardPagesManagement from '../pages/admin/admitCardPages/AdmitCardPagesManagement';
+import AdmitCardsManagement from '../pages/admin/admitCards/AdmitCardsManagement';
 
 
 import PaymentSlipsPage from '../pages/admin/paymentSlip/PaymentSlipsPage';
@@ -48,6 +50,8 @@ const AdminRoutes = () => {
                 <Route path="answer-key" element={<PostManagementPage categoryTitle="Answer Key" />} />
                 <Route path="latest-news" element={<PostManagementPage categoryTitle="Latest News" />} />
                 <Route path="gallery" element={<GalleryManagementPage />} />
+                <Route path="admit-card-pages" element={<AdmitCardPagesManagement />} />
+                <Route path="admit-cards/:pageId" element={<AdmitCardsManagement />} />
                 <Route path="custom/:slug" element={<DynamicCustomRoute />} />
 
                 {/* Specific Management Pages */}

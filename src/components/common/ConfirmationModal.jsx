@@ -1,5 +1,6 @@
 import React from 'react';
-import { OctagonAlert, X } from 'lucide-react';
+import { OctagonAlert, X, Trash2 } from 'lucide-react';
+import Button from '../ui/Button';
 
 const ConfirmationModal = ({
     isOpen,
@@ -15,19 +16,19 @@ const ConfirmationModal = ({
 
     const themes = {
         danger: {
-            icon: OctagonAlert,
-            iconClass: "text-red-500 bg-red-50 dark:bg-red-500/10",
-            confirmBtn: "bg-red-500 hover:bg-red-600 shadow-red-500/30",
+            icon: Trash2,
+            iconClass: "text-red-500 bg-red-100 dark:bg-red-500/10",
+            btnVariant: "danger",
         },
         warning: {
             icon: OctagonAlert,
             iconClass: "text-amber-500 bg-amber-50 dark:bg-amber-500/10",
-            confirmBtn: "bg-amber-500 hover:bg-amber-600 shadow-amber-500/30",
+            btnVariant: "primary",
         },
         info: {
             icon: OctagonAlert,
             iconClass: "text-primary bg-primary/10",
-            confirmBtn: "bg-primary hover:bg-primary/90 shadow-primary/30",
+            btnVariant: "primary",
         }
     };
 
@@ -40,7 +41,7 @@ const ConfirmationModal = ({
                 className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200"
                 onClick={onClose}
             ></div>
-            <div className="relative bg-white dark:bg-slate-800 w-full max-w-sm rounded-3xl shadow-2xl border border-slate-100 dark:border-slate-700 overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="relative bg-white dark:bg-slate-800 w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 overflow-hidden animate-in zoom-in-95 duration-200">
                 <div className="p-8 text-center flex flex-col items-center">
                     <button
                         onClick={onClose}
@@ -53,25 +54,27 @@ const ConfirmationModal = ({
                         <Icon size={32} />
                     </div>
 
-                    <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">{title}</h3>
-                    <p className="text-sm font-medium text-slate-500 mt-2 leading-relaxed">{message}</p>
+                    <h3 className="text-xl font-black text-slate-800 dark:text-white mt-2">{title}</h3>
+                    <p className="text-sm font-medium text-slate-500 mt-2">{message}</p>
 
                     <div className="grid grid-cols-2 gap-3 w-full mt-8">
-                        <button
-                            onClick={onClose}
-                            className="py-3.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 dark:hover:bg-slate-600 transition-all"
+                        <Button 
+                            variant="secondary" 
+                            onClick={onClose} 
+                            className="w-full py-3.5 text-xs uppercase tracking-widest"
                         >
                             {cancelText}
-                        </button>
-                        <button
+                        </Button>
+                        <Button 
+                            variant={theme.btnVariant} 
                             onClick={() => {
                                 onConfirm();
                                 onClose();
-                            }}
-                            className={`py-3.5 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg hover:-translate-y-0.5 transition-all ${theme.confirmBtn}`}
+                            }} 
+                            className="w-full py-3.5 text-xs uppercase tracking-widest hover:-translate-y-0.5"
                         >
                             {confirmText}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </div>

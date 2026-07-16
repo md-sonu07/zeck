@@ -26,6 +26,8 @@ import ApplicationPage from '../pages/user/apply/ApplicationPage';
 
 import GalleryPage from '../pages/user/gallery/GalleryPage';
 import DynamicCategoryPage from '../pages/user/dynamic/DynamicCategoryPage';
+import AdmitCardPagesList from '../pages/user/admitCardPages/AdmitCardPagesList';
+import AdmitCardSearchPage from '../pages/user/admitCardSearch/AdmitCardSearchPage';
 
 
 const AppRoutes = () => {
@@ -46,6 +48,8 @@ const AppRoutes = () => {
             <Route path="/search" element={<SearchResultsPage />} />
             <Route path="/apply/:slug" element={<ApplicationPage />} />
             <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/admit-cards" element={<AdmitCardPagesList />} />
+            <Route path="/admit-cards/:slug" element={<AdmitCardSearchPage />} />
 
 
             {/* Admin Panel Routes */}
