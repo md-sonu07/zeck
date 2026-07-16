@@ -168,7 +168,7 @@ const Sidebar = () => {
                         className="flex items-center gap-4 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 group hover:border-emerald-500 transition-colors duration-300 no-underline"
                     >
                         <div className="size-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform duration-300">
-                            <Phone size={16} />
+                            <Phone size={14} />
                         </div>
                         <div>
                             <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Helpline Number</p>
@@ -200,8 +200,8 @@ const Sidebar = () => {
                                 className="group flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/40 transition-all duration-200 no-underline"
                             >
                                 {/* Brand icon */}
-                                <div className={`size-10 rounded-xl ${social.color} ${social.glow} flex items-center justify-center text-white shadow-md group-hover:shadow-xl group-hover:scale-110 transition-all duration-200 shrink-0`}>
-                                    <social.icon size={20} />
+                                <div className={`size-8 rounded-md ${social.color} ${social.glow} flex items-center justify-center text-white shadow-md group-hover:shadow-xl group-hover:scale-110 transition-all duration-200 shrink-0`}>
+                                    <social.icon size={16} />
                                 </div>
 
                                 {/* Text */}
