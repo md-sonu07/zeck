@@ -8,7 +8,6 @@ import AdmitCardSection from '../../../components/PageSection/home/linkSection/A
 import ResultsSection from '../../../components/PageSection/home/linkSection/ResultsSection';
 import AnswerKeySyllabus from '../../../components/PageSection/home/linkSection/AnswerKeySyllabus';
 import HomeCoursesSection from '../../../components/PageSection/home/linkSection/HomeCoursesSection';
-import OtherNewsTable from '../../../components/PageSection/home/linkSection/OtherNewsTable';
 import Sidebar from '../../../components/PageSection/home/Sidebar';
 import MobileQuickMenu from '../../../components/PageSection/home/MobileQuickMenu';
 import SEO from '../../../components/common/SEO';
@@ -40,23 +39,18 @@ const HomePage = () => {
                             <IdCard className="text-blue-500" size={10} /> Examination Portal
                         </div>
 
-                        {/* Admit Card + Results side-by-side */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <AdmitCardSection />
-                            <ResultsSection />
-                        </div>
+                        <AdmitCardSection />
 
                         {/* Courses Section */}
                         <HomeCoursesSection />
 
-                        {/* Other News Table (Dynamic Sections) */}
-                        <OtherNewsTable />
 
                         {/* Section Label */}
                         <div className="section-label mt-4">
                             <Key className="text-slate-500" size={10} /> Study Resources
                         </div>
                         {/* Answer Key & Syllabus */}
+                        <ResultsSection />
                         <AnswerKeySyllabus />
 
                     </div>

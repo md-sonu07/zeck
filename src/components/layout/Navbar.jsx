@@ -18,10 +18,10 @@ const Navbar = () => {
 
     const navLinks = [
         { name: 'Home', path: '/', icon: House },
-        { name: 'University', path: '/university', icon: School },
-        { name: 'Admission', path: '/admission', icon: GraduationCap },
+        { name: 'University & Courses', path: '/university-cources', icon: School },
+        // { name: 'Admission', path: '/admission', icon: GraduationCap },
+        { name: 'Admit Card', path: '/admit-cards', icon: FileText },
         { name: 'Latest News', path: '/latest-news', icon: Newspaper },
-        { name: 'Admit Card', path: '/admit-card', icon: FileText },
         { name: 'Result', path: '/result', icon: CheckCircle },
         { name: 'Service', path: '/service', icon: Briefcase },
         { name: 'Gallery', path: '/gallery', icon: Image },

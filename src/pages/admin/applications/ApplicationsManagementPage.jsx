@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { ClipboardList, Eye, Trash2, CheckCircle, XCircle, Search, Loader2 } from 'lucide-react';
+import { ClipboardList, Eye, Trash2, CheckCircle, XCircle, Search, Loader2, ChevronDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Button from '../../../components/ui/Button';
 import ConfirmationModal from '../../../components/common/ConfirmationModal';
@@ -9,6 +9,57 @@ import {
     fetchAllAdmissions, updateAdmissionStatus, deleteAdmission, bulkUpdateAdmissionStatus
 } from '../../../store/slice/admissionSlice.js';
 import { fetchCourses } from '../../../store/slice/courseSlice.js';
+
+const CustomDropdown = ({ value, onChange, options, placeholder }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    const selectedOption = options.find(opt => opt.value === value);
+
+    return (
+        <div className="relative" ref={dropdownRef}>
+            <button
+                type="button"
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary shadow-sm transition-all flex items-center justify-between"
+            >
+                <span className="truncate">{selectedOption ? selectedOption.label : placeholder}</span>
+                <ChevronDown size={16} className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {isOpen && (
+                <div className="absolute z-50 w-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg max-h-60 overflow-auto py-1 custom-scrollbar">
+                    <button
+                        type="button"
+                        onClick={() => { onChange(''); setIsOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm transition-colors ${!value ? 'bg-primary/10 text-primary font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'}`}
+                    >
+                        {placeholder}
+                    </button>
+                    {options.map((opt) => (
+                        <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => { onChange(opt.value); setIsOpen(false); }}
+                            className={`w-full text-left px-4 py-2 text-sm transition-colors ${value === opt.value ? 'bg-primary/10 text-primary font-bold' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50'}`}
+                        >
+                            {opt.label}
+                        </button>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+};
 
 const statusColors = {
     pending: 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-500/10 dark:text-amber-400',
@@ -105,27 +156,46 @@ const ApplicationsManagementPage = () => {
                 )}
             </div>
 
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-                <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
-                    <div className="flex flex-col md:flex-row gap-3">
-                        <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                            <input type="text" placeholder="Search by ID, name, mobile..." value={searchTerm}
-                                onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-1 focus:ring-primary text-sm font-medium" />
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                <div className="p-5 md:p-6 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 rounded-t-2xl relative z-20">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                            <Search size={16} className="text-primary" /> Filter & Search
+                        </h2>
+                        {(searchTerm || statusFilter || courseFilter) && (
+                            <button onClick={() => { setSearchTerm(''); setStatusFilter(''); setCourseFilter(''); }} className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary-dark transition-colors px-3 py-1.5 bg-primary/10 rounded-lg">
+                                Clear All
+                            </button>
+                        )}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                        <div className="md:col-span-6 relative">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block ml-1">Search Keywords</label>
+                            <div className="relative group">
+                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={16} />
+                                <input type="text" placeholder="Search by ID, student name, or mobile..." value={searchTerm}
+                                    onChange={e => setSearchTerm(e.target.value)}
+                                    className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm font-semibold text-slate-800 dark:text-white shadow-sm transition-all" />
+                            </div>
                         </div>
-                        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-                            className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary">
-                            <option value="">All Status</option>
-                            {['pending', 'under_review', 'approved', 'rejected', 'waitlisted', 'changes_requested'].map(s => (
-                                <option key={s} value={s}>{getStatusLabel(s)}</option>
-                            ))}
-                        </select>
-                        <select value={courseFilter} onChange={e => setCourseFilter(e.target.value)}
-                            className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md text-sm font-medium focus:outline-none focus:ring-1 focus:ring-primary">
-                            <option value="">All Courses</option>
-                            {courses.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-                        </select>
+                        <div className="md:col-span-3">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block ml-1">Application Status</label>
+                            <CustomDropdown 
+                                value={statusFilter} 
+                                onChange={setStatusFilter} 
+                                options={['pending', 'under_review', 'approved', 'rejected', 'waitlisted', 'changes_requested'].map(s => ({ value: s, label: getStatusLabel(s) }))}
+                                placeholder="All Statuses" 
+                            />
+                        </div>
+                        <div className="md:col-span-3">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 block ml-1">Filter by Course</label>
+                            <CustomDropdown 
+                                value={courseFilter} 
+                                onChange={setCourseFilter} 
+                                options={courses.map(c => ({ value: c._id, label: c.name }))}
+                                placeholder="All Courses" 
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -137,8 +207,7 @@ const ApplicationsManagementPage = () => {
                                     <input type="checkbox" onChange={e => { if (e.target.checked) setSelected(filtered.map(a => a._id)); else setSelected([]); }}
                                         checked={selected.length === filtered.length && filtered.length > 0} />
                                 </th>
-                                <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">App ID</th>
-                                <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Student</th>
+                                <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Student & App ID</th>
                                 <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Mobile</th>
                                 <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Course</th>
                                 <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Date</th>
@@ -148,12 +217,12 @@ const ApplicationsManagementPage = () => {
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                             {loading && filtered.length === 0 ? (
-                                <tr><td colSpan="8" className="p-10 text-center">
+                                <tr><td colSpan="7" className="p-10 text-center">
                                     <Loader2 className="animate-spin text-primary inline-block mb-2" />
                                     <p className="text-sm font-medium text-slate-400 uppercase tracking-widest">Loading...</p>
                                 </td></tr>
                             ) : filtered.length === 0 ? (
-                                <tr><td colSpan="8" className="p-20 text-center">
+                                <tr><td colSpan="7" className="p-20 text-center">
                                     <div className="flex flex-col items-center gap-3">
                                         <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-full text-slate-300"><ClipboardList size={32} /></div>
                                         <p className="text-sm font-bold text-slate-400">{searchTerm || statusFilter || courseFilter ? 'No matching applications.' : 'No applications yet.'}</p>
@@ -170,10 +239,10 @@ const ApplicationsManagementPage = () => {
                                             }} />
                                     </td>
                                     <td className="p-4">
-                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-mono">{admission.applicationId}</span>
-                                    </td>
-                                    <td className="p-4">
-                                        <p className="font-bold text-slate-800 dark:text-white text-[14px]">{admission.personalInfo?.fullName}</p>
+                                        <div className="flex flex-col gap-0.5">
+                                            <p className="font-bold text-slate-800 dark:text-white text-[14px] leading-tight truncate">{admission.personalInfo?.fullName}</p>
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-mono">{admission.applicationId}</span>
+                                        </div>
                                     </td>
                                     <td className="p-4 text-sm font-medium text-slate-600 dark:text-slate-300">{admission.contactInfo?.mobile}</td>
                                     <td className="p-4">
@@ -186,8 +255,8 @@ const ApplicationsManagementPage = () => {
                                             {getStatusLabel(admission.status)}
                                         </span>
                                     </td>
-                                    <td className="p-4 text-right" onClick={e => e.stopPropagation()}>
-                                        <div className="flex items-center justify-end gap-2">
+                                    <td className="p-2 text-right" onClick={e => e.stopPropagation()}>
+                                        <div className="flex items-center justify-end gap-1">
                                             <Button variant="ghost" size="sm" onClick={() => navigate(`/admin/applications/${admission._id}`)} title="View">
                                                 <Eye size={16} />
                                             </Button>

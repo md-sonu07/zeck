@@ -4,7 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { fetchCourseById, clearCurrentCourse } from '../../../store/slice/courseSlice';
 import { submitApplication } from '../../../store/slice/admissionSlice';
-import { ArrowLeft, BookOpen, Clock, CheckCircle2, IndianRupee, Loader2 } from 'lucide-react';
+import { register } from '../../../store/thunk/authThunk';
+import { ArrowLeft, BookOpen, Clock, CheckCircle2, IndianRupee, Loader2, Info, Eye, EyeOff } from 'lucide-react';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/common/Input';
 import Select from '../../../components/common/Select';
@@ -16,7 +17,7 @@ const ApplyNowPage = () => {
     const navigate = useNavigate();
 
     const { currentCourse: course, loading: courseLoading } = useSelector((state) => state.courses);
-    const { user: userInfo } = useSelector((state) => state.auth);
+    const { userInfo } = useSelector((state) => state.auth);
     const { loading: submitting } = useSelector((state) => state.admissions);
 
     const [form, setForm] = useState({
@@ -32,9 +33,16 @@ const ApplyNowPage = () => {
     const [educationEntries, setEducationEntries] = useState([]);
     const [documentFiles, setDocumentFiles] = useState({});
     const [sameAddress, setSameAddress] = useState(false);
+    
+    const [accountForm, setAccountForm] = useState({ fullName: '', email: '', phone: '', password: '', confirmPassword: '' });
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
-        dispatch(fetchCourseById(id));
+        // Extract the actual MongoDB ID from the slug (e.g. bca-course-123456)
+        const courseId = id ? id.split('-').pop() : null;
+        if (courseId) {
+            dispatch(fetchCourseById(courseId));
+        }
         return () => {
             dispatch(clearCurrentCourse());
         };
@@ -79,8 +87,23 @@ const ApplyNowPage = () => {
         setForm(prev => ({ ...prev, extraInformation: value }));
     };
 
+    const updateAccountForm = (field, value) => {
+        setAccountForm(prev => ({ ...prev, [field]: value }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // 1. Validate Account Creation (if guest)
+        if (!userInfo) {
+            if (!accountForm.fullName || !accountForm.email || !accountForm.phone || !accountForm.password) {
+                return toast.error("Please fill all fields in the Create Account section.");
+            }
+            if (accountForm.password !== accountForm.confirmPassword) {
+                return toast.error("Passwords do not match.");
+            }
+        }
+
         const fd = new FormData();
         const appData = {
             course: course._id,
@@ -95,9 +118,26 @@ const ApplyNowPage = () => {
         };
         fd.append('applicationData', JSON.stringify(appData));
         Object.entries(documentFiles).forEach(([name, files]) => {
-            files.forEach(file => fd.append('documents', file));
+            files.forEach(file => fd.append(`${name}_doc`, file));
         });
+        
         try {
+            if (!userInfo) {
+                const regToast = toast.loading('Creating your account...');
+                try {
+                    await dispatch(register({
+                        name: accountForm.fullName,
+                        email: accountForm.email,
+                        phone: accountForm.phone,
+                        password: accountForm.password
+                    })).unwrap();
+                    toast.success('Account created successfully!', { id: regToast });
+                } catch (error) {
+                    toast.error(`Registration failed: ${error}`, { id: regToast });
+                    return; // Stop submission if registration fails
+                }
+            }
+
             await dispatch(submitApplication(fd)).unwrap();
             toast.success('Application submitted successfully!');
             navigate('/my-applications');
@@ -126,7 +166,7 @@ const ApplyNowPage = () => {
 
             {/* Header */}
             <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-40">
-                <div className="max-w-4xl mx-auto px-4 xl:px-8 py-4 flex items-center gap-4">
+                <div className="max-w-6xl mx-auto px-4 xl:px-8 py-4 flex items-center gap-4">
                     <button type="button" onClick={() => navigate(-1)} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors shrink-0">
                         <ArrowLeft size={20} className="text-slate-600 dark:text-slate-400" />
                     </button>
@@ -139,7 +179,20 @@ const ApplyNowPage = () => {
                 </div>
             </div>
 
-            <div className="max-w-4xl mx-auto px-4 mt-8 space-y-6">
+            <div className="max-w-5xl mx-auto px-4 mt-8 space-y-6">
+
+                {/* Information Banner */}
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/50 rounded-2xl p-4 flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <div className="mt-0.5 text-blue-500 shrink-0">
+                        <Info size={20} />
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-bold text-blue-800 dark:text-blue-300">महत्वपूर्ण सूचना (Important Instructions)</h3>
+                        <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mt-1 leading-relaxed">
+                            कृपया अपना आवेदन फॉर्म ध्यानपूर्वक भरें। सुनिश्चित करें कि आपके द्वारा दी गई सभी जानकारी आपके दस्तावेज़ों से मेल खाती हो। फॉर्म सबमिट करने के बाद, हमारी टीम आपसे जल्द ही संपर्क करेगी।
+                        </p>
+                    </div>
+                </div>
 
                 {/* Course Details Card */}
                 {course && (
@@ -192,6 +245,12 @@ const ApplyNowPage = () => {
                                             ))
                                         ) : (
                                             <div className="text-xs text-slate-500 italic">No detailed fee breakdown.</div>
+                                        )}
+                                        {course.discount > 0 && (
+                                            <div className="flex justify-between items-center text-xs pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+                                                <span className="font-semibold text-emerald-600 dark:text-emerald-400">Discount</span>
+                                                <span className="font-bold text-emerald-600 dark:text-emerald-400">-₹{course.discount?.toLocaleString('en-IN')}</span>
+                                            </div>
                                         )}
                                     </div>
                                     <div className="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-slate-700/50 mt-auto">
@@ -324,8 +383,36 @@ const ApplyNowPage = () => {
                         </div>
                     </div>
 
+                    {!userInfo && (
+                        <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-8 border-2 border-primary/20 shadow-sm mt-8">
+                            <div className="mb-6">
+                                <h2 className="text-2xl font-black text-slate-800 dark:text-white">Create Account</h2>
+                                <p className="text-sm font-medium text-slate-500 mt-1">Please provide identification details to create an account and track your application.</p>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Input label="Full Name" placeholder="e.g. John Doe" type="text" value={accountForm.fullName} onChange={e => updateAccountForm('fullName', e.target.value)} required={!userInfo} />
+                                <Input label="Email Identifier" placeholder="e.g. john@example.com" type="email" value={accountForm.email} onChange={e => updateAccountForm('email', e.target.value)} required={!userInfo} />
+                                <Input label="Phone Number" placeholder="e.g. 9876543210" type="tel" value={accountForm.phone} onChange={e => updateAccountForm('phone', e.target.value)} required={!userInfo} />
+                                <div className="hidden md:block"></div>
+                                <div className="relative">
+                                    <Input label="Password" placeholder="Create a password" type={showPassword ? "text" : "password"} value={accountForm.password} onChange={e => updateAccountForm('password', e.target.value)} required={!userInfo} />
+                                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-[38px] text-slate-400 hover:text-primary transition-colors">
+                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                </div>
+                                <div className="relative">
+                                    <Input label="Confirm Password" placeholder="Confirm your password" type={showPassword ? "text" : "password"} value={accountForm.confirmPassword} onChange={e => updateAccountForm('confirmPassword', e.target.value)} required={!userInfo} />
+                                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-[38px] text-slate-400 hover:text-primary transition-colors">
+                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+
                     <button type="submit" disabled={submitting}
-                        className="w-full py-4 bg-primary text-white rounded-xl text-base font-black shadow-lg shadow-primary/25 hover:-translate-y-1 transition-all active:scale-[0.98] disabled:opacity-50 mt-8">
+                        className="w-full py-4 bg-primary text-white rounded-md cursor-pointer text-base font-black shadow-lg shadow-primary/25 hover:-translate-y-1 transition-all active:scale-[0.98] disabled:opacity-50 mt-8">
                         {submitting ? 'Submitting...' : 'Submit Application'}
                     </button>
                 </form>

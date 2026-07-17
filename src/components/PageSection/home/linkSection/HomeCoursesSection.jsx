@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { GraduationCap, Loader2, BookOpen } from 'lucide-react';
+import { GraduationCap, Loader2, BookOpen, ArrowRight } from 'lucide-react';
 import { fetchActiveCourseCategories } from '../../../../store/slice/courseCategorySlice';
 import { fetchCourses } from '../../../../store/slice/courseSlice';
 
-const HomeCoursesSection = () => {
+const HomeCoursesSection = ({ hideViewAll = false }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
@@ -31,15 +31,21 @@ const HomeCoursesSection = () => {
     }, [dispatch]);
 
     const handleApplyClick = (course) => {
-        navigate('/course-apply/' + course._id);
+        const slug = course.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+        navigate(`/course-apply/${slug}-${course._id}`);
     };
 
     return (
         <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-md shadow-slate-200/60 dark:shadow-black/20 card-lift mb-8">
-            <div className="bg-linear-to-r from-purple-700 to-indigo-800 px-5 py-3">
+            <div className="bg-linear-to-r from-purple-700 to-indigo-800 px-5 py-3 flex items-center justify-between">
                 <h2 className="text-base font-bold text-white flex items-center gap-2">
                     <BookOpen size={15} /> Courses, Universities & Colleges
                 </h2>
+                {!hideViewAll && (
+                    <Link to="/university-cources" className="text-[10px] font-black bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition-colors uppercase tracking-widest cursor-pointer">
+                        View All
+                    </Link>
+                )}
             </div>
 
             <div className="p-6">
@@ -50,10 +56,10 @@ const HomeCoursesSection = () => {
                 ) : categories.length > 0 ? (
                     <div className="space-y-8">
                         {categories.map(category => {
-                            const categoryCourses = courses.filter(c => 
+                            const categoryCourses = courses.filter(c =>
                                 (c.category?._id || c.category) === category._id && !c.deletedAt
                             );
-                            
+
                             if (categoryCourses.length === 0) return null;
 
                             return (
@@ -90,9 +96,9 @@ const HomeCoursesSection = () => {
                                                     </div>
                                                 </div>
                                                 <div className="shrink-0 w-full sm:w-auto">
-                                                    <button 
+                                                    <button
                                                         onClick={() => handleApplyClick(course)}
-                                                        className="w-full sm:w-auto px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-lg shadow-sm shadow-purple-600/30 transition-all active:scale-95"
+                                                        className="w-full sm:w-auto cursor-pointer px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold rounded-lg shadow-sm shadow-purple-600/30 transition-all active:scale-95"
                                                     >
                                                         Apply Now
                                                     </button>
@@ -109,9 +115,20 @@ const HomeCoursesSection = () => {
                         No courses available at the moment.
                     </div>
                 )}
+
+                 {/* Footer */}
+            {!hideViewAll && (
+                <div className="px-4 py-2.5 mt-4 rounded-md bg-slate-50 dark:bg-slate-700/30 border-t border-slate-100 dark:border-slate-700 text-center">
+                    <Link
+                        to="/university-cources"
+                        className="group/footer text-xs font-bold text-purple-700 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 inline-flex items-center gap-1.5 transition-colors duration-200 no-underline"
+                    >
+                        View All Courses & Universities
+                        <ArrowRight size={11} className="transition-transform duration-200 group-hover/footer:translate-x-1" />
+                    </Link>
+                </div>
+            )}
             </div>
-
-
         </section>
     );
 };

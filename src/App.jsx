@@ -6,6 +6,7 @@ import TopBar from './components/layout/TopBar';
 import Header from './components/layout/Header';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import MobileBottomBar from './components/layout/MobileBottomBar';
 import AppRoutes from './routes/AppRoutes';
 import { Toaster } from 'react-hot-toast';
 
@@ -32,7 +33,7 @@ const AppContent = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background-light dark:bg-background-dark flex flex-col transition-colors duration-300">
+    <div className="min-h-screen bg-background-light dark:bg-background-dark flex flex-col transition-colors duration-300 pb-16 md:pb-0">
       <TopBar />
       {/* Sticky Header & Navbar Wrapper */}
       <div className="sticky top-0 z-50 w-full bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm">
@@ -46,6 +47,7 @@ const AppContent = () => {
         <AppRoutes />
       </main>
       <Footer />
+      <MobileBottomBar />
     </div>
   );
 };

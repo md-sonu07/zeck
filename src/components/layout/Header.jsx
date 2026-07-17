@@ -31,7 +31,7 @@ const Header = () => {
 
     const navLinks = [
         { name: 'Home', path: '/', icon: House },
-        { name: 'University', path: '/university', icon: School },
+        { name: 'University & Courses', path: '/university-cources', icon: School },
         { name: 'Admission', path: '/admission', icon: GraduationCap },
         { name: 'Latest News', path: '/latest-news', icon: Newspaper },
         { name: 'Admit Card', path: '/admit-card', icon: FileText },
@@ -59,7 +59,7 @@ const Header = () => {
                 {/* Logo Section */}
                 <Link to="/" className="flex items-center gap-3 shrink-0 group">
                     <div className="">
-                        <div className="size-11 sm:size-12 rounded-md flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
+                        <div className="size-9 sm:size-12 rounded-md flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300">
                             <img
                                 src={darkMode ? "/logo/light-logo.png" : "/logo/dark-logo.png"}
                                 alt="Zoya Education Centre"
@@ -69,9 +69,9 @@ const Header = () => {
                     </div>
                     {/* Mobile Title View */}
                     <div className="leading-none sm:hidden">
-                        <h1 className="font-black tracking-tighter flex flex-col">
-                            <span className="text-primary text-xl leading-none uppercase">Zoya</span>
-                            <span className="text-slate-800 dark:text-white text-[10px] uppercase tracking-[0.1em] font-bold">Education Centre</span>
+                        <h1 className="font-black tracking-tighter flex flex-col mt-1">
+                            <span className="text-primary text-lg leading-none uppercase">Zoya Education</span>
+                            <span className="text-slate-800 dark:text-white text-[12px] uppercase tracking-[0.1em] font-bold">Centre & Trust</span>
                         </h1>
                     </div>
 

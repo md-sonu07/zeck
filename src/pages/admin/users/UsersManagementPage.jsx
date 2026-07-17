@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 
 const UsersManagementPage = () => {
     const [users, setUsers] = useState([]);
-    const [filteredUsers, setFilteredUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [roleFilter, setRoleFilter] = useState('all');
@@ -53,15 +52,14 @@ const UsersManagementPage = () => {
             setLoading(true);
             const data = await getAllUsersApi();
             setUsers(data);
-            setFilteredUsers(data);
-            setLoading(false);
         } catch (error) {
             console.error('Failed to fetch users', error);
+        } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
+    const filteredUsers = React.useMemo(() => {
         let result = [...users];
 
         // Search Filter
@@ -94,9 +92,12 @@ const UsersManagementPage = () => {
             return 0;
         });
 
-        setFilteredUsers(result);
-        setCurrentPage(1); // Reset to page 1 when filters or sort change
+        return result;
     }, [searchQuery, roleFilter, sortOption, users]);
+
+    useEffect(() => {
+        setCurrentPage(1); // Reset to page 1 when filters or sort change
+    }, [searchQuery, roleFilter, sortOption]);
 
     // Pagination calculations
     const indexOfLastUser = currentPage * usersPerPage;
@@ -316,7 +317,7 @@ const UsersManagementPage = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
-                            {loading ? (
+                            {loading && filteredUsers.length === 0 ? (
                                 <tr>
                                     <td colSpan="5" className="p-8 text-center text-slate-500 font-medium">Loading users...</td>
                                 </tr>

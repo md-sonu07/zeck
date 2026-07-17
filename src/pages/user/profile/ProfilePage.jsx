@@ -10,6 +10,7 @@ import { ProfileSkeleton } from '../../../components/common/Skeleton';
 
 import { logout as logoutUser } from '../../../store/thunk/authThunk';
 import { fetchMyApplications } from '../../../store/thunk/applicationThunk';
+import { fetchMyAdmissions } from '../../../store/slice/admissionSlice';
 import { fetchContactSettings } from '../../../store/thunk/contactThunk';
 
 import { useNavigate, Link } from 'react-router-dom';
@@ -22,9 +23,8 @@ const ProfilePage = () => {
     const { userDetails, loading } = useSelector((state) => state.user);
     const { userInfo } = useSelector((state) => state.auth);
     const { myApplications, loading: appsLoading } = useSelector((state) => state.applications);
+    const { myApplications: myAdmissions, loading: admissionsLoading } = useSelector((state) => state.admissions);
     const { settings: contactSettings } = useSelector((state) => state.contact);
-    const [selectedApp, setSelectedApp] = useState(null);
-    const [activeTab, setActiveTab] = useState('history'); // 'history' or 'docs'
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editName, setEditName] = useState('');
     const [editEmail, setEditEmail] = useState('');
@@ -39,20 +39,48 @@ const ProfilePage = () => {
         } else {
             dispatch(getProfile());
             dispatch(fetchMyApplications());
+            dispatch(fetchMyAdmissions());
             dispatch(fetchContactSettings());
         }
     }, [dispatch, userInfo, navigate]);
 
 
+    const combinedActivities = [
+        ...(myApplications || []).map(app => ({
+            ...app,
+            activityType: 'application',
+            title: app.article?.title || 'Unknown Post',
+            date: app.createdAt,
+            displayAmount: app.amount || 0,
+            displayType: app.paymentType === 'payment' ? 'Direct Payment' : 'Documents Only'
+        })),
+        ...(myAdmissions || []).map(adm => ({
+            ...adm,
+            activityType: 'admission',
+            title: adm.course?.name || 'Course Application',
+            date: adm.submittedAt,
+            displayAmount: adm.course?.totalFee || 0,
+            displayType: 'Course Admission',
+            documents: (adm.documents || []).flatMap(d => d.files || [])
+        }))
+    ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
     // Consolidate all documents from all applications for the "All Data" view
-    const allDocuments = myApplications?.reduce((acc, app) => {
-        if (app.documents && app.documents.length > 0) {
-            app.documents.forEach(doc => {
+    const allDocuments = combinedActivities?.reduce((acc, app) => {
+        let flatDocs = [];
+        if (app.activityType === 'application') {
+            flatDocs = app.documents || [];
+        } else if (app.activityType === 'admission') {
+            flatDocs = (app.documents || []).flatMap(d => d.files || []);
+        }
+
+        if (flatDocs.length > 0) {
+            flatDocs.forEach(docUrl => {
                 acc.push({
-                    url: doc,
-                    appName: app.article?.title || 'Unknown',
+                    url: docUrl,
+                    appName: app.title,
                     status: app.status,
-                    date: app.createdAt,
+                    date: app.date,
                     appId: app._id,
                     fullApp: app
                 });
@@ -239,43 +267,17 @@ const ProfilePage = () => {
                                     <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                                         <Clock className="text-primary" size={20} /> My Activities
                                     </h2>
-
-                                    {/* Tabs */}
-                                    <div className="flex items-center w-full sm:w-auto p-1.5 bg-slate-50 dark:bg-slate-800/50 rounded-[1.25rem] border border-slate-100 dark:border-slate-800">
-                                        <button
-                                            onClick={() => setActiveTab('history')}
-                                            className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-[0.9rem] text-[10px] font-black uppercase tracking-widest transition-all duration-300 active:scale-95 ${activeTab === 'history'
-                                                ? 'bg-white dark:bg-slate-700 text-primary shadow-md shadow-primary/5 ring-1 ring-slate-100 dark:ring-slate-600'
-                                                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
-                                                }`}
-                                        >
-                                            <Clock size={14} className={activeTab === 'history' ? 'animate-pulse' : ''} />
-                                            History
-                                        </button>
-                                        <button
-                                            onClick={() => setActiveTab('docs')}
-                                            className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-[0.9rem] text-[10px] font-black uppercase tracking-widest transition-all duration-300 active:scale-95 ${activeTab === 'docs'
-                                                ? 'bg-white dark:bg-slate-700 text-primary shadow-md shadow-primary/5 ring-1 ring-slate-100 dark:ring-slate-600'
-                                                : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300'
-                                                }`}
-                                        >
-                                            <FileText size={14} className={activeTab === 'docs' ? 'animate-pulse' : ''} />
-                                            Documents
-                                        </button>
-                                    </div>
-
                                 </div>
                             </div>
 
                             <div className="divide-y divide-slate-50 dark:divide-slate-800">
-                                {appsLoading ? (
+                                {appsLoading || admissionsLoading ? (
                                     <div className="p-10 flex flex-col items-center justify-center gap-3">
                                         <div className="size-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
                                         <p className="text-xs font-bold text-slate-400 italic">Fetching...</p>
                                     </div>
-                                ) : activeTab === 'history' ? (
-                                    /* History View */
-                                    myApplications?.length === 0 ? (
+                                ) : (
+                                    combinedActivities?.length === 0 ? (
                                         <div className="p-12 text-center">
                                             <div className="size-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-dashed border-slate-200 dark:border-slate-700">
                                                 <CreditCard className="text-slate-300" size={30} />
@@ -284,81 +286,50 @@ const ProfilePage = () => {
                                             <p className="text-xs text-slate-500 mt-1 max-w-[240px] mx-auto">You haven't submitted any applications or payments yet.</p>
                                         </div>
                                     ) : (
-                                        myApplications.map((app) => (
-                                            <div key={app._id} onClick={() => setSelectedApp(app)} className="px-6 md:px-8 py-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer">
-                                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                                    <div className="flex items-start gap-4">
-                                                        <div className={`size-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${app.status === 'approved' ? 'bg-emerald-50 text-emerald-500 dark:bg-emerald-500/10' :
+                                        combinedActivities.map((app) => (
+                                            <div key={app._id} onClick={() => navigate('/my-applications')} className="px-4 md:px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group cursor-pointer border-b border-slate-50 dark:border-slate-800 last:border-0">
+                                                <div className="flex items-center justify-between gap-3">
+                                                    <div className="flex items-center gap-3 min-w-0">
+                                                        <div className={`size-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${app.status === 'approved' ? 'bg-emerald-50 text-emerald-500 dark:bg-emerald-500/10' :
                                                             app.status === 'rejected' ? 'bg-rose-50 text-rose-500 dark:bg-rose-500/10' :
                                                                 'bg-amber-50 text-amber-500 dark:bg-amber-500/10'
                                                             }`}>
-                                                            {app.status === 'approved' ? <CheckCircle2 size={24} /> :
-                                                                app.status === 'rejected' ? <XCircle size={24} /> :
-                                                                    <Clock size={24} />}
+                                                            {app.status === 'approved' ? <CheckCircle2 size={20} /> :
+                                                                app.status === 'rejected' ? <XCircle size={20} /> :
+                                                                    <Clock size={20} />}
                                                         </div>
                                                         <div className="min-w-0">
-                                                            <h3 className="text-sm font-bold text-slate-800 dark:text-white truncate group-hover:text-primary transition-colors">
-                                                                {app.article?.title || 'Unknown Post'}
-                                                            </h3>
-                                                            <div className="flex items-center gap-3 mt-1">
-                                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(app.createdAt).toLocaleDateString()}</span>
+                                                            <div className="flex items-center gap-2">
+                                                                <h3 className="text-sm font-bold text-slate-800 dark:text-white truncate group-hover:text-primary transition-colors">
+                                                                    {app.title}
+                                                                </h3>
+                                                                <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded sm:hidden ${app.status === 'approved' ? 'text-emerald-500 bg-emerald-50' :
+                                                                    app.status === 'rejected' ? 'text-rose-500 bg-rose-50' : 'text-amber-500 bg-amber-50'
+                                                                    }`}>{app.status}</span>
+                                                            </div>
+                                                            <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(app.date).toLocaleDateString()}</span>
                                                                 <span className="size-1 bg-slate-200 dark:bg-slate-700 rounded-full"></span>
-                                                                <span className="text-[10px] font-black text-primary uppercase tracking-widest">₹{app.amount}</span>
-                                                                <span className="size-1 bg-slate-200 dark:bg-slate-700 rounded-full"></span>
-                                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
-                                                                    {app.paymentType === 'payment' ? 'Direct Payment' : 'Documents Only'}
+                                                                <span className="text-[10px] font-black text-primary uppercase tracking-widest">₹{app.displayAmount?.toLocaleString('en-IN')}</span>
+                                                                <span className="size-1 bg-slate-200 dark:bg-slate-700 rounded-full hidden sm:block"></span>
+                                                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-md hidden sm:block">
+                                                                    {app.displayType}
                                                                 </span>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className="flex items-center justify-between sm:justify-end gap-3 sm:text-right">
-                                                        <div className="hidden sm:block">
+                                                    <div className="flex items-center justify-end gap-3 shrink-0">
+                                                        <div className="hidden sm:block text-right">
                                                             <p className={`text-[10px] font-black uppercase tracking-[0.2em] ${app.status === 'approved' ? 'text-emerald-500' :
                                                                 app.status === 'rejected' ? 'text-rose-500' : 'text-amber-500'
                                                                 }`}>{app.status}</p>
                                                             <p className="text-[9px] font-bold text-slate-400 mt-0.5">Application State</p>
                                                         </div>
-                                                        <ChevronRight size={18} className="text-slate-300 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                                                        <ChevronRight size={16} className="text-slate-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                                                     </div>
                                                 </div>
                                             </div>
                                         ))
-                                    )
-                                ) : (
-                                    /* Documents View */
-                                    allDocuments?.length === 0 ? (
-                                        <div className="p-12 text-center">
-                                            <div className="size-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-dashed border-slate-200 dark:border-slate-700">
-                                                <FileText className="text-slate-300" size={30} />
-                                            </div>
-                                            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">No Documents Found</h3>
-                                            <p className="text-xs text-slate-500 mt-1 max-w-[240px] mx-auto">Your uploaded documents will appear here.</p>
-                                        </div>
-                                    ) : (
-                                        <div className="p-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                            {allDocuments.map((doc, idx) => {
-                                                const fullUrl = doc.url.startsWith('http') ? doc.url : `${apiBaseUrl}${doc.url}`;
-                                                const isImage = doc.url.match(/\.(jpeg|jpg|gif|png|webp)$/i);
-                                                return (
-                                                    <div key={idx} onClick={() => setSelectedApp(doc.fullApp)} className="group relative aspect-square bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-xs hover:shadow-md transition-all cursor-pointer">
-                                                        {isImage ? (
-                                                            <img src={fullUrl} alt="Doc" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                                        ) : (
-                                                            <div className="w-full h-full flex flex-col items-center justify-center p-3 text-center">
-                                                                <FileText size={24} className="text-primary/50 mb-1" />
-                                                                <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest truncate w-full">{doc.appName}</span>
-                                                            </div>
-                                                        )}
-                                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                                            <Eye size={20} className="text-white" />
-                                                        </div>
-                                                        <div className={`absolute top-2 left-2 size-2 rounded-full border border-white shadow-sm ${doc.status === 'approved' ? 'bg-emerald-500' :
-                                                            doc.status === 'rejected' ? 'bg-rose-500' : 'bg-amber-500'
-                                                            }`}></div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
                                     )
                                 )}
                             </div>
@@ -411,90 +382,6 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            {/* Application Detail Modal */}
-            {selectedApp && (
-                <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-slate-900/95 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setSelectedApp(null)}>
-                    <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-6 md:p-8 max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 relative animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-                        {/* Header */}
-                        <div className="flex justify-between items-start mb-6">
-                            <div>
-                                <h2 className="text-xl md:text-2xl font-black text-slate-800 dark:text-white leading-tight">Application Details</h2>
-                                <p className="text-xs font-bold text-primary uppercase tracking-[0.2em] mt-1">{selectedApp.article?.title}</p>
-                            </div>
-                            <button onClick={() => setSelectedApp(null)} className="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-red-500 rounded-2xl transition-all active:scale-90">
-                                <X size={20} />
-                            </button>
-                        </div>
-
-                        <div className="flex-1 overflow-y-auto space-y-8 pr-2 custom-scrollbar">
-                            {/* Message Section */}
-                            {selectedApp.message && (
-                                <div className="space-y-3">
-                                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                        <MessageCircle size={14} className="text-primary" /> Your Message
-                                    </h3>
-                                    <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-5 border border-slate-100 dark:border-slate-800">
-                                        <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 leading-relaxed italic italic">"{selectedApp.message}"</p>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Documents Section */}
-                            <div className="space-y-4">
-                                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                    <FileText size={14} className="text-primary" /> Uploaded Documents ({selectedApp.documents?.length || 0})
-                                </h3>
-
-                                {selectedApp.documents && selectedApp.documents.length > 0 ? (
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {selectedApp.documents.map((doc, idx) => {
-                                            const fullUrl = doc.startsWith('http') ? doc : `${apiBaseUrl}${doc}`;
-                                            const isImage = doc.match(/\.(jpeg|jpg|gif|png|webp)$/i);
-                                            return (
-                                                <div key={idx} className="group relative aspect-square bg-slate-50 dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-                                                    {isImage ? (
-                                                        <>
-                                                            <img src={fullUrl} alt="Doc" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                                                                <a href={fullUrl} target="_blank" rel="noreferrer" className="size-10 bg-white rounded-xl flex items-center justify-center text-primary shadow-lg animate-in zoom-in-50 duration-200">
-                                                                    <Eye size={20} />
-                                                                </a>
-                                                            </div>
-                                                        </>
-                                                    ) : (
-                                                        <div className="w-full h-full flex flex-col items-center justify-center p-4">
-                                                            <FileText size={40} className="text-primary/40 mb-2" />
-                                                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">PDF Document</span>
-                                                            <a href={fullUrl} target="_blank" rel="noreferrer" className="mt-3 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary text-[9px] font-black rounded-lg uppercase tracking-widest transition-colors">
-                                                                Open
-                                                            </a>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                ) : (
-                                    <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-8 border border-dashed border-slate-200 dark:border-slate-800 text-center">
-                                        <p className="text-xs font-bold text-slate-400 italic">No documents uploaded for this application.</p>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Status Footer */}
-                        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className={`size-3 rounded-full animate-pulse ${selectedApp.status === 'approved' ? 'bg-emerald-500' :
-                                    selectedApp.status === 'rejected' ? 'bg-rose-500' : 'bg-amber-500'
-                                    }`}></div>
-                                <span className="text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Status: {selectedApp.status}</span>
-                            </div>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest group">Transaction #{selectedApp._id.slice(-8)}</span>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Edit Profile Modal */}
             {isEditModalOpen && (

@@ -13,7 +13,8 @@ import {
 
 const emptyForm = {
     name: '', category: '', duration: '', eligibility: '',
-    feeType: 'fixed', feeComponents: [], studentCreditCard: false
+    feeType: 'fixed', feeComponents: [], studentCreditCard: false,
+    discount: 0, totalFee: 0
 };
 
 const FeeSection = ({ feeComponents, onChange }) => {
@@ -67,6 +68,16 @@ const CoursesManagementPage = () => {
         dispatch(fetchCourseCategories());
     }, [dispatch]);
 
+    useEffect(() => {
+        if (showForm) {
+            const baseTotal = form.feeComponents.reduce((s, c) => s + (Number(c.amount) || 0), 0);
+            const calculatedTotal = Math.max(0, baseTotal - (Number(form.discount) || 0));
+            if (calculatedTotal !== form.totalFee) {
+                setForm(prev => ({ ...prev, totalFee: calculatedTotal }));
+            }
+        }
+    }, [form.feeComponents, form.discount, showForm]);
+
     const activeCourses = courses.filter(c => !c.deletedAt && !c.isArchived && (!categoryId || (c.category && (c.category._id === categoryId || c.category === categoryId))));
     const filtered = activeCourses.filter(c =>
         c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -92,7 +103,9 @@ const CoursesManagementPage = () => {
             duration: course.duration || '', eligibility: course.eligibility || '',
             feeType: course.feeType || 'fixed',
             feeComponents: course.feeComponents || [],
-            studentCreditCard: course.studentCreditCard || false
+            studentCreditCard: course.studentCreditCard || false,
+            discount: course.discount || "",
+            totalFee: course.totalFee || ""
         });
         setShowForm(true);
     };
@@ -198,6 +211,18 @@ const CoursesManagementPage = () => {
                     <div className="pt-4 border-t border-slate-100 dark:border-slate-700">
                         <label className="block text-sm font-bold text-slate-800 dark:text-slate-100 mb-3">Fee Structure</label>
                         <FeeSection feeComponents={form.feeComponents} onChange={c => setForm({ ...form, feeComponents: c })} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Discount (₹)</label>
+                                <input type="number" min="0" placeholder="e.g. 5000" value={form.discount} onChange={e => setForm({ ...form, discount: Number(e.target.value) })}
+                                    className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-slate-800 dark:text-white font-medium" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Total Fee (₹)</label>
+                                <input type="number" readOnly value={form.totalFee}
+                                    className="w-full px-4 py-2 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-md text-slate-500 dark:text-slate-400 font-bold cursor-not-allowed" />
+                            </div>
+                        </div>
                     </div>
 
                     <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">

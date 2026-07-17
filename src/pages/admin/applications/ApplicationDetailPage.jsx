@@ -78,36 +78,33 @@ const ApplicationDetailPage = () => {
     const getStatusLabel = (s) => s.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
 
     return (
-        <div className="space-y-6 max-w-5xl mx-auto">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div className="flex items-center gap-3">
+        <div className="space-y-6 max-w-6xl mx-auto">
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 pb-4 border-b border-slate-200 dark:border-slate-700">
+                <div className="flex items-start gap-4">
                     <button onClick={() => navigate('/admin/applications')}
-                        className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
-                        <ArrowLeft size={18} className="text-slate-500" />
+                        className="mt-1 p-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl transition-all shadow-sm">
+                        <ArrowLeft size={18} className="text-slate-600 dark:text-slate-300" />
                     </button>
                     <div>
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-2xl font-bold text-slate-800 dark:text-white">{app.applicationId}</h1>
-                            <span className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${statusColors[app.status] || ''}`}>
+                        <div className="flex flex-wrap items-center gap-3">
+                            <h1 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white tracking-tight">{app.applicationId}</h1>
+                            <span className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border shadow-sm ${statusColors[app.status] || ''}`}>
                                 <span className={`size-1.5 rounded-full ${app.status === 'approved' ? 'bg-emerald-500 animate-pulse' : app.status === 'rejected' ? 'bg-red-500' : 'bg-amber-500'}`}></span>
                                 {getStatusLabel(app.status)}
                             </span>
                         </div>
-                        <p className="text-sm text-slate-500 mt-0.5">Submitted {new Date(app.submittedAt).toLocaleString()}</p>
+                        <p className="text-sm font-medium text-slate-500 mt-1">Submitted on <span className="text-slate-700 dark:text-slate-300 font-bold">{new Date(app.submittedAt).toLocaleString()}</span></p>
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Button size="sm" onClick={() => handleStatus('approved')} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+                <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                    <Button size="sm" onClick={() => handleStatus('approved')} className="flex-1 lg:flex-none bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">
                         <CheckCircle size={14} /> Approve
                     </Button>
-                    <Button size="sm" onClick={() => handleStatus('rejected')} className="bg-red-600 hover:bg-red-700 text-white">
+                    <Button size="sm" onClick={() => handleStatus('rejected')} className="flex-1 lg:flex-none bg-red-600 hover:bg-red-700 text-white shadow-sm">
                         <XCircle size={14} /> Reject
                     </Button>
-                    <Button size="sm" variant="secondary" onClick={() => handleStatus('under_review')}>
-                        Mark Under Review
-                    </Button>
-                    <Button size="sm" variant="secondary" onClick={() => handleStatus('changes_requested')}>
-                        Request Changes
+                    <Button size="sm" variant="secondary" onClick={() => handleStatus('pending')} className="flex-1 lg:flex-none shadow-sm">
+                        Pending
                     </Button>
                 </div>
             </div>
@@ -197,38 +194,39 @@ const ApplicationDetailPage = () => {
 
             <SectionCard icon={FileText} title="Uploaded Documents">
                 {app.documents?.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {app.documents.map((doc, i) => (
-                            <div key={i} className="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{doc.name}</p>
-                                    <p className="text-[10px] text-slate-400">{doc.files?.length || 0} file(s)</p>
-                                </div>
-                                {doc.files?.map((url, fi) => (
-                                    <a key={fi} href={url} target="_blank" rel="noopener noreferrer"
-                                        className="text-xs font-bold text-primary hover:underline shrink-0">
-                                        View
-                                    </a>
-                                ))}
-                            </div>
-                        ))}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {app.documents.map((doc, i) => {
+                            return doc.files?.map((url, fi) => {
+                                const extractedFileName = url.split('/').pop().replace(/^[a-zA-Z0-9]+-\d+_?/, '');
+                                const displayName = doc.name.toLowerCase() === 'documents' ? extractedFileName : doc.name;
+                                
+                                return (
+                                    <div key={`${i}-${fi}`} className="p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-700 flex flex-col gap-3">
+                                        <div>
+                                            <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{displayName} {doc.files.length > 1 ? `(Part ${fi + 1})` : ''}</p>
+                                            <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-1">Uploaded Document</p>
+                                        </div>
+                                        <a href={url} target="_blank" rel="noopener noreferrer"
+                                            className="w-full text-center px-4 py-2 bg-primary/10 hover:bg-primary text-primary hover:text-white rounded-lg text-xs font-bold transition-colors shadow-sm">
+                                            Preview Document
+                                        </a>
+                                    </div>
+                                );
+                            });
+                        })}
                     </div>
                 ) : (
                     <p className="text-sm text-slate-400">No documents uploaded.</p>
                 )}
             </SectionCard>
 
-            {app.answers?.length > 0 && (
-                <SectionCard icon={FileText} title="Custom Question Responses">
-                    <div className="space-y-3">
-                        {app.answers.map((a, i) => (
-                            <div key={i} className="p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-700">
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{a.questionLabel}</p>
-                                <p className="text-sm font-semibold text-slate-800 dark:text-white mt-0.5">
-                                    {Array.isArray(a.answer) ? a.answer.join(', ') : a.answer || '—'}
-                                </p>
-                            </div>
-                        ))}
+            {app.extraInformation && (
+                <SectionCard icon={FileText} title="Extra Information">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-700">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Description / Extra Details</p>
+                        <p className="text-sm font-semibold text-slate-800 dark:text-white whitespace-pre-wrap">
+                            {app.extraInformation}
+                        </p>
                     </div>
                 </SectionCard>
             )}

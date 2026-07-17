@@ -80,7 +80,7 @@ const AdmitCardSearchPage = () => {
                     </div>
                 </div>
 
-                <div className="max-w-[800px] mx-auto px-4 -mt-6 relative z-10">
+                <div className="max-w-5xl mx-auto px-4 -mt-6 relative z-10">
                     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-4">
                         <div className="relative">
                             <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />

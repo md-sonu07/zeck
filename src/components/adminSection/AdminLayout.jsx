@@ -44,23 +44,33 @@ const AdminLayout = () => {
     const { userInfo } = useSelector((state) => state.auth);
 
     const navItems = [
+        { type: 'divider', label: 'Main' },
         { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+        { path: '/admin/users', label: 'Users', icon: Users },
+        
+        { type: 'divider', label: 'Core Management' },
         { path: '/admin/courses', label: 'Add Courses', icon: BookMarked },
         { path: '/admin/applications', label: 'Courses Applications', icon: ClipboardList },
-        { path: '/admin/users', label: 'Users', icon: Users },
+        
+        { type: 'divider', label: 'Content Management' },
         { path: '/admin/categories', label: 'Categories', icon: ListTree },
-        { path: '/admin/activities', label: 'Activities', icon: History },
-        { path: '/admin/payment-slips', label: 'Payment Slips', icon: FileText },
-        { path: '/admin/payments', label: 'Online Payments', icon: CreditCard },
         { path: '/admin/page-articles', label: 'Page Articles', icon: FileText },
         { path: '/admin/admit-card-pages', label: 'Admit Card Pages', icon: BadgeCheck },
-
-        { path: '/admin/marquee', label: 'Announcement Bar', icon: Megaphone },
         { path: '/admin/gallery', label: 'Gallery', icon: Image },
         { path: '/admin/important-services', label: 'Important Services', icon: Sparkles },
-        { path: '/admin/about-us', label: 'About Us', icon: Info },
+        
+        { type: 'divider', label: 'Finance' },
+        { path: '/admin/payments', label: 'Online Payments', icon: CreditCard },
+        { path: '/admin/payment-slips', label: 'Payment Slips', icon: FileText },
+        
+        { type: 'divider', label: 'Communications' },
         { path: '/admin/contact-messages', label: 'User Messages', icon: MessageSquare },
+        { path: '/admin/marquee', label: 'Announcement Bar', icon: Megaphone },
+        
+        { type: 'divider', label: 'System Information' },
+        { path: '/admin/about-us', label: 'About Us', icon: Info },
         { path: '/admin/contact-us', label: 'Contact Settings', icon: PhoneCall },
+        { path: '/admin/activities', label: 'Activities', icon: History },
         { path: '/admin/settings', label: 'Settings', icon: Settings },
     ];
 
@@ -125,7 +135,15 @@ const AdminLayout = () => {
                         <Home size={18} />
                         Back to Website
                     </Link>
-                    {navItems.map((item) => {
+                    {navItems.map((item, index) => {
+                        if (item.type === 'divider') {
+                            return (
+                                <p key={`div-${index}`} className="px-3 text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 mt-4">
+                                    {item.label}
+                                </p>
+                            );
+                        }
+
                         const isActive = location.pathname === item.path || (item.path !== '/admin' && location.pathname.startsWith(item.path));
                         return (
                             <Link

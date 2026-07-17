@@ -28,7 +28,6 @@ import GalleryPage from '../pages/user/gallery/GalleryPage';
 import DynamicCategoryPage from '../pages/user/dynamic/DynamicCategoryPage';
 import AdmitCardPagesList from '../pages/user/admitCardPages/AdmitCardPagesList';
 import AdmitCardSearchPage from '../pages/user/admitCardSearch/AdmitCardSearchPage';
-import CoursesListPage from '../pages/user/courses/CoursesListPage';
 import CourseDetailsPage from '../pages/user/courses/CourseDetailsPage';
 import ApplyNowPage from '../pages/user/apply/ApplyNowPage';
 import MyApplicationsPage from '../pages/user/myApplications/MyApplicationsPage';
@@ -45,7 +44,7 @@ const AppRoutes = () => {
             <Route path="/result" element={<ResultPage />} />
             <Route path="/answer-key" element={<AnswerKeyPage />} />
             <Route path="/admission" element={<AdmissionPage />} />
-            <Route path="/university" element={<UniversityPage />} />
+            <Route path="/university-cources" element={<UniversityPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/service" element={<ServicesPage />} />
             <Route path="/search" element={<SearchResultsPage />} />
@@ -53,7 +52,6 @@ const AppRoutes = () => {
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/admit-cards" element={<AdmitCardPagesList />} />
             <Route path="/admit-cards/:slug" element={<AdmitCardSearchPage />} />
-            <Route path="/courses" element={<CoursesListPage />} />
             <Route path="/courses/:id" element={<CourseDetailsPage />} />
             <Route path="/course-apply/:id" element={<ApplyNowPage />} />
 

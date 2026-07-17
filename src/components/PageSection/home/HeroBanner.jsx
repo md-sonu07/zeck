@@ -72,7 +72,7 @@ const HeroBanner = () => {
                                 <Newspaper size={14} className="shrink-0" /> LATEST NEWS
                             </Link>
 
-                            <Link to="/university"
+                            <Link to="university-cources"
                                 className="flex-1 sm:flex-none flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] px-5 py-3 rounded-xl border border-white/20 backdrop-blur-sm transition-all duration-300 uppercase tracking-widest whitespace-nowrap">
                                 <GraduationCap size={14} className="shrink-0" /> UNIVERSITY
                             </Link>
@@ -82,7 +82,7 @@ const HeroBanner = () => {
                                 <CheckCircle size={14} className="shrink-0" /> RESULTS
                             </Link>
 
-                            <Link to="/admit-card"
+                            <Link to="/admit-cards"
                                 className="flex-1 sm:flex-none flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] px-5 py-3 rounded-xl border border-white/20 backdrop-blur-sm transition-all duration-300 uppercase tracking-widest whitespace-nowrap">
                                 <IdCard size={14} className="shrink-0" /> ADMIT CARDS
                             </Link>
