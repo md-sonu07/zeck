@@ -25,7 +25,10 @@ import {
     CreditCard,
     MessageSquare,
     Image,
-    BadgeCheck
+    BadgeCheck,
+    BookOpen,
+    BookMarked,
+    ClipboardList
 } from 'lucide-react';
 import { logout as logoutUser } from '../../store/thunk/authThunk';
 
@@ -42,6 +45,8 @@ const AdminLayout = () => {
 
     const navItems = [
         { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+        { path: '/admin/courses', label: 'Add Courses', icon: BookMarked },
+        { path: '/admin/applications', label: 'Courses Applications', icon: ClipboardList },
         { path: '/admin/users', label: 'Users', icon: Users },
         { path: '/admin/categories', label: 'Categories', icon: ListTree },
         { path: '/admin/activities', label: 'Activities', icon: History },

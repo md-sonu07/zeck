@@ -19,6 +19,10 @@ import slipSettingReducer from './slice/slipSettingSlice';
 import galleryReducer from './slice/gallerySlice';
 import admitCardPageReducer from './slice/admitCardPageSlice';
 import admitCardReducer from './slice/admitCardSlice';
+import courseCategoryReducer from './slice/courseCategorySlice';
+import courseReducer from './slice/courseSlice';
+import admissionReducer from './slice/admissionSlice';
+import notificationReducer from './slice/notificationSlice';
 
 const store = configureStore({
     reducer: {
@@ -41,6 +45,10 @@ const store = configureStore({
         gallery: galleryReducer,
         admitCardPages: admitCardPageReducer,
         admitCards: admitCardReducer,
+        courseCategories: courseCategoryReducer,
+        courses: courseReducer,
+        admissions: admissionReducer,
+        notifications: notificationReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

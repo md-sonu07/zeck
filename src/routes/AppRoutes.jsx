@@ -28,7 +28,10 @@ import GalleryPage from '../pages/user/gallery/GalleryPage';
 import DynamicCategoryPage from '../pages/user/dynamic/DynamicCategoryPage';
 import AdmitCardPagesList from '../pages/user/admitCardPages/AdmitCardPagesList';
 import AdmitCardSearchPage from '../pages/user/admitCardSearch/AdmitCardSearchPage';
-
+import CoursesListPage from '../pages/user/courses/CoursesListPage';
+import CourseDetailsPage from '../pages/user/courses/CourseDetailsPage';
+import ApplyNowPage from '../pages/user/apply/ApplyNowPage';
+import MyApplicationsPage from '../pages/user/myApplications/MyApplicationsPage';
 
 const AppRoutes = () => {
     return (
@@ -50,7 +53,9 @@ const AppRoutes = () => {
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/admit-cards" element={<AdmitCardPagesList />} />
             <Route path="/admit-cards/:slug" element={<AdmitCardSearchPage />} />
-
+            <Route path="/courses" element={<CoursesListPage />} />
+            <Route path="/courses/:id" element={<CourseDetailsPage />} />
+            <Route path="/course-apply/:id" element={<ApplyNowPage />} />
 
             {/* Admin Panel Routes */}
             <Route element={<AdminRoute />}>
@@ -62,6 +67,7 @@ const AppRoutes = () => {
             <Route element={<ProtectedRoutes />}>
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/saved-posts" element={<SavedPostsPage />} />
+                <Route path="/my-applications" element={<MyApplicationsPage />} />
             </Route>
 
             {/* Dynamic Article Detail Page Route */}

@@ -7,7 +7,7 @@ import LatestNewsSection from '../../../components/PageSection/home/linkSection/
 import AdmitCardSection from '../../../components/PageSection/home/linkSection/AdmitCardSection';
 import ResultsSection from '../../../components/PageSection/home/linkSection/ResultsSection';
 import AnswerKeySyllabus from '../../../components/PageSection/home/linkSection/AnswerKeySyllabus';
-import UniversityBoardUpdates from '../../../components/PageSection/home/linkSection/UniversityBoardUpdates';
+import HomeCoursesSection from '../../../components/PageSection/home/linkSection/HomeCoursesSection';
 import OtherNewsTable from '../../../components/PageSection/home/linkSection/OtherNewsTable';
 import Sidebar from '../../../components/PageSection/home/Sidebar';
 import MobileQuickMenu from '../../../components/PageSection/home/MobileQuickMenu';
@@ -46,12 +46,8 @@ const HomePage = () => {
                             <ResultsSection />
                         </div>
 
-                        {/* Section Label */}
-                        <div className="section-label mt-4">
-                            <GraduationCap className="text-purple-500" size={10} /> Academic Updates
-                        </div>
-                        {/* University & Board Updates */}
-                        <UniversityBoardUpdates />
+                        {/* Courses Section */}
+                        <HomeCoursesSection />
 
                         {/* Other News Table (Dynamic Sections) */}
                         <OtherNewsTable />

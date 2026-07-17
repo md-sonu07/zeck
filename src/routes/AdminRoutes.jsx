@@ -15,7 +15,10 @@ import GalleryManagementPage from '../pages/admin/gallery/GalleryManagementPage'
 import PaymentManagementPage from '../pages/admin/payment/PaymentManagementPage';
 import AdmitCardPagesManagement from '../pages/admin/admitCardPages/AdmitCardPagesManagement';
 import AdmitCardsManagement from '../pages/admin/admitCards/AdmitCardsManagement';
-
+import CourseCategoriesManagementPage from '../pages/admin/courseCategories/CourseCategoriesManagementPage';
+import CoursesManagementPage from '../pages/admin/courses/CoursesManagementPage';
+import ApplicationsManagementPage from '../pages/admin/applications/ApplicationsManagementPage';
+import ApplicationDetailPage from '../pages/admin/applications/ApplicationDetailPage';
 
 import PaymentSlipsPage from '../pages/admin/paymentSlip/PaymentSlipsPage';
 import CreatePaymentSlipPage from '../pages/admin/paymentSlip/CreatePaymentSlipPage';
@@ -66,6 +69,10 @@ const AdminRoutes = () => {
 
                 <Route path="payments" element={<PaymentManagementPage />} />
 
+                <Route path="courses" element={<CourseCategoriesManagementPage />} />
+                <Route path="courses/:categoryId" element={<CoursesManagementPage />} />
+                <Route path="applications" element={<ApplicationsManagementPage />} />
+                <Route path="applications/:id" element={<ApplicationDetailPage />} />
                 <Route path="settings" element={<DashboardPage />} />
 
             </Route>
