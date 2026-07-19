@@ -467,7 +467,7 @@ export const ApplicationSkeleton = () => (
 export const GallerySkeleton = () => (
     <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8">
         <div className="flex items-center gap-4 mb-10">
-            <Skeleton width="56px" height="56px" className="rounded-2xl" />
+            <Skeleton width="48px" height="48px" className="rounded-xl" />
             <div className="space-y-2">
                 <Skeleton width="200px" height="28px" />
                 <Skeleton width="140px" height="14px" />
@@ -478,13 +478,16 @@ export const GallerySkeleton = () => (
                 <Skeleton width="40px" height="40px" className="rounded-xl" />
                 <Skeleton width="120px" height="24px" />
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {[1, 2, 3, 4, 5].map(i => (
-                    <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-                        <Skeleton height="280px" className="rounded-none" />
-                        <div className="p-3 space-y-2">
-                            <Skeleton width="70%" height="14px" />
-                            <Skeleton width="50%" height="10px" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {[1, 2, 3].map(i => (
+                    <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+                        <div className="aspect-[4/3] w-full">
+                            <Skeleton height="100%" className="rounded-none" />
+                        </div>
+                        <div className="p-4 space-y-3">
+                            <Skeleton width="60px" height="20px" className="rounded-lg" />
+                            <Skeleton width="70%" height="16px" />
+                            <Skeleton width="90%" height="12px" />
                         </div>
                     </div>
                 ))}
@@ -495,14 +498,16 @@ export const GallerySkeleton = () => (
                 <Skeleton width="40px" height="40px" className="rounded-xl" />
                 <Skeleton width="180px" height="24px" />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                {[1, 2, 3, 4, 5, 6].map(i => (
-                    <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-                        <Skeleton height="200px" className="rounded-none" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {[1, 2, 3, 4].map(i => (
+                    <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+                        <div className="aspect-[16/10] w-full">
+                            <Skeleton height="100%" className="rounded-none" />
+                        </div>
                         <div className="p-4 space-y-3">
-                            <Skeleton width="80px" height="16px" className="rounded-lg" />
-                            <Skeleton width="70%" height="18px" />
-                            <Skeleton width="50%" height="12px" />
+                            <Skeleton width="80px" height="20px" className="rounded-lg" />
+                            <Skeleton width="60%" height="16px" />
+                            <Skeleton width="80%" height="12px" />
                         </div>
                     </div>
                 ))}

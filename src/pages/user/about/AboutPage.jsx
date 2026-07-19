@@ -39,7 +39,7 @@ export default function AboutPage() {
                     <div className="flex-1 space-y-8">
                         <div className="space-y-4">
                             <h4 className="font-black text-xs uppercase tracking-[0.2em] bg-primary/10 dark:bg-primary/20 text-primary w-fit px-3 py-1.5 rounded-full inline-block">Our Story</h4>
-                            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.1]">
+                            <h1 className="text-4xl md:text-5xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.1]">
                                 <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-600">{title}</span>
                             </h1>
                             <div className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed max-w-xl font-medium pt-2 space-y-3">
