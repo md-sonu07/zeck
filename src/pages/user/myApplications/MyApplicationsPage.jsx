@@ -159,6 +159,25 @@ const MyApplicationsPage = () => {
                                                 </div>
                                             </div>
                                         </section>
+
+                                        {/* Additional Details (Custom Answers) */}
+                                        {app.customAnswers && app.customAnswers.length > 0 && (
+                                            <section>
+                                                <h3 className="text-xs font-black text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                    <BookOpen size={14} /> Additional Details
+                                                </h3>
+                                                <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 md:p-5 border border-slate-100 dark:border-slate-700/50 space-y-4">
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                        {app.customAnswers.map((answer, i) => (
+                                                            <div key={i}>
+                                                                <p className="text-[10px] uppercase font-bold text-slate-400">{answer.questionLabel}</p>
+                                                                <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{answer.answer}</p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        )}
                                     </div>
 
                                     {/* Right Column */}
@@ -177,8 +196,8 @@ const MyApplicationsPage = () => {
                                                                 <p className="text-xs font-medium text-slate-500 mt-0.5">{edu.board} • {edu.passingYear}</p>
                                                             </div>
                                                             <div className="sm:text-right">
-                                                                <p className="text-[10px] uppercase font-bold text-slate-400">Marks</p>
-                                                                <p className="font-black text-primary">{edu.marks}%</p>
+                                                                <p className="text-[10px] uppercase font-bold text-slate-400">Obtained Marks</p>
+                                                                <p className="font-black text-primary">{edu.marks}</p>
                                                             </div>
                                                         </div>
                                                     ))

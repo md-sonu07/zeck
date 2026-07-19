@@ -27,13 +27,13 @@ const HeroBanner = () => {
                         <div className="space-y-4">
                             <h1 className="text-4xl md:text-6xl font-black leading-none tracking-tight">
                                 <span className="bg-clip-text text-transparent bg-linear-to-b from-white to-blue-50 drop-shadow-[0_0_25px_rgba(255,255,255,0.3)]">
-                                    ZOYA EDUCATION CENTER
+                                    ZOYA EDUCATION CENTER & TRUST
                                 </span>
                             </h1>
                             {/* Minimalist Bold Certification - Clean & Authoritative */}
                             <div className="mb-8 border-l-4 border-yellow-400 pl-5 py-0.5 group cursor-default">
                                 <h3 className="text-white text-xl font-black tracking-tight uppercase leading-none group-hover:translate-x-1 transition-transform duration-300">
-                                    ISO 9001:2015 <span className="text-yellow-300 font-mono italic">Certified</span>
+                                   AN ISO 9001:2015 <span className="text-yellow-300 font-mono italic">Certified Organization</span>
                                 </h3>
                                 <p className="text-white/90 text-[10px] font-bold tracking-[0.3em] uppercase mt-2 font-mono">
                                     License: Q2A-2026-0330T117681
@@ -44,7 +44,7 @@ const HeroBanner = () => {
                                 किसी भी कोर्स के लिए संपर्क करें {" "}
                                 <span className="text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,0.4)] block sm:inline">+91 9876543210</span>
                             </h2>
-                            <p className="text-white/80 text-sm md:text-xl font-medium mt-3 max-w-2xl">
+                            <p className="text-white text-sm md:text-2xl font-medium mt-3 max-w-2xl">
                                 बिहार स्टूडेंट क्रेडिट कार्ड योजना के माध्यम से
                             </p>
                         </div>

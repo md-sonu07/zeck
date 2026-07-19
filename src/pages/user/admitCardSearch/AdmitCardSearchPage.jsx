@@ -6,6 +6,8 @@ import { searchAdmitCards } from '../../../store/thunk/admitCardThunk';
 import { clearSearchResults } from '../../../store/slice/admitCardSlice';
 import { Search, ChevronRight, Home, FileText, Loader2, X, ExternalLink, User, Building2, Hash } from 'lucide-react';
 import SEO from '../../../components/common/SEO';
+import PopupModel from '../../../components/ui/PopupModel';
+import Button from '../../../components/ui/Button';
 
 const AdmitCardSearchPage = () => {
     const { slug } = useParams();
@@ -60,7 +62,7 @@ const AdmitCardSearchPage = () => {
         <>
             <SEO
                 title={(currentPage?.title || 'Admit Card') + ' - Search'}
-                description={'Search and download ' + (currentPage?.title || 'admit card') + ' by roll number or name.'}
+                description={'Search and download ' + (currentPage?.title || 'admit card') + ' by application no or name.'}
                 keywords="admit card, search admit card, hall ticket"
             />
             <div className="pb-16 bg-slate-50 dark:bg-slate-900 min-h-screen">
@@ -86,7 +88,7 @@ const AdmitCardSearchPage = () => {
                             <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                             <input
                                 type="text"
-                                placeholder="Enter Roll Number or Student Name..."
+                                placeholder="Enter Application No / Registration No or Student Name..."
                                 value={query}
                                 onChange={(e) => handleSearch(e.target.value)}
                                 className="w-full pl-12 pr-10 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-base font-medium focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
@@ -130,7 +132,7 @@ const AdmitCardSearchPage = () => {
                                 <div className="bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 p-10 text-center">
                                     <FileText size={40} className="mx-auto text-slate-300 mb-3" />
                                     <p className="text-slate-400 font-bold">No admit cards found</p>
-                                    <p className="text-xs text-slate-400 mt-1">Try searching with a different roll number or name.</p>
+                                    <p className="text-xs text-slate-400 mt-1">Try searching with a different application no or name.</p>
                                 </div>
                             )}
 
@@ -138,13 +140,14 @@ const AdmitCardSearchPage = () => {
                                 <div className="bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 p-10 text-center">
                                     <Search size={40} className="mx-auto text-slate-300 mb-3" />
                                     <p className="text-slate-400 font-bold">Search your admit card</p>
-                                    <p className="text-xs text-slate-400 mt-1">Enter your roll number or full name above.</p>
+                                    <p className="text-xs text-slate-400 mt-1">Enter your application no or full name above.</p>
                                 </div>
                             )}
 
                         {searchResults.map((card) => (
                             <div key={card._id}
-                                className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200"
+                                onClick={() => setSelectedCard(card)}
+                                className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
                             >
                                 <div className="p-5">
                                     <div className="flex items-start justify-between">
@@ -164,7 +167,7 @@ const AdmitCardSearchPage = () => {
                                                 <div className="flex items-center gap-2">
                                                     <Hash size={14} className="text-purple-500 shrink-0" />
                                                     <div>
-                                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Roll Number</p>
+                                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Application No / Reg No</p>
                                                         <p className="text-sm font-bold text-slate-800 dark:text-white">{card.rollNumber}</p>
                                                     </div>
                                                 </div>
@@ -173,10 +176,10 @@ const AdmitCardSearchPage = () => {
                                     </div>
                                     <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center gap-2">
                                         {card.admitCardFile ? (
-                                            <a href={card.admitCardFile} target="_blank" rel="noreferrer"
+                                            <button onClick={(e) => { e.stopPropagation(); setSelectedCard(card); }}
                                                 className="px-5 py-2.5 bg-blue-600 text-white text-xs font-black uppercase tracking-wider rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2 shadow-sm">
                                                 <ExternalLink size={14} /> View Admit Card
-                                            </a>
+                                            </button>
                                         ) : (
                                             <span className="text-xs text-slate-400 italic">No admit card file uploaded yet</span>
                                         )}
@@ -191,6 +194,62 @@ const AdmitCardSearchPage = () => {
                     )}
                 </div>
             </div>
+
+            <PopupModel
+                isOpen={!!selectedCard}
+                onClose={() => setSelectedCard(null)}
+                title="Admit Card Details"
+                maxWidth="max-w-3xl"
+            >
+                {selectedCard && (
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                            <div>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Application No</p>
+                                <p className="text-sm font-semibold text-slate-800 dark:text-white">{selectedCard.rollNumber}</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Student Name</p>
+                                <p className="text-sm font-semibold text-slate-800 dark:text-white">{selectedCard.studentName}</p>
+                            </div>
+                            <div className="col-span-2 md:col-span-2">
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">College</p>
+                                <p className="text-sm font-semibold text-slate-800 dark:text-white">{selectedCard.collegeName}</p>
+                            </div>
+                            {selectedCard.additionalInfo && (
+                                <div className="col-span-full mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Additional Info</p>
+                                    <p className="text-sm font-semibold text-slate-800 dark:text-white">{selectedCard.additionalInfo}</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {selectedCard.admitCardFile ? (
+                            <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 aspect-video md:aspect-[1/1.2] relative flex items-center justify-center">
+                                {selectedCard.admitCardFile.toLowerCase().endsWith('.pdf') ? (
+                                    <iframe src={selectedCard.admitCardFile} className="w-full h-full border-0" title="Admit Card PDF" />
+                                ) : (
+                                    <img src={selectedCard.admitCardFile} alt="Admit Card" className="w-full h-full object-contain" />
+                                )}
+                            </div>
+                        ) : (
+                            <div className="p-10 text-center bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-700">
+                                <FileText size={48} className="mx-auto text-slate-300 mb-4" />
+                                <p className="text-sm font-bold text-slate-400">No admit card file uploaded.</p>
+                            </div>
+                        )}
+
+                        <div className="flex justify-end pt-2 gap-2">
+                            {selectedCard.admitCardFile && (
+                                <a href={selectedCard.admitCardFile} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all">
+                                    <ExternalLink size={16} /> Open in New Tab
+                                </a>
+                            )}
+                            <Button variant="secondary" onClick={() => setSelectedCard(null)}>Close</Button>
+                        </div>
+                    </div>
+                )}
+            </PopupModel>
         </>
     );
 };

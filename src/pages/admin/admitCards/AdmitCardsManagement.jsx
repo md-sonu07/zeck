@@ -29,6 +29,7 @@ const AdmitCardsManagement = () => {
     const [editingId, setEditingId] = useState(null);
     const [itemToDelete, setItemToDelete] = useState(null);
     const [saving, setSaving] = useState(false);
+    const [viewingCard, setViewingCard] = useState(null);
 
     const [collegeName, setCollegeName] = useState('');
     const [studentName, setStudentName] = useState('');
@@ -65,7 +66,7 @@ const AdmitCardsManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!studentName.trim() || !rollNumber.trim() || !collegeName.trim()) {
-            return toast.error('Student Name, Roll Number, and College Name are required');
+            return toast.error('Student Name, Application No, and College Name are required');
         }
         setSaving(true);
         const loadingToast = toast.loading(editingId ? 'Updating...' : 'Adding...');
@@ -127,7 +128,7 @@ const AdmitCardsManagement = () => {
             if (parts.length < 3) return null;
             return { collegeName: parts[0], studentName: parts[1], rollNumber: parts[2] };
         }).filter(Boolean);
-        if (cardsData.length === 0) return toast.error('Format: CollegeName, StudentName, RollNumber');
+        if (cardsData.length === 0) return toast.error('Format: CollegeName, StudentName, ApplicationNo');
         const loadingToast = toast.loading('Uploading ' + cardsData.length + ' cards...');
         try {
             await dispatch(bulkCreateAdmitCards({ pageId, cards: cardsData })).unwrap();
@@ -178,7 +179,7 @@ const AdmitCardsManagement = () => {
             {showBulk && (
                 <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
                     <h3 className="font-semibold text-sm text-slate-800 dark:text-white mb-1">Bulk Upload</h3>
-                    <p className="text-xs text-slate-500 mb-3">Format per line: <strong>College, StudentName, RollNumber</strong></p>
+                    <p className="text-xs text-slate-500 mb-3">Format per line: <strong>College, StudentName, ApplicationNo</strong></p>
                     <textarea
                         rows="4"
                         placeholder={"ABC College, John Doe, 2024001\nXYZ College, Jane Smith, 2024002"}
@@ -229,7 +230,7 @@ const AdmitCardsManagement = () => {
                         </div>
                         <div className="space-y-2">
                             <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
-                                Roll No <span className="text-red-500">*</span>
+                                Application No <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
@@ -284,6 +285,57 @@ const AdmitCardsManagement = () => {
                 </form>
             </PopupModel>
 
+            <PopupModel
+                isOpen={!!viewingCard}
+                onClose={() => setViewingCard(null)}
+                title="Admit Card Details"
+                maxWidth="max-w-3xl"
+            >
+                {viewingCard && (
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                            <div>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Application No</p>
+                                <p className="text-sm font-semibold text-slate-800 dark:text-white">{viewingCard.rollNumber}</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Student Name</p>
+                                <p className="text-sm font-semibold text-slate-800 dark:text-white">{viewingCard.studentName}</p>
+                            </div>
+                            <div className="col-span-2 md:col-span-2">
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">College</p>
+                                <p className="text-sm font-semibold text-slate-800 dark:text-white">{viewingCard.collegeName}</p>
+                            </div>
+                            {viewingCard.additionalInfo && (
+                                <div className="col-span-full mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Additional Info</p>
+                                    <p className="text-sm font-semibold text-slate-800 dark:text-white">{viewingCard.additionalInfo}</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {viewingCard.admitCardFile ? (
+                            <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 aspect-video md:aspect-[1/1.2] relative flex items-center justify-center">
+                                {viewingCard.admitCardFile.toLowerCase().endsWith('.pdf') ? (
+                                    <iframe src={viewingCard.admitCardFile} className="w-full h-full border-0" title="Admit Card PDF" />
+                                ) : (
+                                    <img src={viewingCard.admitCardFile} alt="Admit Card" className="w-full h-full object-contain" />
+                                )}
+                            </div>
+                        ) : (
+                            <div className="p-10 text-center bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-700">
+                                <FileText size={48} className="mx-auto text-slate-300 mb-4" />
+                                <p className="text-sm font-bold text-slate-400">No admit card file uploaded.</p>
+                            </div>
+                        )}
+
+                        <div className="flex justify-end pt-2">
+                            <Button variant="secondary" onClick={() => setViewingCard(null)}>Close</Button>
+                        </div>
+                    </div>
+                )}
+            </PopupModel>
+
             <div className={`transition-all duration-300 block`}>
                 <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
                     <div className="p-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col md:flex-row gap-4 justify-between items-center">
@@ -291,7 +343,7 @@ const AdmitCardsManagement = () => {
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                             <input
                                 type="text"
-                                placeholder="Search by name, roll no, or college..."
+                                placeholder="Search by name, application no, or college..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-1 focus:ring-primary text-sm font-medium"
@@ -303,7 +355,7 @@ const AdmitCardsManagement = () => {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
-                                    <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Roll No</th>
+                                    <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Application No</th>
                                     <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Student Name</th>
                                     <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">College</th>
                                     <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">File</th>
@@ -334,7 +386,7 @@ const AdmitCardsManagement = () => {
                                     filteredCards.map((card) => (
                                         <tr key={card._id}
                                             className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors group cursor-pointer"
-                                            onClick={() => card.admitCardFile && window.open(card.admitCardFile, '_blank')}
+                                            onClick={() => setViewingCard(card)}
                                         >
                                             <td className="p-4 font-bold text-slate-800 dark:text-white text-xs">{card.rollNumber}</td>
                                             <td className="p-4 text-slate-700 dark:text-slate-200 group-hover:text-primary transition-colors">{card.studentName}</td>

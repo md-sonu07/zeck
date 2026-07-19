@@ -225,7 +225,7 @@ const MarqueeManagementPage = () => {
                         }}
                     ></div>
 
-                    <div className="relative bg-white dark:bg-slate-800 w-full max-w-lg rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-700 overflow-hidden animate-in zoom-in-95 duration-200">
+                    <div className="relative bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 overflow-hidden animate-in zoom-in-95 duration-200">
                         <form onSubmit={editingItem ? handleUpdateSubmit : handleAddSubmit} className="p-8">
                             <div className="flex items-center justify-between mb-8">
                                 <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">

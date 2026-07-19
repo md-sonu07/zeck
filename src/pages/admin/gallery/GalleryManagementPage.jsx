@@ -21,6 +21,7 @@ const GalleryManagementPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const [itemToDelete, setItemToDelete] = useState(null);
+    const [previewItem, setPreviewItem] = useState(null);
     const [saving, setSaving] = useState(false);
 
     const [title, setTitle] = useState('');
@@ -311,7 +312,7 @@ const GalleryManagementPage = () => {
                                     </tr>
                                 ) : (
                                     filteredItems.map((item) => (
-                                        <tr key={item._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors group">
+                                        <tr key={item._id} onClick={() => setPreviewItem(item)} className="hover:bg-slate-50/50 dark:hover:bg-slate-700/30 transition-colors group cursor-pointer">
                                             <td className="p-4">
                                                 <div className="size-14 rounded-xl overflow-hidden shrink-0 border border-slate-100 dark:border-slate-700 shadow-sm bg-slate-100 flex items-center justify-center">
                                                     {item.imageUrl ? (
@@ -343,7 +344,7 @@ const GalleryManagementPage = () => {
                                             </td>
                                             <td className="p-4">
                                                 <button
-                                                    onClick={() => toggleActive(item)}
+                                                    onClick={(e) => { e.stopPropagation(); toggleActive(item); }}
                                                     className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
                                                         item.isActive
                                                             ? 'bg-emerald-50 text-emerald-600 border border-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20'
@@ -356,11 +357,11 @@ const GalleryManagementPage = () => {
                                             </td>
                                             <td className="p-4 text-right">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    <Button variant="ghost" size="sm" onClick={() => startEdit(item)} title="Edit">
+                                                    <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); startEdit(item); }} title="Edit">
                                                         <AppIcon name="Edit" size={16} />
                                                     </Button>
-                                                    <Button variant="ghost" size="sm" onClick={() => setItemToDelete(item._id)} title="Delete" className="hover:text-red-500 hover:bg-red-50">
-                                                        <AppIcon name="Trash2" size={16} />
+                                                    <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setItemToDelete(item._id); }} title="Delete" className="hover:text-red-500 hover:bg-red-50">
+                                                        <AppIcon name="Trash" size={16} />
                                                     </Button>
                                                 </div>
                                             </td>
@@ -383,6 +384,46 @@ const GalleryManagementPage = () => {
                 cancelText="Cancel"
                 type="danger"
             />
+
+            <PopupModel
+                isOpen={!!previewItem}
+                onClose={() => setPreviewItem(null)}
+                title="Preview Gallery Image"
+                maxWidth="max-w-3xl"
+            >
+                {previewItem && (
+                    <div className="space-y-6">
+                        <div className="w-full bg-slate-100 dark:bg-slate-900 rounded-xl overflow-hidden flex justify-center items-center p-4">
+                            {previewItem.imageUrl ? (
+                                <img src={previewItem.imageUrl} alt={previewItem.title} className="max-w-full max-h-[60vh] object-contain rounded-lg shadow-sm" />
+                            ) : (
+                                <div className="py-20 flex flex-col items-center justify-center text-slate-400">
+                                    <AppIcon name="Image" size={48} className="mb-4" />
+                                    <p>No image available</p>
+                                </div>
+                            )}
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-3 mb-2">
+                                <h3 className="text-xl font-bold text-slate-800 dark:text-white">{previewItem.title}</h3>
+                                <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-md uppercase tracking-wider">
+                                    {previewItem.category}
+                                </span>
+                            </div>
+                            {previewItem.description ? (
+                                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{previewItem.description}</p>
+                            ) : (
+                                <p className="text-slate-400 dark:text-slate-500 text-sm italic">No description provided.</p>
+                            )}
+                        </div>
+                        <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+                            <Button onClick={() => setPreviewItem(null)} variant="secondary">
+                                Close Preview
+                            </Button>
+                        </div>
+                    </div>
+                )}
+            </PopupModel>
         </div>
     );
 };

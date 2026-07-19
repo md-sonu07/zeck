@@ -4,7 +4,7 @@ import { fetchContactSettings } from '../../../store/thunk/contactThunk';
 import {
     Mail, Phone, MapPin, Send,
     Clock, CheckCircle2, ChevronDown, ExternalLink,
-    Home, ChevronRight as Chevron, Loader2
+    Home, ChevronRight as Chevron, Loader2, User
 } from 'lucide-react';
 import { ContactSkeleton } from '../../../components/common/Skeleton';
 import WhatsAppIcon from '../../../components/common/WhatsAppIcon';
@@ -85,18 +85,18 @@ const ContactPage = () => {
             href: settings?.email ? `mailto:${settings.email}` : 'mailto:zoyaeducationcentre@gmail.com',
         },
         {
-            icon: MapPin, label: 'Visit Us',
-            value: settings?.address || 'Man Road, Kursakanta, Araria, Bihar-854331',
-            sub: settings?.addressSub || 'Near Gandhi Maidan',
+            icon: User, label: 'Managing Director',
+            value: 'Md. Subhan Alam (Advocate)',
+            sub: '📞 +91 62006 48112',
             color: 'bg-rose-500', ring: 'ring-rose-500/20', text: 'text-rose-600 dark:text-rose-400',
-            href: null,
+            href: 'tel:+916200648112',
         },
         {
-            icon: Clock, label: 'Working Hours',
-            value: settings?.workingHours || '9:00 AM – 6:00 PM',
-            sub: settings?.workingHoursSub || 'Monday to Saturday',
+            icon: User, label: 'Admission Director',
+            value: 'Md. Ashfak Alam',
+            sub: '📞 +91 91626 53235',
             color: 'bg-amber-500', ring: 'ring-amber-500/20', text: 'text-amber-600 dark:text-amber-400',
-            href: null,
+            href: 'tel:+919162653235',
         },
     ];
 
@@ -146,12 +146,12 @@ const ContactPage = () => {
                             <div className={`size-10 ${card.color} rounded-xl flex items-center justify-center text-white shadow-md mb-3 group-hover:scale-110 transition-transform duration-200`}>
                                 <card.icon size={18} />
                             </div>
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{card.label}</p>
+                            <p className="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-widest mb-1">{card.label}</p>
                             {card.href
-                                ? <a href={card.href} className={`block text-xs font-bold ${card.text} leading-snug`}>{card.value}</a>
-                                : <p className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-snug">{card.value}</p>
+                                ? <a href={card.href} className={`block text-sm font-bold ${card.text} leading-snug`}>{card.value}</a>
+                                : <p className="text-sm font-bold text-slate-700 dark:text-slate-200 leading-snug">{card.value}</p>
                             }
-                            <p className="text-[10px] text-slate-400 mt-0.5">{card.sub}</p>
+                            <p className="text-[14px] text-slate-400 mt-0.5">{card.sub}</p>
                         </div>
                     ))}
                 </div>

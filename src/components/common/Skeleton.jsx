@@ -7,15 +7,15 @@ import React from 'react';
 const Skeleton = ({ width, height, className = "", circle = false }) => {
     const baseClass = "animate-pulse bg-slate-200 dark:bg-slate-800";
     const shapeClass = circle ? "rounded-full" : "rounded-xl";
-    
+
     const style = {
         width: width || '100%',
         height: height || '20px'
     };
 
     return (
-        <div 
-            className={`${baseClass} ${shapeClass} ${className}`} 
+        <div
+            className={`${baseClass} ${shapeClass} ${className}`}
             style={style}
         />
     );
@@ -334,7 +334,7 @@ export const AboutSkeleton = () => (
                 </div>
             </div>
             <div className="flex-1 max-w-md mx-auto">
-                <Skeleton height="600px" className="rounded-[2.5rem]" />
+                <Skeleton height="600px" className="rounded-2xl" />
             </div>
         </div>
     </div>

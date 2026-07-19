@@ -104,10 +104,12 @@ const admissionSlice = createSlice({
             .addCase(fetchMyAdmissions.rejected, (state, action) => { state.loading = false; state.error = action.payload; })
             .addCase(updateAdmissionStatus.fulfilled, (state, action) => {
                 const idx = state.data.findIndex(a => a._id === action.payload._id);
-                if (idx !== -1) state.data[idx] = action.payload;
+                if (idx !== -1) state.data[idx] = { ...state.data[idx], status: action.payload.status, remarks: action.payload.remarks };
                 const myIdx = state.myApplications.findIndex(a => a._id === action.payload._id);
-                if (myIdx !== -1) state.myApplications[myIdx] = action.payload;
-                if (state.currentAdmission?._id === action.payload._id) state.currentAdmission = action.payload;
+                if (myIdx !== -1) state.myApplications[myIdx] = { ...state.myApplications[myIdx], status: action.payload.status, remarks: action.payload.remarks };
+                if (state.currentAdmission?._id === action.payload._id) {
+                    state.currentAdmission = { ...state.currentAdmission, status: action.payload.status, remarks: action.payload.remarks };
+                }
             })
             .addCase(deleteAdmission.fulfilled, (state, action) => {
                 state.data = state.data.filter(a => a._id !== action.payload);

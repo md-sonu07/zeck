@@ -103,6 +103,9 @@ const courseCategorySlice = createSlice({
             .addCase(deleteCourseCategory.fulfilled, (state, action) => {
                 const idx = state.data.findIndex(c => c._id === action.payload);
                 if (idx !== -1) state.data[idx].deletedAt = new Date().toISOString();
+            })
+            .addCase(reorderCourseCategories.fulfilled, (state, action) => {
+                state.data = action.payload;
             });
     }
 });

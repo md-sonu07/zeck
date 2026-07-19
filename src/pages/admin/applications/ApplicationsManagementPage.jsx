@@ -246,7 +246,7 @@ const ApplicationsManagementPage = () => {
                                     </td>
                                     <td className="p-4 text-sm font-medium text-slate-600 dark:text-slate-300">{admission.contactInfo?.mobile}</td>
                                     <td className="p-4">
-                                        <span className="text-xs font-semibold text-slate-500 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">{admission.course?.name}</span>
+                                        <span className="text-xs font-semibold text-slate-500 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">{admission.course?.name || 'Unknown Course'}</span>
                                     </td>
                                     <td className="p-4 text-sm font-medium text-slate-500">{new Date(admission.submittedAt).toLocaleDateString()}</td>
                                     <td className="p-4">

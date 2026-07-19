@@ -32,7 +32,11 @@ const ApplyNowPage = () => {
     });
     const [educationEntries, setEducationEntries] = useState([]);
     const [documentFiles, setDocumentFiles] = useState({});
+    const [additionalDocuments, setAdditionalDocuments] = useState([]);
+    const [customAnswers, setCustomAnswers] = useState({});
+    const [selectedUniversity, setSelectedUniversity] = useState('');
     const [sameAddress, setSameAddress] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     
     const [accountForm, setAccountForm] = useState({ fullName: '', email: '', phone: '', password: '', confirmPassword: '' });
     const [showPassword, setShowPassword] = useState(false);
@@ -83,6 +87,22 @@ const ApplyNowPage = () => {
         setDocumentFiles(prev => ({ ...prev, [docName]: [...(prev[docName] || []), ...Array.from(fileList)] }));
     };
 
+    const updateAdditionalDocumentTitle = (idx, title) => {
+        const updated = [...additionalDocuments];
+        updated[idx].title = title;
+        setAdditionalDocuments(updated);
+    };
+
+    const handleAdditionalFileChange = (idx, fileList) => {
+        const updated = [...additionalDocuments];
+        updated[idx].files = fileList;
+        setAdditionalDocuments(updated);
+    };
+
+    const updateCustomAnswer = (label, value) => {
+        setCustomAnswers(prev => ({ ...prev, [label]: value }));
+    };
+
     const updateExtraInfo = (value) => {
         setForm(prev => ({ ...prev, extraInformation: value }));
     };
@@ -94,15 +114,35 @@ const ApplyNowPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
         // 1. Validate Account Creation (if guest)
         if (!userInfo) {
             if (!accountForm.fullName || !accountForm.email || !accountForm.phone || !accountForm.password) {
+                setIsSubmitting(false);
                 return toast.error("Please fill all fields in the Create Account section.");
             }
             if (accountForm.password !== accountForm.confirmPassword) {
+                setIsSubmitting(false);
                 return toast.error("Passwords do not match.");
             }
         }
+        
+        // 2. Validate custom questions
+        if (course?.customQuestions) {
+            for (const q of course.customQuestions) {
+                if (q.required && !customAnswers[q.label]) {
+                    setIsSubmitting(false);
+                    return toast.error(`Please provide an answer for: ${q.label}`);
+                }
+            }
+        }
+
+        const formattedCustomAnswers = Object.keys(customAnswers).map(label => ({
+            questionLabel: label,
+            answer: customAnswers[label]
+        }));
 
         const fd = new FormData();
         const appData = {
@@ -114,11 +154,21 @@ const ApplyNowPage = () => {
                 current: form.addressInfo.sameAsPermanent ? form.addressInfo.permanent : form.addressInfo.current
             },
             educationInfo: educationEntries,
-            extraInformation: form.extraInformation
+            customAnswers: formattedCustomAnswers,
+            extraInformation: form.extraInformation,
+            selectedUniversity: selectedUniversity
         };
         fd.append('applicationData', JSON.stringify(appData));
         Object.entries(documentFiles).forEach(([name, files]) => {
             files.forEach(file => fd.append(`${name}_doc`, file));
+        });
+        
+        additionalDocuments.forEach(doc => {
+            if (doc.title && doc.files) {
+                Array.from(doc.files).forEach(file => {
+                    fd.append(`${doc.title}_doc`, file);
+                });
+            }
         });
         
         try {
@@ -134,6 +184,7 @@ const ApplyNowPage = () => {
                     toast.success('Account created successfully!', { id: regToast });
                 } catch (error) {
                     toast.error(`Registration failed: ${error}`, { id: regToast });
+                    setIsSubmitting(false);
                     return; // Stop submission if registration fails
                 }
             }
@@ -141,7 +192,11 @@ const ApplyNowPage = () => {
             await dispatch(submitApplication(fd)).unwrap();
             toast.success('Application submitted successfully!');
             navigate('/my-applications');
-        } catch (err) { toast.error(err); }
+        } catch (err) { 
+            toast.error(err); 
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     if (courseLoading) {
@@ -348,7 +403,7 @@ const ApplyNowPage = () => {
                                     <Input size="sm" label="Institution" placeholder="School / College Name" type="text" value={entry.institution} onChange={e => updateEdu(idx, 'institution', e.target.value)} />
                                     <Input size="sm" label="Roll Number" placeholder="e.g. 12345678" type="text" value={entry.rollNumber} onChange={e => updateEdu(idx, 'rollNumber', e.target.value)} />
                                     <Input size="sm" label="Passing Year" placeholder="e.g. 2023" type="text" value={entry.passingYear} onChange={e => updateEdu(idx, 'passingYear', e.target.value)} />
-                                    <Input size="sm" label="Marks (%)" placeholder="e.g. 85.5" type="text" value={entry.marks} onChange={e => updateEdu(idx, 'marks', e.target.value)} />
+                                    <Input size="sm" label="Obtained Marks" placeholder="e.g. 450" type="text" value={entry.marks} onChange={e => updateEdu(idx, 'marks', e.target.value)} />
                                 </div>
                             </div>
                         ))}
@@ -371,6 +426,119 @@ const ApplyNowPage = () => {
                                     />
                                 </div>
                             ))}
+
+                            {/* Additional Documents Section */}
+                            {additionalDocuments.length > 0 && (
+                                <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+                                    <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-4">Extra Documents</h3>
+                                    {additionalDocuments.map((doc, idx) => (
+                                        <div key={idx} className="flex flex-col md:flex-row gap-3 mb-4 items-end bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700">
+                                            <div className="flex-1 w-full">
+                                                <Input 
+                                                    size="sm"
+                                                    label="Document Title" 
+                                                    placeholder="e.g. Migration Certificate" 
+                                                    value={doc.title} 
+                                                    onChange={e => updateAdditionalDocumentTitle(idx, e.target.value)} 
+                                                    required 
+                                                />
+                                            </div>
+                                            <div className="flex-1 w-full">
+                                                <Input 
+                                                    size="sm"
+                                                    label="Choose File" 
+                                                    type="file" 
+                                                    onChange={e => handleAdditionalFileChange(idx, e.target.files)} 
+                                                    required 
+                                                />
+                                            </div>
+                                            <button 
+                                                type="button" 
+                                                onClick={() => setAdditionalDocuments(additionalDocuments.filter((_, i) => i !== idx))}
+                                                className="text-red-500 hover:text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-500/10 p-2 md:mb-1 rounded-lg transition-colors shrink-0 flex items-center justify-center h-[42px] w-[42px]"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            <button 
+                                type="button" 
+                                onClick={() => setAdditionalDocuments([...additionalDocuments, { title: '', files: null }])}
+                                className="text-primary text-sm font-bold hover:text-primary-dark transition-colors inline-flex items-center gap-1 mt-2 bg-primary/10 px-4 py-2 rounded-xl"
+                            >
+                                + Add Document
+                            </button>
+                        </div>
+                    )}
+
+                    {course?.customQuestions?.length > 0 && (
+                        <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <h2 className="text-2xl font-black text-slate-800 dark:text-white mb-6">Additional Details</h2>
+                            <div className="grid grid-cols-1 gap-6">
+                                {[...course.customQuestions].sort((a, b) => a.order - b.order).map((q, idx) => (
+                                    <div key={idx}>
+                                        {q.type === 'dropdown' ? (
+                                            <Select 
+                                                label={q.label} 
+                                                required={q.required} 
+                                                value={customAnswers[q.label] || ''} 
+                                                onChange={e => updateCustomAnswer(q.label, e.target.value)}
+                                            >
+                                                <option value="">Select an option</option>
+                                                {q.options?.map((opt, i) => (
+                                                    <option key={i} value={opt}>{opt}</option>
+                                                ))}
+                                            </Select>
+                                        ) : q.type === 'textarea' ? (
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1 mb-1.5">
+                                                    {q.label} {q.required && <span className="text-red-500">*</span>}
+                                                </label>
+                                                <textarea 
+                                                    onChange={e => updateCustomAnswer(q.label, e.target.value)} 
+                                                    value={customAnswers[q.label] || ''} 
+                                                    required={q.required}
+                                                    className="w-full px-4 py-3 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-slate-800 dark:text-white font-medium transition-all shadow-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 hover:border-slate-300 dark:hover:border-slate-600" 
+                                                    rows={3} 
+                                                />
+                                            </div>
+                                        ) : q.type === 'radio' ? (
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider ml-1 mb-1.5">
+                                                    {q.label} {q.required && <span className="text-red-500">*</span>}
+                                                </label>
+                                                <div className="flex flex-wrap gap-4 mt-2">
+                                                    {q.options?.map((opt, i) => (
+                                                        <label key={i} className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer">
+                                                            <input 
+                                                                type="radio" 
+                                                                name={q.label} 
+                                                                value={opt} 
+                                                                checked={customAnswers[q.label] === opt}
+                                                                onChange={e => updateCustomAnswer(q.label, e.target.value)}
+                                                                required={q.required && !customAnswers[q.label]}
+                                                                className="text-primary focus:ring-primary"
+                                                            />
+                                                            {opt}
+                                                        </label>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <Input 
+                                                label={q.label} 
+                                                type={q.type === 'number' ? 'number' : q.type === 'date' ? 'date' : 'text'} 
+                                                required={q.required} 
+                                                value={customAnswers[q.label] || ''} 
+                                                onChange={e => updateCustomAnswer(q.label, e.target.value)} 
+                                            />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
 
@@ -411,9 +579,9 @@ const ApplyNowPage = () => {
                     )}
 
 
-                    <button type="submit" disabled={submitting}
-                        className="w-full py-4 bg-primary text-white rounded-md cursor-pointer text-base font-black shadow-lg shadow-primary/25 hover:-translate-y-1 transition-all active:scale-[0.98] disabled:opacity-50 mt-8">
-                        {submitting ? 'Submitting...' : 'Submit Application'}
+                    <button type="submit" disabled={isSubmitting || submitting}
+                        className="w-full py-4 bg-primary text-white rounded-2xl cursor-pointer text-base font-black shadow-lg shadow-primary/25 mt-8">
+                        {isSubmitting || submitting ? 'Submitting...' : 'Submit Application'}
                     </button>
                 </form>
             </div>

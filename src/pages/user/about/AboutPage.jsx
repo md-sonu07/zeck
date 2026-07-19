@@ -79,9 +79,9 @@ export default function AboutPage() {
                     {/* Right: Image*/}
                     <div className="flex-1 w-full max-w-sm lg:max-w-md relative  sm:mt-16 lg:mt-0 mx-auto lg:ml-auto lg:mr-0 z-10 flex flex-col gap-8">
                         {/* Premium Portrait Frame */}
-                        <div className="relative rounded-[2.5rem] shadow-2xl overflow-hidden group border border-slate-200/50 dark:border-slate-800/80">
+                        <div className="relative rounded-2xl shadow-2xl overflow-hidden group border border-slate-200/50 dark:border-slate-800/80">
                             {/* Inner Glow / Overlay */}
-                            <div className="absolute inset-0 rounded-[2.5rem] ring-1 ring-inset ring-black/5 dark:ring-white/10 z-20 pointer-events-none"></div>
+                            <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-black/5 dark:ring-white/10 z-20 pointer-events-none"></div>
                             <div className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black/60 to-transparent z-10 pointer-events-none"></div>
 
                             {/* Image */}
@@ -98,8 +98,8 @@ export default function AboutPage() {
                                         <CheckCircle size={22} className="drop-shadow-sm fill-green-500/30" />
                                     </div>
                                     <div className="flex flex-col">
-                                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-0.5 leading-none">Meet the</p>
-                                        <p className="text-base font-black leading-none tracking-tight">Shop Owner</p>
+                                        <p className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-0.5 leading-none">Shop Owner</p>
+                                        <p className="text-base font-black leading-none tracking-tight">Md Ashfak</p>
                                     </div>
                                 </div>
                             </div>

@@ -46,7 +46,9 @@ const Footer = () => {
                         <h3 className="text-white font-black text-xl tracking-tight">Zoya Eduction Centre</h3>
                     </div>
                     <p className="text-sm leading-relaxed text-slate-400 font-medium">
-                        {aboutSettings?.description || "India's most trusted recruitment portal since 2018. We provide accurate and reliable information to help you secure your future in public service."}
+                        {aboutSettings?.description
+                            ? aboutSettings.description.replace(/<[^>]+>/g, '').substring(0, 160) + (aboutSettings.description.replace(/<[^>]+>/g, '').length > 160 ? '...' : '')
+                            : "India's most trusted recruitment portal since 2018. We provide accurate and reliable information to help you secure your future in public service."}
                     </p>
                     <div className="flex flex-wrap gap-4 mt-8">
                         {socialLinks.map((link, idx) => (

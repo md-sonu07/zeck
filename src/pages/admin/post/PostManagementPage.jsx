@@ -41,7 +41,7 @@ const PostManagementPage = ({ categoryTitle }) => {
     const [paymentPrice, setPaymentPrice] = useState('');
     const [paymentDiscountPercent, setPaymentDiscountPercent] = useState('');
     const [submittingAction, setSubmittingAction] = useState(null);
-    
+
     // Derived Taxonomies
     const [availableResources, setAvailableResources] = useState([]);
     const [availableCategories, setAvailableCategories] = useState([]);
@@ -894,8 +894,8 @@ const PostManagementPage = ({ categoryTitle }) => {
                                 ) : (
                                     <Save size={18} />
                                 )}
-                                {submittingAction === 'publish' 
-                                    ? (editArticleId ? 'Updating...' : 'Publishing...') 
+                                {submittingAction === 'publish'
+                                    ? (editArticleId ? 'Updating...' : 'Publishing...')
                                     : `${editArticleId ? 'Update' : 'Publish'} ${categoryTitle} Post`
                                 }
                             </button>
@@ -1395,7 +1395,7 @@ const PostManagementPage = ({ categoryTitle }) => {
                                             onClick={() => headerFileRef.current.click()}
                                             className="group cursor-pointer relative"
                                         >
-                                            <div className="absolute -inset-1 bg-linear-to-r from-primary/20 to-violet-500/20 rounded-[2.5rem] blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                                            <div className="absolute -inset-1 bg-linear-to-r from-primary/20 to-violet-500/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
                                             <div className="relative p-8 bg-slate-50 dark:bg-slate-900/50 rounded-4xl border-2 border-dashed border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center text-center transition-all group-hover:bg-white dark:group-hover:bg-slate-800 group-hover:border-primary/40">
                                                 <div className="size-14 bg-white dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-4 shadow-md border border-slate-100 dark:border-slate-700 group-hover:scale-110 transition-transform">
                                                     <Upload size={24} className="text-primary" />

@@ -169,7 +169,7 @@ const CategoriesManagementPage = () => {
                     ></div>
 
                     {/* Modal Card */}
-                    <div className="relative bg-white dark:bg-slate-800 w-full max-w-sm rounded-[2.5rem] shadow-2xl border border-slate-100 dark:border-slate-700 p-8 text-center animate-in zoom-in-95 duration-200">
+                    <div className="relative bg-white dark:bg-slate-800 w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-8 text-center animate-in zoom-in-95 duration-200">
                         <div className="size-20 bg-red-50 dark:bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 text-red-500 border border-red-100 dark:border-red-500/20">
                             <Trash2 size={32} />
                         </div>

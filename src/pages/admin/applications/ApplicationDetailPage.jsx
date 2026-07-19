@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, XCircle, ClipboardList, User, Phone, Mail, MapPin, GraduationCap, FileText, MessageSquare } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, ClipboardList, User, Phone, Mail, MapPin, GraduationCap, FileText, MessageSquare, BookOpen } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { fetchAdmissionById, clearCurrentAdmission, updateAdmissionStatus } from '../../../store/slice/admissionSlice.js';
 import Button from '../../../components/ui/Button';
@@ -119,6 +119,15 @@ const ApplicationDetailPage = () => {
                 </div>
             )}
 
+            <SectionCard icon={BookOpen} title="Course Information">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <DetailRow label="Course Name" value={app.course?.name || 'Unknown Course'} />
+                    {app.selectedUniversity && (
+                        <DetailRow label="University / Board" value={app.selectedUniversity} />
+                    )}
+                </div>
+            </SectionCard>
+
             <SectionCard icon={User} title="Personal Information">
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
                     <DetailRow label="Full Name" value={app.personalInfo?.fullName} />
@@ -126,11 +135,7 @@ const ApplicationDetailPage = () => {
                     <DetailRow label="Mother Name" value={app.personalInfo?.motherName} />
                     <DetailRow label="Gender" value={app.personalInfo?.gender} />
                     <DetailRow label="Date of Birth" value={app.personalInfo?.dateOfBirth ? new Date(app.personalInfo.dateOfBirth).toLocaleDateString() : null} />
-                    <DetailRow label="Marital Status" value={app.personalInfo?.maritalStatus} />
-                    <DetailRow label="Nationality" value={app.personalInfo?.nationality} />
-                    <DetailRow label="Religion" value={app.personalInfo?.religion} />
                     <DetailRow label="Category" value={app.personalInfo?.category} />
-                    <DetailRow label="Blood Group" value={app.personalInfo?.bloodGroup} />
                 </div>
             </SectionCard>
 
@@ -182,7 +187,7 @@ const ApplicationDetailPage = () => {
                                     <DetailRow label="Institution" value={edu.institution} />
                                     <DetailRow label="Roll Number" value={edu.rollNumber} />
                                     <DetailRow label="Passing Year" value={edu.passingYear} />
-                                    <DetailRow label="Marks" value={edu.marks} />
+                                    <DetailRow label="Obtained Marks" value={edu.marks} />
                                 </div>
                             </div>
                         ))}
@@ -220,6 +225,16 @@ const ApplicationDetailPage = () => {
                 )}
             </SectionCard>
 
+            {app.customAnswers?.length > 0 && (
+                <SectionCard icon={ClipboardList} title="Additional Details">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {app.customAnswers.map((answer, i) => (
+                            <DetailRow key={i} label={answer.questionLabel} value={answer.answer} />
+                        ))}
+                    </div>
+                </SectionCard>
+            )}
+
             {app.extraInformation && (
                 <SectionCard icon={FileText} title="Extra Information">
                     <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-100 dark:border-slate-700">
@@ -233,10 +248,10 @@ const ApplicationDetailPage = () => {
 
             <SectionCard icon={ClipboardList} title="Course Information">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-                    <DetailRow label="Course" value={app.course?.name} />
-                    <DetailRow label="Code" value={app.course?.courseCode} />
-                    <DetailRow label="Duration" value={app.course?.duration} />
-                    <DetailRow label="Eligibility" value={app.course?.eligibility} />
+                    <DetailRow label="Course" value={app.course?.name || 'Unknown Course'} />
+                    <DetailRow label="Code" value={app.course?.courseCode || 'N/A'} />
+                    <DetailRow label="Duration" value={app.course?.duration || 'N/A'} />
+                    <DetailRow label="Eligibility" value={app.course?.eligibility || 'N/A'} />
                 </div>
             </SectionCard>
 
