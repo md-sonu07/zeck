@@ -1,7 +1,16 @@
 import { Link } from 'react-router-dom';
 import { Newspaper, CheckCircle, IdCard, GraduationCap, ShieldCheck } from 'lucide-react';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchContactSettings } from '../../../store/thunk/contactThunk';
 
 const HeroBanner = () => {
+    const dispatch = useDispatch();
+    const { settings: contactSettings } = useSelector((state) => state.contact);
+
+    useEffect(() => {
+        if (!contactSettings) dispatch(fetchContactSettings());
+    }, [dispatch, contactSettings]);
     return (
         <div className="relative bg-linear-to-br from-[#0d47a1] via-primary to-[#1565c0] overflow-hidden">
             {/* Background decorations */}
@@ -42,7 +51,9 @@ const HeroBanner = () => {
 
                             <h2 className="text-2xl md:text-4xl font-black text-white leading-tight max-w-4xl tracking-tight -mt-4">
                                 किसी भी कोर्स के लिए संपर्क करें {" "}
-                                <span className="text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,0.4)] block sm:inline">+91 9876543210</span>
+                                <span className="text-yellow-300 drop-shadow-[0_0_20px_rgba(253,224,71,0.4)] block sm:inline">
+                                    {contactSettings?.phoneNo || '+91 9162653235'}
+                                </span>
                             </h2>
                             <p className="text-white text-sm md:text-2xl font-medium mt-3 max-w-2xl">
                                 बिहार स्टूडेंट क्रेडिट कार्ड योजना के माध्यम से

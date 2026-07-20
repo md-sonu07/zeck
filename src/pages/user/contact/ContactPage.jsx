@@ -71,32 +71,32 @@ const ContactPage = () => {
 
     const infoCards = [
         {
-            icon: Phone, label: 'Call Us',
-            value: settings?.phoneNo || '+91 9162653235',
-            sub: settings?.phoneSub || 'Get direct support',
+            icon: Phone, label: 'Admission Director',
+            value: 'Md. Ashfak Alam',
+            sub: '📞 +91 91626 53235',
             color: 'bg-blue-500', ring: 'ring-blue-500/20', text: 'text-blue-600 dark:text-blue-400',
-            href: settings?.phoneNo ? `tel:${settings.phoneNo}` : 'tel:+919162653235',
+            href: 'tel:+919162653235',
         },
         {
             icon: Mail, label: 'Email Us',
-            value: settings?.email || 'zoyaeducationcentre@gmail.com',
-            sub: settings?.emailSub || 'Reply within 24 hours',
+            value: 'zoyaeducationcentre@gmail.com',
+            sub: 'Reply within 24 hours',
             color: 'bg-primary', ring: 'ring-primary/20', text: 'text-primary',
-            href: settings?.email ? `mailto:${settings.email}` : 'mailto:zoyaeducationcentre@gmail.com',
+            href: 'mailto:zoyaeducationcentre@gmail.com',
         },
         {
             icon: User, label: 'Managing Director',
             value: 'Md. Subhan Alam (Advocate)',
-            sub: '📞 +91 62006 48112',
+            sub: '📞 +91 6200648112',
             color: 'bg-rose-500', ring: 'ring-rose-500/20', text: 'text-rose-600 dark:text-rose-400',
             href: 'tel:+916200648112',
         },
         {
-            icon: User, label: 'Admission Director',
-            value: 'Md. Ashfak Alam',
-            sub: '📞 +91 91626 53235',
+            icon: User, label: 'Admission Enquiry',
+            value: 'Mr. Govinda',
+            sub: '📞 +91 8210961006',
             color: 'bg-amber-500', ring: 'ring-amber-500/20', text: 'text-amber-600 dark:text-amber-400',
-            href: 'tel:+919162653235',
+            href: 'tel:+918210961006',
         },
     ];
 
@@ -148,8 +148,8 @@ const ContactPage = () => {
                             </div>
                             <p className="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-widest mb-1">{card.label}</p>
                             {card.href
-                                ? <a href={card.href} className={`block text-sm font-bold ${card.text} leading-snug`}>{card.value}</a>
-                                : <p className="text-sm font-bold text-slate-700 dark:text-slate-200 leading-snug">{card.value}</p>
+                                ? <a href={card.href} className={`block text-sm font-bold ${card.text} leading-snug truncate`} title={card.value}>{card.value}</a>
+                                : <p className="text-sm font-bold text-slate-700 dark:text-slate-200 leading-snug truncate" title={card.value}>{card.value}</p>
                             }
                             <p className="text-[14px] text-slate-400 mt-0.5">{card.sub}</p>
                         </div>

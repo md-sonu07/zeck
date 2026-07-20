@@ -7,6 +7,7 @@ import LatestNewsSection from '../../../components/PageSection/home/linkSection/
 import AdmitCardSection from '../../../components/PageSection/home/linkSection/AdmitCardSection';
 import ResultsSection from '../../../components/PageSection/home/linkSection/ResultsSection';
 import AnswerKeySyllabus from '../../../components/PageSection/home/linkSection/AnswerKeySyllabus';
+import StudentFeedbackSection from '../../../components/PageSection/home/StudentFeedbackSection';
 import HomeCoursesSection from '../../../components/PageSection/home/linkSection/HomeCoursesSection';
 import Sidebar from '../../../components/PageSection/home/Sidebar';
 import MobileQuickMenu from '../../../components/PageSection/home/MobileQuickMenu';
@@ -53,6 +54,8 @@ const HomePage = () => {
                         <ResultsSection />
                         <AnswerKeySyllabus />
 
+                        {/* Student Feedback */}
+                        <StudentFeedbackSection />
                     </div>
 
                     {/* Right Column (Sidebar) */}
