@@ -58,7 +58,7 @@ const LatestNewsSection = () => {
             <ul className="min-h-[100px]">
                 {loading ? (
                     <div className="p-0">
-                        <ListItemsSkeleton count={10} />
+                        <ListItemsSkeleton count={4} />
                     </div>
                 ) : displayArticles.length > 0 ? (
                     displayArticles.map((article, index) => (

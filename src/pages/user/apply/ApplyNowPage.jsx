@@ -320,6 +320,20 @@ const ApplyNowPage = () => {
 
 
                 <form onSubmit={handleSubmit} className="space-y-8">
+                    {course?.universities?.length > 0 && (
+                        <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <h2 className="text-2xl font-black text-slate-800 dark:text-white mb-6">University Preference</h2>
+                            <div className="grid grid-cols-1 gap-4">
+                                <Select label="Select University / Board" required value={selectedUniversity} onChange={e => setSelectedUniversity(e.target.value)}>
+                                    <option value="">Select an option</option>
+                                    {course.universities.map((uni, idx) => (
+                                        <option key={idx} value={uni}>{uni}</option>
+                                    ))}
+                                </Select>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-slate-700 shadow-sm">
                         <h2 className="text-2xl font-black text-slate-800 dark:text-white mb-6">Personal Information</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

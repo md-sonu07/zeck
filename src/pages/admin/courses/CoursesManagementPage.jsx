@@ -103,6 +103,7 @@ const CoursesManagementPage = () => {
             duration: course.duration || '', eligibility: course.eligibility || '',
             feeType: course.feeType || 'fixed',
             feeComponents: course.feeComponents || [],
+            universities: course.universities || [],
             studentCreditCard: course.studentCreditCard || false,
             discount: course.discount || "",
             totalFee: course.totalFee || ""
@@ -200,6 +201,11 @@ const CoursesManagementPage = () => {
                                 className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-slate-800 dark:text-white font-medium" />
                         </div>
                         
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">Universities / Boards</label>
+                            <textarea placeholder="e.g. UP Board, MP Board (Comma separated)" value={form.universities ? form.universities.join(', ') : ''} onChange={e => setForm({ ...form, universities: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })} rows={2}
+                                className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-slate-800 dark:text-white font-medium" />
+                        </div>
                         <div className="md:col-span-2 mt-2">
                             <label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-200 cursor-pointer">
                                 <input type="checkbox" checked={form.studentCreditCard} onChange={e => setForm({ ...form, studentCreditCard: e.target.checked })} className="w-4 h-4 text-primary rounded border-slate-300 focus:ring-primary" />

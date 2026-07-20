@@ -105,6 +105,17 @@ const CourseDetailsPage = () => {
                         </div>
                     )}
 
+                    {course.universities?.length > 0 && (
+                        <div className="mt-6">
+                            <h2 className="text-xl font-semibold mb-3">Affiliated Universities</h2>
+                            <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-400">
+                                {course.universities.map((uni, idx) => (
+                                    <li key={idx} className="text-sm">{uni}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
                     {course.customQuestions?.length > 0 && (
                         <div className="mt-6">
                             <h2 className="text-xl font-semibold mb-3">Additional Questions</h2>
