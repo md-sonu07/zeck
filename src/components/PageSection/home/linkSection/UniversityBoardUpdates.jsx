@@ -79,7 +79,7 @@ const UniversityBoardUpdates = () => {
                                 >
                                     <span className="absolute inset-0 bg-linear-to-r from-purple-50 to-transparent dark:from-purple-900/10 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-r-md" />
                                     <Link
-                                        to={`/${item.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${item.slug}`}
+                                        to={`/${item.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${item.slug || item._id}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="relative flex items-start justify-between gap-2 px-2 py-2.5"
@@ -134,7 +134,7 @@ const UniversityBoardUpdates = () => {
                                 >
                                     <span className="absolute inset-0 bg-linear-to-r from-purple-50 to-transparent dark:from-purple-900/10 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none rounded-r-md" />
                                     <Link
-                                        to={`/${item.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${item.slug}`}
+                                        to={`/${item.mainCategory?.toLowerCase().replace(/\s+/g, '-')}/${item.slug || item._id}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="relative flex items-start justify-between gap-2 px-2 py-2.5"

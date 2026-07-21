@@ -279,7 +279,7 @@ const FilterStrip = () => {
                             {searchResults.map((article) => (
                                 <Link
                                     key={article._id}
-                                    to={`/${(article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug}`}
+                                    to={`/${(article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug || article._id}`}
                                     className="block bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 hover:shadow-lg hover:border-primary/30 transition-all duration-200 group"
                                 >
                                     <div className="flex flex-col md:flex-row md:items-center gap-4">

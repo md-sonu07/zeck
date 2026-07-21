@@ -146,7 +146,7 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
                                                     <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider text-white animate-pulse ${getStatusStyles(article.status).bg}`}>{article.status || 'NEW'}</span>
 
                                                 </div>
-                                                <Link to={`/${(category || article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug}`}>
+                                                <Link to={`/${(category || article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug || article._id}`}>
                                                     <h2 className={`text-lg font-bold text-slate-800 dark:text-slate-100 leading-snug hover:${textColor} cursor-pointer transition-colors mb-4`}>{article.title}</h2>
                                                 </Link>
                                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">

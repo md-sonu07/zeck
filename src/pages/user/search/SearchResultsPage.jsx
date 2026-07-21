@@ -99,7 +99,7 @@ const SearchResultsPage = () => {
                                                 <span className="bg-green-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wider">New</span>
                                             )}
                                         </div>
-                                        <Link to={`/${(article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug}`}>
+                                        <Link to={`/${(article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug || article._id}`}>
                                             <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 leading-snug hover:text-primary cursor-pointer transition-colors mb-4">
                                                 {article.title}
                                             </h2>
@@ -128,7 +128,7 @@ const SearchResultsPage = () => {
                                             <p className="text-xs font-black uppercase tracking-wider text-primary">{article.mainCategory || 'News'}</p>
                                         </div>
                                         <Link
-                                            to={`/${(article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug}`}
+                                            to={`/${(article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug || article._id}`}
                                             className="w-full text-[10px] font-black px-4 py-2.5 rounded-lg uppercase tracking-wider transition-all duration-200 whitespace-nowrap text-center shadow-sm hover:shadow-md bg-primary text-white hover:opacity-90"
                                         >
                                             View Details

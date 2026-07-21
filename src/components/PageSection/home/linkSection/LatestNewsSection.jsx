@@ -70,7 +70,7 @@ const LatestNewsSection = () => {
                             <span className="absolute inset-0 bg-linear-to-r from-blue-50 to-transparent dark:from-primary/5 dark:to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
 
                             <Link
-                                to={`/${(article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug}`}
+                                to={`/${(article.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-')}/${article.slug || article._id}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="relative flex items-center justify-between gap-3 px-4 py-[11px]"
