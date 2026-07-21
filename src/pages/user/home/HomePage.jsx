@@ -5,6 +5,7 @@ import NoticeMarquee from '../../../components/PageSection/home/NoticeMarquee';
 import FilterStrip from '../../../components/PageSection/home/FilterStrip';
 import LatestNewsSection from '../../../components/PageSection/home/linkSection/LatestNewsSection';
 import AdmitCardSection from '../../../components/PageSection/home/linkSection/AdmitCardSection';
+import AdmitCardBEdDElEdSection from '../../../components/PageSection/home/linkSection/AdmitCardBEdDElEdSection';
 import ResultsSection from '../../../components/PageSection/home/linkSection/ResultsSection';
 import AnswerKeySyllabus from '../../../components/PageSection/home/linkSection/AnswerKeySyllabus';
 import StudentFeedbackSection from '../../../components/PageSection/home/StudentFeedbackSection';
@@ -70,7 +71,7 @@ const HomePage = () => {
                             <IdCard className="text-blue-500" size={10} /> Examination Portal
                         </div>
 
-                        <AdmitCardSection />
+                        <AdmitCardBEdDElEdSection />
 
                         {/* Courses Section */}
                         <HomeCoursesSection />
@@ -80,7 +81,8 @@ const HomePage = () => {
                         <div className="section-label mt-4">
                             <Key className="text-slate-500" size={10} /> Study Resources
                         </div>
-                        {/* Answer Key & Syllabus */}
+                        
+                        <AdmitCardSection />
                         <ResultsSection />
                         <AnswerKeySyllabus />
 

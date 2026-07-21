@@ -48,6 +48,7 @@ const AdminRoutes = () => {
                 {/* Dynamically Generated Post Management Pages */}
                 <Route path="university" element={<PostManagementPage categoryTitle="University" />} />
                 <Route path="admission" element={<PostManagementPage categoryTitle="Admission" />} />
+                <Route path="admit-card" element={<PostManagementPage categoryTitle="Admit Card" />} />
                 <Route path="admit-cards" element={<PostManagementPage categoryTitle="Admit Card" />} />
                 <Route path="results" element={<PostManagementPage categoryTitle="Result" />} />
                 <Route path="answer-key" element={<PostManagementPage categoryTitle="Answer Key" />} />
