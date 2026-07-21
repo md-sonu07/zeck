@@ -152,10 +152,7 @@ const AdmitCardSearchPage = () => {
                                 <div className="p-5">
                                     <div className="flex items-start justify-between">
                                         <div className="space-y-3 flex-1 min-w-0">
-                                            <div className="flex items-center gap-2 text-sm text-slate-500">
-                                                <Building2 size={14} className="text-blue-500 shrink-0" />
-                                                <span className="font-bold text-slate-700 dark:text-slate-300 truncate">{card.collegeName}</span>
-                                            </div>
+
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                 <div className="flex items-center gap-2">
                                                     <User size={14} className="text-green-500 shrink-0" />
@@ -212,10 +209,7 @@ const AdmitCardSearchPage = () => {
                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Student Name</p>
                                 <p className="text-sm font-semibold text-slate-800 dark:text-white">{selectedCard.studentName}</p>
                             </div>
-                            <div className="col-span-2 md:col-span-2">
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">College</p>
-                                <p className="text-sm font-semibold text-slate-800 dark:text-white">{selectedCard.collegeName}</p>
-                            </div>
+
                             {selectedCard.additionalInfo && (
                                 <div className="col-span-full mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Additional Info</p>

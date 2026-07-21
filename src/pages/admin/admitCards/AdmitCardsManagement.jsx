@@ -31,7 +31,6 @@ const AdmitCardsManagement = () => {
     const [saving, setSaving] = useState(false);
     const [viewingCard, setViewingCard] = useState(null);
 
-    const [collegeName, setCollegeName] = useState('');
     const [studentName, setStudentName] = useState('');
     const [rollNumber, setRollNumber] = useState('');
     const [admitCardFile, setAdmitCardFile] = useState(null);
@@ -39,7 +38,7 @@ const AdmitCardsManagement = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [showBulk, setShowBulk] = useState(false);
-    const [bulkText, setBulkText] = useState('');
+    const [bulkFiles, setBulkFiles] = useState([]);
 
     useEffect(() => {
         if (pageId) {
@@ -49,7 +48,7 @@ const AdmitCardsManagement = () => {
     }, [dispatch, pageId]);
 
     const resetForm = () => {
-        setCollegeName(''); setStudentName(''); setRollNumber('');
+        setStudentName(''); setRollNumber('');
         setAdmitCardFile(null); setAdditionalInfo(''); setEditingId(null);
     };
 
@@ -57,6 +56,7 @@ const AdmitCardsManagement = () => {
         resetForm();
         setActiveTab('add');
         setShowBulk(false);
+        setBulkFiles([]);
     };
 
     const handleFileSelect = (e) => {
@@ -65,8 +65,8 @@ const AdmitCardsManagement = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!studentName.trim() || !rollNumber.trim() || !collegeName.trim()) {
-            return toast.error('Student Name, Application No, and College Name are required');
+        if (!studentName.trim() || !rollNumber.trim()) {
+            return toast.error('Student Name and Application No are required');
         }
         setSaving(true);
         const loadingToast = toast.loading(editingId ? 'Updating...' : 'Adding...');
@@ -74,7 +74,7 @@ const AdmitCardsManagement = () => {
         try {
             const formData = new FormData();
             formData.append('page', pageId);
-            formData.append('collegeName', collegeName);
+
             formData.append('studentName', studentName);
             formData.append('rollNumber', rollNumber);
             formData.append('additionalInfo', additionalInfo);
@@ -99,7 +99,7 @@ const AdmitCardsManagement = () => {
 
     const startEdit = (card) => {
         setEditingId(card._id);
-        setCollegeName(card.collegeName);
+
         setStudentName(card.studentName);
         setRollNumber(card.rollNumber);
         setAdditionalInfo(card.additionalInfo || '');
@@ -121,28 +121,56 @@ const AdmitCardsManagement = () => {
     };
 
     const handleBulkUpload = async () => {
-        if (!bulkText.trim()) return toast.error('Paste admit card data first');
-        const lines = bulkText.trim().split('\n');
-        const cardsData = lines.map(line => {
-            const parts = line.split(',').map(s => s.trim());
-            if (parts.length < 3) return null;
-            return { collegeName: parts[0], studentName: parts[1], rollNumber: parts[2] };
+        if (!bulkFiles || bulkFiles.length === 0) return toast.error('Please select files first');
+
+        const cardsData = bulkFiles.map(file => {
+            const nameWithoutExt = file.name.substring(0, file.name.lastIndexOf('.'));
+            const parts = nameWithoutExt.split('_');
+            
+            if (parts.length < 2) return null;
+            
+            const rollNumber = parts.pop().trim();
+            const studentName = parts.join('_').trim();
+            
+            return { file, studentName, rollNumber };
         }).filter(Boolean);
-        if (cardsData.length === 0) return toast.error('Format: CollegeName, StudentName, ApplicationNo');
-        const loadingToast = toast.loading('Uploading ' + cardsData.length + ' cards...');
+
+        if (cardsData.length !== bulkFiles.length) {
+            toast.error('Some files have invalid names. Format should be: StudentName_ApplicationNo.pdf');
+        }
+
+        if (cardsData.length === 0) return toast.error('No valid files to upload.');
+
+        const loadingToast = toast.loading(`Uploading ${cardsData.length} cards...`);
+        setSaving(true);
+        let successCount = 0;
+
         try {
-            await dispatch(bulkCreateAdmitCards({ pageId, cards: cardsData })).unwrap();
-            toast.success(cardsData.length + ' cards created', { id: loadingToast });
-            setBulkText(''); setShowBulk(false);
+            for (const card of cardsData) {
+                const formData = new FormData();
+                formData.append('page', pageId);
+                formData.append('studentName', card.studentName);
+                formData.append('rollNumber', card.rollNumber);
+                formData.append('admitCardFile', card.file);
+                
+                await dispatch(createAdmitCard(formData)).unwrap();
+                successCount++;
+            }
+            toast.success(`${successCount} cards created successfully`, { id: loadingToast });
+            setBulkFiles([]);
+            setShowBulk(false);
         } catch (error) {
-            toast.error('Bulk upload failed', { id: loadingToast });
+            toast.error(`Upload stopped. ${successCount} uploaded successfully.`, { id: loadingToast });
+        } finally {
+            setSaving(false);
+            // Refresh the list after bulk upload
+            dispatch(fetchAdmitCardsByPage({ pageId, params: { includeInactive: 'true' } }));
         }
     };
 
     const filteredCards = cards.filter(c =>
         c.studentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.rollNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        c.collegeName?.toLowerCase().includes(searchTerm.toLowerCase())
+        c.rollNumber?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -178,18 +206,52 @@ const AdmitCardsManagement = () => {
 
             {showBulk && (
                 <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6">
-                    <h3 className="font-semibold text-sm text-slate-800 dark:text-white mb-1">Bulk Upload</h3>
-                    <p className="text-xs text-slate-500 mb-3">Format per line: <strong>College, StudentName, ApplicationNo</strong></p>
-                    <textarea
-                        rows="4"
-                        placeholder={"ABC College, John Doe, 2024001\nXYZ College, Jane Smith, 2024002"}
-                        value={bulkText}
-                        onChange={(e) => setBulkText(e.target.value)}
-                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-slate-800 dark:text-white font-mono text-sm resize-none"
-                    />
-                    <div className="flex items-center gap-2 mt-3">
-                        <Button size="sm" onClick={handleBulkUpload}>Upload</Button>
-                        <Button size="sm" variant="ghost" onClick={() => setShowBulk(false)}>Cancel</Button>
+                    <h3 className="font-semibold text-sm text-slate-800 dark:text-white mb-1">Bulk Upload Admit Cards</h3>
+                    <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 p-4 rounded-lg mb-4 text-xs font-medium">
+                        <p className="mb-2"><strong>Instruction:</strong> Ensure your file names strictly follow this format before uploading:</p>
+                        <p className="font-mono bg-white dark:bg-slate-900 px-2 py-1 rounded inline-block border border-blue-100 dark:border-blue-800">StudentName_ApplicationNo.pdf</p>
+                        <p className="mt-2 text-slate-500 dark:text-slate-400">Example: <span className="font-mono text-slate-600 dark:text-slate-300">AMAN_BED202610011471.pdf</span> or <span className="font-mono text-slate-600 dark:text-slate-300">AMAN KUMAR_BED202610011471.pdf</span></p>
+                    </div>
+                    
+                    <label className="flex flex-col items-center justify-center gap-3 w-full px-4 py-8 bg-slate-50 dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl hover:border-primary/50 cursor-pointer transition-all mb-4">
+                        <Upload size={24} className="text-slate-400" />
+                        <div className="text-center">
+                            <span className="text-sm font-bold text-slate-700 dark:text-slate-200 block mb-1">
+                                Click to select PDF files
+                            </span>
+                            <span className="text-xs text-slate-500">
+                                {bulkFiles.length > 0 ? `${bulkFiles.length} file(s) selected` : 'Select multiple PDF files'}
+                            </span>
+                        </div>
+                        <input
+                            type="file"
+                            multiple
+                            accept=".pdf"
+                            className="hidden"
+                            onChange={(e) => {
+                                if (e.target.files) setBulkFiles(Array.from(e.target.files));
+                            }}
+                        />
+                    </label>
+
+                    {bulkFiles.length > 0 && (
+                        <div className="max-h-40 overflow-y-auto mb-4 bg-slate-50 dark:bg-slate-900 rounded-lg p-3 border border-slate-100 dark:border-slate-700">
+                            <ul className="space-y-1">
+                                {bulkFiles.slice(0, 5).map((file, i) => (
+                                    <li key={i} className="text-xs text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                                        <FileText size={12} className="text-primary" /> {file.name}
+                                    </li>
+                                ))}
+                                {bulkFiles.length > 5 && (
+                                    <li className="text-xs font-semibold text-slate-500 pt-2">...and {bulkFiles.length - 5} more files</li>
+                                )}
+                            </ul>
+                        </div>
+                    )}
+
+                    <div className="flex items-center gap-2">
+                        <Button size="sm" onClick={handleBulkUpload} loading={saving}>Upload {bulkFiles.length} Files</Button>
+                        <Button size="sm" variant="ghost" onClick={() => { setShowBulk(false); setBulkFiles([]); }}>Cancel</Button>
                     </div>
                 </div>
             )}
@@ -201,20 +263,7 @@ const AdmitCardsManagement = () => {
                 maxWidth="max-w-2xl"
             >
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div className="space-y-2">
-                            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
-                                College <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                required
-                                placeholder="ABC College"
-                                value={collegeName}
-                                onChange={(e) => setCollegeName(e.target.value)}
-                                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-slate-800 dark:text-white font-medium"
-                            />
-                        </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200">
                                 Student Name <span className="text-red-500">*</span>
@@ -302,10 +351,7 @@ const AdmitCardsManagement = () => {
                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Student Name</p>
                                 <p className="text-sm font-semibold text-slate-800 dark:text-white">{viewingCard.studentName}</p>
                             </div>
-                            <div className="col-span-2 md:col-span-2">
-                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">College</p>
-                                <p className="text-sm font-semibold text-slate-800 dark:text-white">{viewingCard.collegeName}</p>
-                            </div>
+
                             {viewingCard.additionalInfo && (
                                 <div className="col-span-full mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
                                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Additional Info</p>
@@ -357,7 +403,7 @@ const AdmitCardsManagement = () => {
                                 <tr className="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
                                     <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Application No</th>
                                     <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Student Name</th>
-                                    <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">College</th>
+
                                     <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">File</th>
                                     <th className="p-4 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest text-right">Actions</th>
                                 </tr>
@@ -390,7 +436,7 @@ const AdmitCardsManagement = () => {
                                         >
                                             <td className="p-4 font-bold text-slate-800 dark:text-white text-xs">{card.rollNumber}</td>
                                             <td className="p-4 text-slate-700 dark:text-slate-200 group-hover:text-primary transition-colors">{card.studentName}</td>
-                                            <td className="p-4 text-slate-500 text-sm">{card.collegeName}</td>
+
                                             <td className="p-4">
                                                 {card.admitCardFile ? (
                                                     <a href={card.admitCardFile} target="_blank" rel="noreferrer"
