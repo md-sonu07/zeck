@@ -5,14 +5,35 @@ import { Image as ImageIcon, X, ChevronLeft, ChevronRight, LayoutGrid, Users } f
 import SEO from '../../../components/common/SEO';
 import { GallerySkeleton } from '../../../components/common/Skeleton';
 
-const Card = ({ item, aspect, onClick }) => (
+const getOptimizedUrl = (url, width, height, quality = 80) => {
+    if (!url) return '';
+    if (url.includes('ik.imagekit.io')) {
+        // Handle existing query params if any
+        const separator = url.includes('?') ? '&' : '?';
+        return `${url}${separator}tr=w-${width},h-${height},fo-auto,q-${quality}`;
+    }
+    return url;
+};
+
+const getLightboxUrl = (url) => {
+    if (!url) return '';
+    if (url.includes('ik.imagekit.io')) {
+        const separator = url.includes('?') ? '&' : '?';
+        return `${url}${separator}tr=w-1600,q-85`;
+    }
+    return url;
+};
+
+const Card = ({ item, aspect, onClick, width, height }) => (
     <div onClick={onClick} className="cursor-pointer group bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-        <div className={`${aspect} relative overflow-hidden`}>
+        <div className={`${aspect} relative overflow-hidden bg-slate-100 dark:bg-slate-900`}>
             <img
-                src={item.imageUrl}
+                src={getOptimizedUrl(item.imageUrl, width, height)}
                 alt={item.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 loading="lazy"
+                decoding="async"
+                fetchPriority={item.order < 4 ? 'high' : 'auto'}
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
         </div>
@@ -40,9 +61,7 @@ const GalleryPage = () => {
     const [lightboxIndex, setLightboxIndex] = useState(-1);
     const [lightboxList, setLightboxList] = useState([]);
 
-    useEffect(() => {
-        dispatch(fetchGallery());
-    }, [dispatch]);
+
 
     const memberItems = items.filter(item => item.category === 'Our Team');
     const otherItems = items.filter(item => item.category === 'Highlights & Moments');
@@ -78,7 +97,15 @@ const GalleryPage = () => {
         return () => window.removeEventListener('keydown', handleKey);
     }, [lightboxImg, lightboxIndex, lightboxList.length]);
 
-    if (loading) return <GallerySkeleton />;
+    const [initialLoad, setInitialLoad] = useState(true);
+
+    useEffect(() => {
+        dispatch(fetchGallery()).finally(() => {
+            setInitialLoad(false);
+        });
+    }, [dispatch]);
+
+    if ((loading || initialLoad) && items.length === 0) return <GallerySkeleton />;
 
     return (
         <>
@@ -119,6 +146,8 @@ const GalleryPage = () => {
                                     key={item._id}
                                     item={item}
                                     aspect="aspect-[4/3]"
+                                    width={600}
+                                    height={450}
                                     onClick={() => openLightbox(memberItems, index)}
                                 />
                             ))}
@@ -143,6 +172,8 @@ const GalleryPage = () => {
                                     key={item._id}
                                     item={item}
                                     aspect="aspect-[16/10]"
+                                    width={800}
+                                    height={500}
                                     onClick={() => openLightbox(otherItems, index)}
                                 />
                             ))}
@@ -195,9 +226,10 @@ const GalleryPage = () => {
                         onClick={(e) => e.stopPropagation()}
                     >
                         <img
-                            src={lightboxImg.imageUrl}
+                            src={getLightboxUrl(lightboxImg.imageUrl)}
                             alt={lightboxImg.title}
-                            className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl"
+                            className="max-w-full max-h-[75vh] object-contain rounded-2xl shadow-2xl bg-black/50"
+                            decoding="async"
                         />
                         <div className="mt-4 text-center">
                             <h3 className="text-lg font-bold text-white">{lightboxImg.title}</h3>
