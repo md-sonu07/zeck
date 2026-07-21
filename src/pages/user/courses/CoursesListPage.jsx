@@ -72,11 +72,11 @@ const CoursesListPage = () => {
                                     </span>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Link to={`/courses/${course._id}`}
+                                    <Link to={`/courses/${course.slug || course._id}`}
                                         className="flex-1 text-center px-3 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition text-sm">
                                         View Details
                                     </Link>
-                                    <Link to={`/apply/${course._id}`}
+                                    <Link to={`/course-apply/${course.slug || course._id}`}
                                         className="flex-1 text-center px-3 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition text-sm">
                                         Apply Now
                                     </Link>

@@ -31,8 +31,7 @@ const HomeCoursesSection = ({ hideViewAll = false }) => {
     }, [dispatch]);
 
     const handleApplyClick = (course) => {
-        const slug = course.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-        navigate(`/course-apply/${slug}-${course._id}`);
+        navigate(`/course-apply/${course.slug || course._id}`);
     };
 
     return (

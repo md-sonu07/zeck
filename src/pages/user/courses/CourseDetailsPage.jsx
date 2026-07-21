@@ -145,7 +145,7 @@ const CourseDetailsPage = () => {
                     )}
 
                     <div className="mt-8">
-                        <Link to={`/apply/${course._id}`}
+                        <Link to={`/course-apply/${course.slug || course._id}`}
                             className="inline-block bg-primary text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-primary-dark transition">
                             Apply Now
                         </Link>

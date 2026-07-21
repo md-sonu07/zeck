@@ -42,10 +42,8 @@ const ApplyNowPage = () => {
     const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
-        // Extract the actual MongoDB ID from the slug (e.g. bca-course-123456)
-        const courseId = id ? id.split('-').pop() : null;
-        if (courseId) {
-            dispatch(fetchCourseById(courseId));
+        if (id) {
+            dispatch(fetchCourseById(id));
         }
         return () => {
             dispatch(clearCurrentCourse());
