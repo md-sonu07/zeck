@@ -25,7 +25,7 @@ const MobileBottomBar = () => {
         { path: '/', label: 'Home', icon: Home },
         { path: '/university-cources', label: 'Courses', icon: BookOpen },
         { path: 'menu', label: 'Menu', icon: Menu }, // Special action
-        { path: '/admit-cards', label: 'Admit Card', icon: FileCheck },
+        { path: '/course-admit-cards', label: 'Admit Card', icon: FileCheck },
         { path: '/profile', label: 'Profile', icon: User }
     ];
 
@@ -33,6 +33,7 @@ const MobileBottomBar = () => {
         { name: 'Home', path: '/', icon: Home },
         { name: 'University & Courses', path: '/university-cources', icon: School },
         { name: 'Latest News', path: '/latest-news', icon: Newspaper },
+        { name: 'Course Admit Card', path: '/course-admit-cards', icon: FileCheck },
         { name: 'Admit Card', path: '/admit-cards', icon: FileCheck },
         { name: 'Result', path: '/result', icon: CheckCircle },
         { name: 'Service', path: '/service', icon: Briefcase },

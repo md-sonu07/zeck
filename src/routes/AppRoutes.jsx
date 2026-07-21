@@ -40,7 +40,7 @@ const AppRoutes = () => {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/latest-news" element={<LatestNewsPage />} />
-            <Route path="/admit-card" element={<AdmitCardPage />} />
+            <Route path="/admit-cards" element={<AdmitCardPage />} />
             <Route path="/result" element={<ResultPage />} />
             <Route path="/answer-key" element={<AnswerKeyPage />} />
             <Route path="/admission" element={<AdmissionPage />} />
@@ -50,8 +50,8 @@ const AppRoutes = () => {
             <Route path="/search" element={<SearchResultsPage />} />
             <Route path="/apply/:slug" element={<ApplicationPage />} />
             <Route path="/gallery" element={<GalleryPage />} />
-            <Route path="/admit-cards" element={<AdmitCardPagesList />} />
-            <Route path="/admit-cards/:slug" element={<AdmitCardSearchPage />} />
+            <Route path="/course-admit-cards" element={<AdmitCardPagesList />} />
+            <Route path="/course-admit-cards/:slug" element={<AdmitCardSearchPage />} />
             <Route path="/courses/:id" element={<CourseDetailsPage />} />
             <Route path="/course-apply/:id" element={<ApplyNowPage />} />
 

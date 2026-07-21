@@ -18,7 +18,8 @@ import {
     Newspaper,
     School,
     Briefcase,
-    Info
+    Info,
+    BadgeCheck
 } from 'lucide-react';
 
 const Header = () => {
@@ -34,7 +35,8 @@ const Header = () => {
         { name: 'University & Courses', path: '/university-cources', icon: School },
         { name: 'Admission', path: '/admission', icon: GraduationCap },
         { name: 'Latest News', path: '/latest-news', icon: Newspaper },
-        { name: 'Admit Card', path: '/admit-card', icon: FileText },
+        { name: 'Admit Card', path: '/admit-cards', icon: FileText },
+        { name: 'Course Admit Card', path: '/course-admit-cards', icon: BadgeCheck },
         { name: 'Result', path: '/result', icon: CheckCircle },
         { name: 'Gallery', path: '/gallery', icon: Image },
         { name: 'Service', path: '/service', icon: Briefcase },

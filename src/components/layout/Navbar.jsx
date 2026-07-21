@@ -10,7 +10,8 @@ import {
     School,
     Info,
     Mail,
-    Newspaper
+    Newspaper,
+    BadgeCheck
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -20,9 +21,10 @@ const Navbar = () => {
         { name: 'Home', path: '/', icon: House },
         { name: 'University & Courses', path: '/university-cources', icon: School },
         // { name: 'Admission', path: '/admission', icon: GraduationCap },
+        { name: 'Course Admit Card', path: '/course-admit-cards', icon: BadgeCheck },
         { name: 'Admit Card', path: '/admit-cards', icon: FileText },
         { name: 'Latest News', path: '/latest-news', icon: Newspaper },
-        { name: 'Result', path: '/result', icon: CheckCircle },
+        // { name: 'Result', path: '/result', icon: CheckCircle },
         { name: 'Service', path: '/service', icon: Briefcase },
         { name: 'Gallery', path: '/gallery', icon: Image },
         { name: 'About Us', path: '/about', icon: Info },

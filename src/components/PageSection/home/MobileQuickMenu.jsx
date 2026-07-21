@@ -10,7 +10,7 @@ const menuItems = [
     { label: 'University', icon: GraduationCap, path: '/university', color: 'bg-blue-500' },
     { label: 'Admission', icon: UserPlus, path: '/admission', color: 'bg-emerald-500' },
     { label: 'Latest News', icon: Flame, path: '/latest-news', color: 'bg-orange-500' },
-    { label: 'Admit Card', icon: IdCard, path: '/admit-card', color: 'bg-blue-600' },
+    { label: 'Admit Card', icon: IdCard, path: '/admit-cards', color: 'bg-blue-600' },
     { label: 'Result', icon: FileCheck, path: '/result', color: 'bg-purple-500' },
     { label: 'Gallery', icon: Image, path: '/gallery', color: 'bg-indigo-500' },
     { label: 'Service', icon: Gem, path: '/service', color: 'bg-pink-500' },

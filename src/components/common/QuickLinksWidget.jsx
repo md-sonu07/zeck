@@ -5,7 +5,7 @@ import { ChevronRight } from 'lucide-react';
 const QuickLinksWidget = () => {
     const links = [
         { label: 'Latest News', to: '/latest-news', color: 'text-blue-500' },
-        { label: 'Admit Card', to: '/admit-card', color: 'text-orange-500' },
+        { label: 'Admit Card', to: '/admit-cards', color: 'text-orange-500' },
         { label: 'Results', to: '/result', color: 'text-green-500' },
         { label: 'Answer Key', to: '/answer-key', color: 'text-purple-500' },
         { label: 'Gallery', to: '/gallery', color: 'text-cyan-500' },

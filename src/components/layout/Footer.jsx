@@ -74,7 +74,7 @@ const Footer = () => {
                         {([
                             { title: 'About Agency', path: '/about' },
                             { title: 'Latest Vacancy', path: '/latest-news' },
-                            { title: 'Download Admit Card', path: '/admit-card' },
+                            { title: 'Download Admit Card', path: '/admit-cards' },
                             { title: 'Checked Results', path: '/result' },
                             { title: 'Photo Gallery', path: '/gallery' },
                         ]).map((link, idx) => (

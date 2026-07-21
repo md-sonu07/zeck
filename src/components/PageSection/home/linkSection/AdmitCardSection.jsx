@@ -43,7 +43,7 @@ const AdmitCardSection = () => {
                     <FileText size={16} /> Admit Card
                 </h2>
                 <Link
-                    to="/admit-card"
+                    to="/admit-cards"
                     className="group/btn text-[11px] text-white/75 hover:text-white border border-white/30 hover:border-white/70 hover:bg-white/10 px-2.5 py-0.5 rounded-full transition-all duration-200 inline-flex items-center gap-1.5"
                 >
                     View All
@@ -98,7 +98,7 @@ const AdmitCardSection = () => {
             {/* Footer */}
             <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-700/30 border-t border-slate-100 dark:border-slate-700 text-center">
                 <Link
-                    to="/admit-card"
+                    to="/admit-cards"
                     className="group/footer text-xs font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 inline-flex items-center gap-1.5 transition-colors duration-200 no-underline"
                 >
                     View All Admit Cards
