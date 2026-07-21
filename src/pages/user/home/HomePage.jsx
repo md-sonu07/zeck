@@ -60,28 +60,25 @@ const HomePage = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                     {/* Left Column */}
                     <div className="lg:col-span-9 space-y-8">
+                        {/* Section Label */}
+                        <div className="section-label mt-4">
+                            <GraduationCap className="text-slate-500" size={10} /> Study Resources
+                        </div>          
+
+                        {/* Courses Section */}
+                        <HomeCoursesSection />
+                        <AdmitCardBEdDElEdSection />
+
+                        {/* Latest News */}
                         <div className="section-label">
                             <Flame className="text-accent" size={10} /> Latest News & Updates
                         </div>
-
-                        {/* Latest News */}
                         <LatestNewsSection />
 
                         <div className="section-label mt-4">
                             <IdCard className="text-blue-500" size={10} /> Examination Portal
                         </div>
 
-                        <AdmitCardBEdDElEdSection />
-
-                        {/* Courses Section */}
-                        <HomeCoursesSection />
-
-
-                        {/* Section Label */}
-                        <div className="section-label mt-4">
-                            <Key className="text-slate-500" size={10} /> Study Resources
-                        </div>
-                        
                         <AdmitCardSection />
                         <ResultsSection />
                         <AnswerKeySyllabus />
