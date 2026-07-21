@@ -34,6 +34,7 @@ const PostManagementPage = ({ categoryTitle }) => {
     const [isLocationDropdownOpen, setIsLocationDropdownOpen] = useState(false);
     const [description, setDescription] = useState('');
     const [imageUrl, setImageUrl] = useState('');
+    const [selectedFile, setSelectedFile] = useState(null);
     const [ytLink, setYtLink] = useState('');
     const [lastDate, setLastDate] = useState('');
     const [postDate, setPostDate] = useState('');
@@ -205,6 +206,7 @@ const PostManagementPage = ({ categoryTitle }) => {
     const handleHeaderFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            setSelectedFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImageUrl(reader.result);
@@ -243,29 +245,35 @@ const PostManagementPage = ({ categoryTitle }) => {
 
         setSubmittingAction(saveAsDraft ? 'draft' : 'publish');
 
-        const postData = {
-            title,
-            mainCategory: categoryTitle, // Admin section category
-            subCategory: selectedCategory,
-            resourceType: selectedResource,
-            location: selectedLocation,
-            shortSummary: description,
-            content: finalContent,
-            imageUrl,
-            ytLink,
-            postDate: postDate || new Date(),
-            lastDate: lastDate || null,
-            paymentPrice: paymentPrice && !isNaN(paymentPrice) ? Number(paymentPrice) : undefined,
-            paymentDiscountPercent: paymentDiscountPercent && !isNaN(paymentDiscountPercent) ? Number(paymentDiscountPercent) : 0,
-            isDraft: saveAsDraft
-        };
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('mainCategory', categoryTitle);
+        formData.append('subCategory', selectedCategory);
+        formData.append('resourceType', selectedResource);
+        formData.append('location', selectedLocation);
+        formData.append('shortSummary', description);
+        formData.append('content', finalContent);
+        if (ytLink) formData.append('ytLink', ytLink);
+        if (postDate) formData.append('postDate', postDate);
+        if (lastDate) formData.append('lastDate', lastDate);
+        if (paymentPrice !== '' && !isNaN(paymentPrice)) formData.append('paymentPrice', Number(paymentPrice));
+        if (paymentDiscountPercent !== '' && !isNaN(paymentDiscountPercent)) formData.append('paymentDiscountPercent', Number(paymentDiscountPercent));
+        formData.append('isDraft', saveAsDraft);
+        
+        if (selectedFile) {
+            formData.append('image', selectedFile);
+        } else if (imageUrl) {
+            formData.append('imageUrl', imageUrl);
+        } else {
+            formData.append('imageUrl', '');
+        }
 
         try {
             if (editArticleId) {
-                await dispatch(updateArticle({ id: editArticleId, articleData: postData })).unwrap();
+                await dispatch(updateArticle({ id: editArticleId, articleData: formData })).unwrap();
                 toast.success(saveAsDraft ? 'Draft saved!' : 'Successfully updated post!');
             } else {
-                await dispatch(createArticle(postData)).unwrap();
+                await dispatch(createArticle(formData)).unwrap();
                 toast.success(saveAsDraft ? 'Draft saved!' : 'Successfully added post!');
             }
 
@@ -278,6 +286,7 @@ const PostManagementPage = ({ categoryTitle }) => {
             setPostDate('');
             setDescription('');
             setImageUrl('');
+            setSelectedFile(null);
             setYtLink('');
             setPaymentPrice('');
             setPaymentDiscountPercent('');
@@ -310,6 +319,7 @@ const PostManagementPage = ({ categoryTitle }) => {
         setSelectedLocation(art.location || '');
         setDescription(art.shortSummary || '');
         setImageUrl(art.imageUrl || '');
+        setSelectedFile(null);
         setYtLink(art.ytLink || '');
         setPaymentPrice(art.paymentPrice || '');
         setPaymentDiscountPercent(art.paymentDiscountPercent || '');
@@ -478,7 +488,7 @@ const PostManagementPage = ({ categoryTitle }) => {
                                                 {imageUrl && (
                                                     <button
                                                         type="button"
-                                                        onClick={() => setImageUrl('')}
+                                                        onClick={() => { setImageUrl(''); setSelectedFile(null); }}
                                                         className="size-10 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all shadow-sm group"
                                                     >
                                                         <X size={16} className="group-hover:rotate-90 transition-transform" />

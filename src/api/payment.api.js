@@ -7,7 +7,9 @@ export const getPaymentSettingsApi = async () => {
 };
 
 // Update Payment Settings (Admin)
-export const updatePaymentSettingsApi = async (data) => {
-    const response = await API.put('/payment/settings', data);
+export const updatePaymentSettingsApi = async (formData) => {
+    const response = await API.put('/payment/settings', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
     return response.data;
 };

@@ -30,10 +30,10 @@ const PaymentSettingsPage = ({ isComponent = false }) => {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            setQrFile(file); // Raw file object
             const reader = new FileReader();
             reader.onloadend = () => {
-                setQrFile(reader.result); // Base64 string
-                setPreviewUrl(reader.result);
+                setPreviewUrl(reader.result); // For preview only
             };
             reader.readAsDataURL(file);
         }
@@ -43,15 +43,14 @@ const PaymentSettingsPage = ({ isComponent = false }) => {
         e.preventDefault();
         try {
             setSaving(true);
-            const payload = {
-                upiId,
-            };
-
+            const formData = new FormData();
+            formData.append('upiId', upiId);
+            
             if (qrFile) {
-                payload.qrCodeImage = qrFile;
+                formData.append('qrCodeImage', qrFile);
             }
 
-            const resultAction = await dispatch(updatePaymentSettings(payload));
+            const resultAction = await dispatch(updatePaymentSettings(formData));
             if (updatePaymentSettings.fulfilled.match(resultAction)) {
                 toast.success("Payment settings updated successfully");
                 setCurrentQr(resultAction.payload.settings?.qrCodeImage || resultAction.payload.qrCodeImage);
