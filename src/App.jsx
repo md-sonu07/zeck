@@ -8,6 +8,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import MobileBottomBar from './components/layout/MobileBottomBar';
 import AppRoutes from './routes/AppRoutes';
+import GoogleAnalytics from './components/common/GoogleAnalytics';
 import { Toaster } from 'react-hot-toast';
 
 const AppContent = () => {
@@ -61,6 +62,7 @@ function App() {
 
   return (
     <Router>
+      <GoogleAnalytics />
       <Toaster position="top-right" toastOptions={{ className: 'dark:bg-slate-800 dark:text-white border border-slate-200 dark:border-slate-700' }} />
       <AppContent />
     </Router>

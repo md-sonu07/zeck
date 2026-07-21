@@ -16,6 +16,7 @@ import { fetchContactSettings } from '../../../store/thunk/contactThunk';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiBaseUrl } from '../../../api/axios';
 import toast from 'react-hot-toast';
+import SEO from '../../../components/common/SEO';
 
 const ProfilePage = () => {
     const dispatch = useDispatch();
@@ -151,6 +152,11 @@ const ProfilePage = () => {
 
     return (
         <div className="min-h-[80vh] bg-slate-100 dark:bg-slate-950 py-10 px-4">
+            <SEO
+                title="My Profile"
+                description="Your personal profile on Zoya Education Center."
+                noindex={true}
+            />
             <div className="max-w-6xl mx-auto">
                 <div className="flex flex-col lg:flex-row gap-5">
 

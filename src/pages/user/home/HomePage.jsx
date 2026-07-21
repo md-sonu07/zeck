@@ -18,8 +18,38 @@ const HomePage = () => {
         <div className="pb-10">
             <SEO
                 title="Home"
-                description="Zoya Education Center - Your one-stop destination for latest news, exam updates, results, admit cards, and academic resources."
-                keywords="education, latest news, exam results, admit card, syllabus, answer key, university updates"
+                description="Zoya Education Center - Your trusted source for latest government job notifications, admit cards, exam results, answer keys, syllabus, and university admission updates across India. Get real-time alerts."
+                keywords="government jobs, sarkari naukri, admit card 2026, exam results, answer key, university admission, latest news, job notification, Bihar jobs, India jobs, Zoya Education Center, online form, syllabus download"
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "Home",
+                            "item": "https://zoyaeducation.com/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "Latest News",
+                            "item": "https://zoyaeducation.com/latest-news"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 3,
+                            "name": "Admit Card",
+                            "item": "https://zoyaeducation.com/admit-card"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 4,
+                            "name": "Results",
+                            "item": "https://zoyaeducation.com/result"
+                        }
+                    ]
+                }}
             />
             <HeroBanner />
             <NoticeMarquee />

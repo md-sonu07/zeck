@@ -5,6 +5,7 @@ import { fetchSearchResults } from '../../../store/thunk/searchThunk';
 import { clearSearchResults } from '../../../store/slice/searchSlice';
 import { Search, ChevronRight, Home, Loader2, FileX2 } from 'lucide-react';
 import { CategorySkeleton } from '../../../components/common/Skeleton';
+import SEO from '../../../components/common/SEO';
 
 const isNew = (article) => {
     const date = article?.postDate || article?.createdAt;
@@ -35,6 +36,11 @@ const SearchResultsPage = () => {
 
     return (
         <div className="pb-16 bg-slate-50 dark:bg-slate-900 min-h-screen">
+            <SEO
+                title={query ? `Search: ${query}` : 'Search'}
+                description={`Search results for "${query}" on Zoya Education Center. Find government jobs, admit cards, results, and education news.`}
+                noindex={true}
+            />
             {/* Header Banner */}
             <div className="bg-linear-to-r from-primary to-blue-700 px-4 py-6">
                 <div className="max-w-[1200px] mx-auto">

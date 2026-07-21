@@ -99,6 +99,31 @@ const ArticleDetailPage = () => {
                 image={article.imageUrl}
                 keywords={`${article.mainCategory}, ${article.subCategory || ''}, ${article.tags?.join(', ') || ''}`}
                 type="article"
+                jsonLd={{
+                    "@context": "https://schema.org",
+                    "@type": "Article",
+                    "headline": article.title,
+                    "description": article.shortSummary || article.content?.substring(0, 160).replace(/<[^>]*>?/gm, ''),
+                    "image": article.imageUrl || "https://zoyaeducation.com/logo/light-logo.png",
+                    "datePublished": article.postDate || article.createdAt,
+                    "dateModified": article.updatedAt || article.postDate || article.createdAt,
+                    "author": {
+                        "@type": "Organization",
+                        "name": "Zoya Education Center"
+                    },
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": "Zoya Education Center",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": "https://zoyaeducation.com/logo/light-logo.png"
+                        }
+                    },
+                    "mainEntityOfPage": {
+                        "@type": "WebPage",
+                        "@id": typeof window !== 'undefined' ? window.location.href : ''
+                    }
+                }}
             />
 
             {/* Premium Header: Breadcrumbs + Navigation */}

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
 import { CheckCircle, XCircle } from 'lucide-react';
 import { fetchCourseById, clearCurrentCourse } from '../../../store/slice/courseSlice.js';
+import SEO from '../../../components/common/SEO';
 
 const CourseDetailsPage = () => {
     const { id } = useParams();
@@ -19,6 +20,13 @@ const CourseDetailsPage = () => {
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
+            <SEO
+                title={course.name}
+                description={course.description ? course.description.substring(0, 160) : `${course.name} - Course details, eligibility, fee structure, and admission information at Zoya Education Center.`}
+                keywords={`${course.name}, ${course.category?.name || ''}, admission, course details, fee structure, eligibility`}
+                image={course.thumbnail}
+                type="article"
+            />
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
                 {course.thumbnail && (
                     <img src={course.thumbnail} alt={course.name} className="w-full h-64 object-cover" />

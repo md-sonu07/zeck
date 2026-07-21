@@ -1,7 +1,22 @@
+# Zoya Education Center - robots.txt
 # https://www.robotstxt.org/robotstxt.html
 
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /profile
+Disallow: /saved-posts
+Disallow: /my-applications
+Disallow: /login
+Disallow: /register
+Disallow: /apply/
+Disallow: /course-apply/
 
-# Sitemaps
-Sitemap: https://zoyacenter.in/sitemap.xml
+# Crawl delay
+Crawl-delay: 1
+
+# Dynamic Sitemap (generated from database)
+Sitemap: https://api.zoyaeducation.com/api/seo/sitemap.xml
+
+# Static Sitemap fallback
+Sitemap: https://zoyaeducation.com/sitemap.xml

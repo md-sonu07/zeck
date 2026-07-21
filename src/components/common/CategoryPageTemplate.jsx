@@ -6,6 +6,7 @@ import { CategorySkeleton } from './Skeleton';
 import FilterStrip from '../PageSection/home/FilterStrip';
 import { Link } from 'react-router-dom';
 import QuickLinksWidget from './QuickLinksWidget';
+import SEO from './SEO';
 
 const isNew = (article) => {
     const date = article?.postDate || article?.createdAt;
@@ -108,6 +109,11 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
 
     return (
         <div className="pb-16 bg-slate-50 dark:bg-slate-900 min-h-screen">
+            <SEO
+                title={pageTitle || `${category || 'Latest'} 2026`}
+                description={description || `Latest ${category || 'news'} notifications, updates, and information. Stay updated with Zoya Education Center.`}
+                keywords={`${category || 'education'}, ${category || 'news'} 2026, government jobs, sarkari naukri, exam updates, Zoya Education Center`}
+            />
             <div className={`${bgClass} px-4 py-6`}>
 
                 <div className="max-w-[1200px] mx-auto">

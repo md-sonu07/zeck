@@ -13,6 +13,7 @@ import QuickLinksWidget from '../../../components/common/QuickLinksWidget';
 import { CategorySkeleton } from '../../../components/common/Skeleton';
 import toast from 'react-hot-toast';
 import slug from 'slug';
+import SEO from '../../../components/common/SEO';
 
 const SavedPostsPage = () => {
     const navigate = useNavigate();
@@ -67,6 +68,11 @@ const SavedPostsPage = () => {
 
     return (
         <div className="pb-16 bg-slate-50 dark:bg-slate-900 min-h-screen">
+            <SEO
+                title="Saved Posts"
+                description="Your saved articles and bookmarked posts on Zoya Education Center."
+                noindex={true}
+            />
             {/* Hero Header */}
             <div className="bg-linear-to-r from-primary via-blue-600 to-blue-700 px-4 py-6">
                 <div className="max-w-[1200px] mx-auto">

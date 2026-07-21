@@ -2,10 +2,16 @@ import React from 'react';
 import { School, ChevronRight, Home, Send, MessageCircle } from 'lucide-react';
 import HomeCoursesSection from '../../../components/PageSection/home/linkSection/HomeCoursesSection';
 import QuickLinksWidget from '../../../components/common/QuickLinksWidget';
+import SEO from '../../../components/common/SEO';
 
 const UniversityPage = () => {
     return (
         <div className="pb-16 bg-slate-50 dark:bg-slate-900 min-h-screen">
+            <SEO
+                title="Universities & Courses"
+                description="Explore top universities, courses, fee structures, and admission details for premier institutions across India. Find BCA, BBA, MBA, B.Tech and more courses at Zoya Education Center."
+                keywords="university courses, BCA, BBA, MBA, B.Tech, admission, fee structure, top universities India, Bihar university"
+            />
             <div className="bg-indigo-600 px-4 py-6">
                 <div className="max-w-[1200px] mx-auto">
                     <nav className="flex items-center gap-1.5 text-white/70 text-[10px] font-bold uppercase tracking-widest mb-2">
