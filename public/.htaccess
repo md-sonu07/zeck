@@ -1,6 +1,10 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+  
+  # Redirect sitemap requests (and common typos) to the dynamic backend API
+  RewriteRule ^(sitemap|sitmap)\.xml$ https://api.zoyaeducation.com/api/seo/sitemap.xml [R=301,L]
+
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
