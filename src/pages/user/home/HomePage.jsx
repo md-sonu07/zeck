@@ -81,7 +81,7 @@ const HomePage = () => {
 
                         <AdmitCardSection />
                         <ResultsSection />
-                        <AnswerKeySyllabus />
+                        {/* <AnswerKeySyllabus /> */}
 
                         {/* Student Feedback */}
                         <StudentFeedbackSection />

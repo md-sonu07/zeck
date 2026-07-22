@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { SlidersHorizontal, Search, Filter, ChevronDown, Check, X, Loader2, FileX2 } from 'lucide-react';
+import { SlidersHorizontal, Search, Filter, ChevronDown, Check, X, FileX2 } from 'lucide-react';
+import { ListItemsSkeleton } from '../../common/Skeleton';
 import { fetchSearchResults } from '../../../store/thunk/searchThunk';
 import { clearSearchResults } from '../../../store/slice/searchSlice';
 import { fetchCategories } from '../../../store/thunk/categoryThunk';
@@ -271,8 +272,8 @@ const FilterStrip = () => {
                     </div>
 
                     {searchLoading ? (
-                        <div className="flex items-center justify-center py-16 bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
-                            <Loader2 className="animate-spin text-primary" size={36} />
+                        <div className="p-0">
+                            <ListItemsSkeleton count={3} />
                         </div>
                     ) : searchResults.length > 0 ? (
                         <div className="space-y-3">

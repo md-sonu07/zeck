@@ -10,7 +10,6 @@ const StudentFeedbackSection = () => {
             fee: "₹40,000 / Yr",
             review: "Great guidance and transparent fee structure!",
             rating: 5,
-            image: "https://ui-avatars.com/api/?name=Md+Hajrat&background=0D8ABC&color=fff&size=128",
             color: "from-blue-500 to-cyan-400"
         },
         {
@@ -20,7 +19,6 @@ const StudentFeedbackSection = () => {
             fee: "₹50,000 / Yr",
             review: "Dedicated support and structured counseling.",
             rating: 5,
-            image: "https://ui-avatars.com/api/?name=Jay+Kumar+Yadav&background=8B5CF6&color=fff&size=128",
             color: "from-purple-500 to-pink-500"
         },
         {
@@ -30,7 +28,6 @@ const StudentFeedbackSection = () => {
             fee: "₹40,000 / Yr",
             review: "Smooth admission process, highly recommended.",
             rating: 5,
-            image: "https://ui-avatars.com/api/?name=Lata+Kumari&background=F59E0B&color=fff&size=128",
             color: "from-amber-500 to-orange-400"
         },
         {
@@ -40,7 +37,6 @@ const StudentFeedbackSection = () => {
             fee: "₹50,000 / Yr",
             review: "Best place to secure B.Ed admission easily.",
             rating: 5,
-            image: "https://ui-avatars.com/api/?name=Jyoti+Kumari&background=10B981&color=fff&size=128",
             color: "from-emerald-500 to-teal-400"
         },
         {
@@ -50,7 +46,6 @@ const StudentFeedbackSection = () => {
             fee: "₹40,000 / Yr",
             review: "Very helpful staff and excellent guidance.",
             rating: 5,
-            image: "https://ui-avatars.com/api/?name=Sanjana+Kumari&background=EC4899&color=fff&size=128",
             color: "from-pink-500 to-rose-400"
         },
         {
@@ -60,15 +55,23 @@ const StudentFeedbackSection = () => {
             fee: "₹50,000 / Yr",
             review: "Highly professional and supportive environment.",
             rating: 5,
-            image: "https://ui-avatars.com/api/?name=Deepan+Kumar&background=3B82F6&color=fff&size=128",
             color: "from-blue-600 to-indigo-500"
         }
     ];
 
+    const getInitials = (name) => {
+        return name
+            .split(' ')
+            .filter(Boolean)
+            .map((part) => part[0]?.toUpperCase())
+            .slice(0, 2)
+            .join('');
+    };
+
     return (
         <div className="mt-12 mb-8">
             <div className="flex items-center gap-3 mb-6">
-                <div className="bg-yellow-100 p-2 rounded-xl shadow-sm border border-yellow-200">
+                <div className="bg-white p-2 rounded-xl shadow-sm border border-yellow-200">
                     <Quote className="text-yellow-600" size={16} />
                 </div>
                 <div>
@@ -85,11 +88,9 @@ const StudentFeedbackSection = () => {
                         <div className={`absolute top-0 right-0 w-24 h-24 bg-linear-to-br ${item.color} opacity-[0.08] rounded-bl-full -z-10 group-hover:scale-110 transition-transform duration-500`}></div>
                         
                         <div className="flex items-center gap-3 mb-3">
-                            <img 
-                                src={item.image} 
-                                alt={item.name} 
-                                className="w-10 h-10 rounded-full shadow-sm border border-slate-100 object-cover" 
-                            />
+                            <div className={`w-10 h-10 rounded-full shadow-sm border border-slate-100 flex items-center justify-center text-white font-bold text-[13px] bg-gradient-to-br ${item.color}`}>
+                                {getInitials(item.name)}
+                            </div>
                             <div>
                                 <h3 className="font-bold text-sm text-slate-800 leading-none">{item.name}</h3>
                                 <p className="text-[11px] text-primary font-semibold flex items-center gap-1 mt-1">

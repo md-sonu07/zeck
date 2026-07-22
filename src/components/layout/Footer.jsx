@@ -11,7 +11,8 @@ import {
     Mail,
     Phone,
     Instagram,
-    Youtube
+    Youtube,
+    Download
 } from 'lucide-react';
 import WhatsAppIcon from '../common/WhatsAppIcon';
 
@@ -63,6 +64,15 @@ const Footer = () => {
                             </a>
                         ))}
                     </div>
+                    <a
+                        href="https://github.com/md-sonu07/zeck/releases/download/zoya.v01/Zoya.Education.apk"
+                        download="Zoya Education.apk"
+                        className="mt-10 hidden inli ne-flex cursor-pointer text-nowrap items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl transition-all duration-300 shadow-lg font-semibold text-sm"
+                        aria-label="Download app"
+                    >
+                        <Download size={18} />
+                        <span>Download Zoya Education App</span>
+                    </a>
                 </div>
 
                 {/* Navigation */}

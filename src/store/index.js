@@ -23,6 +23,7 @@ import courseCategoryReducer from './slice/courseCategorySlice';
 import courseReducer from './slice/courseSlice';
 import admissionReducer from './slice/admissionSlice';
 import notificationReducer from './slice/notificationSlice';
+import candidatePaymentReducer from './slice/candidatePaymentSlice';
 
 const store = configureStore({
     reducer: {
@@ -49,6 +50,7 @@ const store = configureStore({
         courses: courseReducer,
         admissions: admissionReducer,
         notifications: notificationReducer,
+        candidatePayment: candidatePaymentReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

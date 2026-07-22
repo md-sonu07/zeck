@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
     Home, 
-    Upload, 
+    Download,
     BookOpen, 
     FileCheck, 
     User, 
@@ -20,6 +20,10 @@ import {
 const MobileBottomBar = () => {
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    const handleDownloadApp = () => {
+        setIsMenuOpen(false);
+    };
 
     const primaryNavItems = [
         { path: '/', label: 'Home', icon: Home },
@@ -40,6 +44,7 @@ const MobileBottomBar = () => {
         { name: 'Gallery', path: '/gallery', icon: ImageIcon },
         { name: 'About Us', path: '/about', icon: Info },
         { name: 'Contact Us', path: '/contact', icon: Mail },
+        // { name: 'Download App', path: '#download-app', icon: Download, isDownload: true },
     ];
 
     return (
@@ -63,19 +68,35 @@ const MobileBottomBar = () => {
                         <h3 className="text-lg font-black text-slate-800 dark:text-white tracking-tight">Quick Navigate</h3>
                         <button 
                             onClick={() => setIsMenuOpen(false)}
-                            className="p-2 bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-red-500 rounded-full transition-colors"
+                            className="p-2 cursor-pointer bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-red-500 rounded-full transition-colors"
                         >
                             <X size={20} />
                         </button>
                     </div>
                     
                     <div className="grid grid-cols-3 gap-3">
-                        {allLinks.map((link, idx) => {
+                        {allLinks.map((link) => {
                             const isActive = location.pathname === link.path;
                             const Icon = link.icon;
+
+                            if (link.isDownload) {
+                                return (
+                                    <a
+                                        key={link.name}
+                                        href="https://github.com/md-sonu07/zeck/releases/download/zoya.v01/Zoya.Education.apk"
+                                        download="Zoya Education.apk"
+                                        onClick={() => setIsMenuOpen(false)}
+                                        className="flex flex-col items-center justify-center p-3 rounded-2xl border transition-all active:scale-95 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 hover:border-emerald-400"
+                                    >
+                                        <Icon size={22} className="mb-2" />
+                                        <span className="text-[10px] font-bold text-center leading-tight">{link.name}</span>
+                                    </a>
+                                );
+                            }
+
                             return (
                                 <Link
-                                    key={idx}
+                                    key={link.name}
                                     to={link.path}
                                     onClick={() => setIsMenuOpen(false)}
                                     className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all active:scale-95 ${
@@ -95,7 +116,7 @@ const MobileBottomBar = () => {
 
             {/* Bottom Bar */}
             <div className="md:hidden fixed bottom-0 left-0 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 z-50 pb-safe shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
-                <div className="flex items-center justify-around h-16 relative px-1">
+                <div className="flex items-center justify-around h-20 relative px-1">
                     {primaryNavItems.map((item) => {
                         const isMenu = item.path === 'menu';
                         const isActive = isMenu ? isMenuOpen : location.pathname === item.path;

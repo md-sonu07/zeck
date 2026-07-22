@@ -28,7 +28,8 @@ import {
     BadgeCheck,
     BookOpen,
     BookMarked,
-    ClipboardList
+    ClipboardList,
+    DollarSign
 } from 'lucide-react';
 import { logout as logoutUser } from '../../store/thunk/authThunk';
 
@@ -61,6 +62,7 @@ const AdminLayout = () => {
         
         { type: 'divider', label: 'Finance' },
         { path: '/admin/payments', label: 'Online Payments', icon: CreditCard },
+        // { path: '/admin/candidate-payments', label: 'Candidate Payments', icon: DollarSign },
         { path: '/admin/payment-slips', label: 'Payment Slips', icon: FileText },
         
         { type: 'divider', label: 'Communications' },

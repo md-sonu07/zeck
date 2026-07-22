@@ -264,6 +264,45 @@ export const CategorySkeleton = () => {
     );
 };
 
+export const CourseAdmitCardSkeleton = () => {
+    return (
+        <div className="pb-16 bg-slate-50 dark:bg-slate-900 min-h-screen">
+            <div className="max-w-[1200px] mx-auto px-4 mt-8 flex flex-col lg:flex-row gap-8">
+                <div className="flex-1 space-y-5">
+                    {[1, 2, 3, 4, 5].map(i => (
+                        <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 space-y-4">
+                            <div className="flex gap-2">
+                                <Skeleton width="60px" height="16px" />
+                                <Skeleton width="80px" height="16px" />
+                            </div>
+                            <Skeleton width="90%" height="24px" />
+                            <div className="flex gap-8">
+                                <div className="space-y-2">
+                                    <Skeleton width="60px" height="10px" />
+                                    <Skeleton width="100px" height="14px" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Skeleton width="60px" height="10px" />
+                                    <Skeleton width="100px" height="14px" />
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <div className="w-80 hidden lg:block space-y-6">
+                    <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 space-y-4">
+                        <Skeleton height="24px" width="120px" />
+                        <div className="space-y-3">
+                            <Skeleton height="40px" />
+                            <Skeleton height="40px" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 /**
  * Home Page Skeleton
  */

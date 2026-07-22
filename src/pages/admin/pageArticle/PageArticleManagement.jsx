@@ -23,7 +23,7 @@ import { fetchPageSections, createPageSection, deletePageSection } from '../../.
 const defaultSections = [
     { id: '1', title: 'Latest News', path: '/admin/latest-news', iconName: 'Newspaper', color: 'bg-blue-500', description: 'Manage new and recent updates', isDefault: true },
     { id: '2', title: 'Result', path: '/admin/results', iconName: 'CheckCircle', color: 'bg-green-500', description: 'Publish final or preliminary exam results', isDefault: true },
-    { id: '3', title: 'Answer Key', path: '/admin/answer-key', iconName: 'Key', color: 'bg-teal-500', description: 'Upload official answer keys and objections', isDefault: true },
+    // { id: '3', title: 'Answer Key', path: '/admin/answer-key', iconName: 'Key', color: 'bg-teal-500', description: 'Upload official answer keys and objections', isDefault: true },
     { id: '4', title: 'Admission', path: '/admin/admission', iconName: 'GraduationCap', color: 'bg-indigo-500', description: 'Update college and entrance admissions', isDefault: true },
     { id: '5', title: 'Admit Card', path: '/admin/admit-card', iconName: 'FileText', color: 'bg-orange-500', description: 'Manage admit cards and exam tickets', isDefault: true },
 ];

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { GraduationCap, Loader2, BookOpen, ArrowRight } from 'lucide-react';
+import { GraduationCap, BookOpen, ArrowRight } from 'lucide-react';
+import { ListItemsSkeleton } from '../../../common/Skeleton';
 import { fetchActiveCourseCategories } from '../../../../store/slice/courseCategorySlice';
 import { fetchCourses } from '../../../../store/slice/courseSlice';
 
@@ -49,8 +50,8 @@ const HomeCoursesSection = ({ hideViewAll = false }) => {
 
             <div className="p-6">
                 {loading ? (
-                    <div className="flex justify-center items-center py-10">
-                        <Loader2 className="animate-spin text-purple-600" size={30} />
+                    <div className="p-0">
+                        <ListItemsSkeleton count={3} />
                     </div>
                 ) : categories.length > 0 ? (
                     <div className="space-y-8">

@@ -22,8 +22,15 @@ export const deleteArticleApi = async (id) => {
 };
 
 export const getArticleByIdApi = async (idOrSlug) => {
-    const response = await api.get(`/articles/${idOrSlug}`);
-    return response.data;
+    try {
+        const response = await api.get(`/articles/${idOrSlug}`);
+        return response.data;
+    } catch (error) {
+        if (error?.response?.status === 404) {
+            return null;
+        }
+        throw error;
+    }
 };
 
 // Save/Unsave post toggle

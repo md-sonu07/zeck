@@ -41,6 +41,7 @@ const AppRoutes = () => {
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/latest-news" element={<LatestNewsPage />} />
             <Route path="/admit-cards" element={<AdmitCardPage />} />
+            <Route path="/admit-cards/:slug" element={<AdmitCardSearchPage />} />
             <Route path="/result" element={<ResultPage />} />
             <Route path="/answer-key" element={<AnswerKeyPage />} />
             <Route path="/admission" element={<AdmissionPage />} />

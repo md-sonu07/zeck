@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCredentials } from '../../../store/slice/authSlice';
-import { getArticleByIdApi, toggleSavePostApi } from '../../../api/articleapi';
+import { getArticleByIdApi, toggleSavePostApi, getArticlesApi } from '../../../api/articleapi';
 import {
     Calendar, MapPin, Tag, ArrowLeft, Loader2, PlayCircle,
     Share2, Bookmark, BookmarkCheck, CheckCircle2, Info
@@ -14,12 +14,13 @@ import { ArticleSkeleton } from '../../../components/common/Skeleton';
 import QuickLinksWidget from '../../../components/common/QuickLinksWidget';
 
 const ArticleDetailPage = () => {
-    const { slug } = useParams();
+    const { slug, category: routeCategory } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { userInfo } = useSelector((state) => state.auth);
     const [article, setArticle] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const [savingPost, setSavingPost] = useState(false);
 
@@ -27,13 +28,34 @@ const ArticleDetailPage = () => {
         const fetchArticle = async () => {
             try {
                 setLoading(true);
+                setNotFound(false);
                 const data = await getArticleByIdApi(slug);
+                if (!data) {
+                    // Attempt a fuzzy search fallback for mismatched slugs (redirect if found)
+                    try {
+                        const results = await getArticlesApi({ search: slug, limit: 1 });
+                        if (results && results.length > 0) {
+                            const found = results[0];
+                            const targetCategory = (found.mainCategory || 'news').toLowerCase().replace(/\s+/g, '-');
+                            navigate(`/${targetCategory}/${found.slug}`, { replace: true });
+                            return;
+                        }
+                    } catch (e) {
+                        // ignore search errors and show not found
+                    }
+
+                    setArticle(null);
+                    setNotFound(true);
+                    return;
+                }
+
                 setArticle(data);
                 if (data.title) document.title = `${data.title} - Zoya Education`;
             } catch (error) {
                 console.error("Failed to fetch article:", error);
-                toast.error(`Error loading article content`);
-                navigate(-1);
+                setArticle(null);
+                setNotFound(true);
+                toast.error('Error loading article content');
             } finally {
                 setLoading(false);
             }
@@ -83,6 +105,36 @@ const ArticleDetailPage = () => {
 
     if (loading) {
         return <ArticleSkeleton />;
+    }
+
+    if (notFound) {
+        return (
+            <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-900 flex items-center justify-center px-4 py-20">
+                <div className="max-w-md w-full bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 p-8 text-center">
+                    <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Info className="text-primary" size={24} />
+                    </div>
+                    <h2 className="text-xl font-black text-slate-800 dark:text-white">Article not available</h2>
+                    <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+                        The content you are looking for is not available right now.
+                    </p>
+                    <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+                        <button
+                            onClick={() => navigate(-1)}
+                            className="px-4 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold"
+                        >
+                            Go Back
+                        </button>
+                        <Link
+                            to="/latest-news"
+                            className="px-4 py-2 rounded-lg bg-primary text-white font-semibold"
+                        >
+                            Browse Latest News
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (!article) return null;

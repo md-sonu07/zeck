@@ -5,11 +5,12 @@ import toast from 'react-hot-toast';
 import { fetchCourseById, clearCurrentCourse } from '../../../store/slice/courseSlice';
 import { submitApplication } from '../../../store/slice/admissionSlice';
 import { register } from '../../../store/thunk/authThunk';
-import { ArrowLeft, BookOpen, Clock, CheckCircle2, IndianRupee, Loader2, Info, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, BookOpen, Clock, CheckCircle2, IndianRupee, Info, Eye, EyeOff } from 'lucide-react';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/common/Input';
 import Select from '../../../components/common/Select';
 import SEO from '../../../components/common/SEO.jsx';
+import { ApplicationSkeleton } from '../../../components/common/Skeleton';
 
 const ApplyNowPage = () => {
     const { id } = useParams();
@@ -198,11 +199,7 @@ const ApplyNowPage = () => {
     };
 
     if (courseLoading) {
-        return (
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex justify-center items-center">
-                <Loader2 className="animate-spin text-purple-600" size={40} />
-            </div>
-        );
+        return <ApplicationSkeleton />;
     }
 
     if (!course) {

@@ -1,17 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { fetchAdmitCardPages } from '../../../store/thunk/admitCardPageThunk';
-import { FileText, ChevronRight, Home, Search, Loader2 } from 'lucide-react';
+import { FileText, ChevronRight, Home, Search } from 'lucide-react';
 import SEO from '../../../components/common/SEO';
+import { CourseAdmitCardSkeleton } from '../../../components/common/Skeleton';
 
 const AdmitCardPagesList = () => {
     const dispatch = useDispatch();
     const { pages, loading } = useSelector((state) => state.admitCardPages);
+    const [initialLoading, setInitialLoading] = useState(true);
 
     useEffect(() => {
         dispatch(fetchAdmitCardPages());
     }, [dispatch]);
+
+    useEffect(() => {
+        if (!loading) setInitialLoading(false);
+    }, [loading]);
 
     return (
         <>
@@ -32,8 +38,10 @@ const AdmitCardPagesList = () => {
                 </div>
 
                 <div className="max-w-[1200px] mx-auto px-4 mt-6">
-                    {loading ? (
-                        <div className="py-20 text-center"><Loader2 size={32} className="animate-spin mx-auto text-primary" /></div>
+                    {initialLoading ? (
+                        <CourseAdmitCardSkeleton />
+                    ) : loading ? (
+                        <CourseAdmitCardSkeleton />
                     ) : pages.length === 0 ? (
                         <div className="py-20 text-center bg-white dark:bg-slate-800 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700">
                             <FileText size={48} className="mx-auto text-slate-300 mb-3" />

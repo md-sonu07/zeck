@@ -5,6 +5,7 @@ import { Eye, Download, XCircle, FileText, User, Mail, Phone, MapPin, BookOpen, 
 import toast from 'react-hot-toast';
 import { fetchMyAdmissions, updateAdmissionStatus } from '../../../store/slice/admissionSlice.js';
 import SEO from '../../../components/common/SEO.jsx';
+import { CategorySkeleton } from '../../../components/common/Skeleton';
 import { apiBaseUrl } from '../../../api/axios';
 
 const statusColors = {
@@ -54,10 +55,7 @@ const MyApplicationsPage = () => {
                 </div>
 
                 {loading ? (
-                    <div className="flex flex-col items-center justify-center py-20">
-                        <div className="size-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4"></div>
-                        <p className="text-slate-500 font-medium animate-pulse">Loading your applications...</p>
-                    </div>
+                    <CategorySkeleton />
                 ) : myApplications.length === 0 ? (
                     <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700 p-12 text-center">
                         <div className="size-20 bg-slate-50 dark:bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-6">

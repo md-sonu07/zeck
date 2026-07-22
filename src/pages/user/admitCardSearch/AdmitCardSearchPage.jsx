@@ -4,7 +4,9 @@ import { useParams, Link } from 'react-router-dom';
 import { fetchAdmitCardPageBySlug } from '../../../store/thunk/admitCardPageThunk';
 import { searchAdmitCards } from '../../../store/thunk/admitCardThunk';
 import { clearSearchResults } from '../../../store/slice/admitCardSlice';
-import { Search, ChevronRight, Home, FileText, Loader2, X, ExternalLink, User, Building2, Hash } from 'lucide-react';
+import { Search, ChevronRight, Home, FileText, X, ExternalLink, User, Building2, Hash } from 'lucide-react';
+import { ListItemsSkeleton } from '../../../components/common/Skeleton';
+import AdmitCardSearchSkeleton from '../../../components/common/AdmitCardSearchSkeleton';
 import SEO from '../../../components/common/SEO';
 import PopupModel from '../../../components/ui/PopupModel';
 import Button from '../../../components/ui/Button';
@@ -104,9 +106,8 @@ const AdmitCardSearchPage = () => {
                     </div>
 
                     {pageLoading && !currentPage && (
-                        <div className="flex items-center justify-center py-8">
-                            <Loader2 size={24} className="animate-spin text-primary" />
-                            <span className="ml-3 text-sm font-medium text-slate-500">Loading page...</span>
+                        <div className="p-0">
+                            <AdmitCardSearchSkeleton />
                         </div>
                     )}
 
@@ -119,75 +120,82 @@ const AdmitCardSearchPage = () => {
                         </div>
                     )}
 
-                    {currentPage && (
+                    {(currentPage || pageLoading) && (
                         <div className="mt-4 space-y-3">
-                            {searchLoading && (
-                                <div className="flex items-center justify-center py-8">
-                                    <Loader2 size={24} className="animate-spin text-primary" />
-                                    <span className="ml-3 text-sm font-medium text-slate-500">Searching...</span>
+                            {pageLoading ? (
+                                <div className="p-0">
+                                    <AdmitCardSearchSkeleton />
                                 </div>
-                            )}
+                            ) : (
+                                <>
+                                    {searchLoading && (
+                                        <div className="p-0">
+                                            <ListItemsSkeleton count={3} />
+                                        </div>
+                                    )}
 
-                            {!searchLoading && query && searchResults.length === 0 && (
-                                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 p-10 text-center">
-                                    <FileText size={40} className="mx-auto text-slate-300 mb-3" />
-                                    <p className="text-slate-400 font-bold">No admit cards found</p>
-                                    <p className="text-xs text-slate-400 mt-1">Try searching with a different application no or name.</p>
-                                </div>
-                            )}
+                                    {!searchLoading && query && searchResults.length === 0 && (
+                                        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 p-10 text-center">
+                                            <FileText size={40} className="mx-auto text-slate-300 mb-3" />
+                                            <p className="text-slate-400 font-bold">No admit cards found</p>
+                                            <p className="text-xs text-slate-400 mt-1">Try searching with a different application no or name.</p>
+                                        </div>
+                                    )}
 
-                            {!searchLoading && !query && (
-                                <div className="bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 p-10 text-center">
-                                    <Search size={40} className="mx-auto text-slate-300 mb-3" />
-                                    <p className="text-slate-400 font-bold">Search your admit card</p>
-                                    <p className="text-xs text-slate-400 mt-1">Enter your application no or full name above.</p>
-                                </div>
-                            )}
+                                    {!searchLoading && !query && (
+                                        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 p-10 text-center">
+                                            <Search size={40} className="mx-auto text-slate-300 mb-3" />
+                                            <p className="text-slate-400 font-bold">Search your admit card</p>
+                                            <p className="text-xs text-slate-400 mt-1">Enter your application no or full name above.</p>
+                                        </div>
+                                    )}
 
-                        {searchResults.map((card) => (
-                            <div key={card._id}
-                                onClick={() => setSelectedCard(card)}
-                                className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
-                            >
-                                <div className="p-5">
-                                    <div className="flex items-start justify-between">
-                                        <div className="space-y-3 flex-1 min-w-0">
+                                    {searchResults.map((card) => (
+                                        <div key={card._id}
+                                            onClick={() => setSelectedCard(card)}
+                                            className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+                                        >
+                                            <div className="p-5">
+                                                <div className="flex items-start justify-between">
+                                                    <div className="space-y-3 flex-1 min-w-0">
 
-                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                <div className="flex items-center gap-2">
-                                                    <User size={14} className="text-green-500 shrink-0" />
-                                                    <div>
-                                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Student Name</p>
-                                                        <p className="text-sm font-bold text-slate-800 dark:text-white">{card.studentName}</p>
+                                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                            <div className="flex items-center gap-2">
+                                                                <User size={14} className="text-green-500 shrink-0" />
+                                                                <div>
+                                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Student Name</p>
+                                                                    <p className="text-sm font-bold text-slate-800 dark:text-white">{card.studentName}</p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <Hash size={14} className="text-purple-500 shrink-0" />
+                                                                <div>
+                                                                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Application No / Reg No</p>
+                                                                    <p className="text-sm font-bold text-slate-800 dark:text-white">{card.rollNumber}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Hash size={14} className="text-purple-500 shrink-0" />
-                                                    <div>
-                                                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Application No / Reg No</p>
-                                                        <p className="text-sm font-bold text-slate-800 dark:text-white">{card.rollNumber}</p>
-                                                    </div>
+                                                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center gap-2">
+                                                    {card.admitCardFile ? (
+                                                        <button onClick={(e) => { e.stopPropagation(); setSelectedCard(card); }}
+                                                            className="px-5 py-2.5 bg-blue-600 text-white text-xs font-black uppercase tracking-wider rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2 shadow-sm">
+                                                            <ExternalLink size={14} /> View Admit Card
+                                                        </button>
+                                                    ) : (
+                                                        <span className="text-xs text-slate-400 italic">No admit card file uploaded yet</span>
+                                                    )}
+                                                    {card.additionalInfo && (
+                                                        <span className="text-[10px] text-slate-400 ml-2">{card.additionalInfo}</span>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex items-center gap-2">
-                                        {card.admitCardFile ? (
-                                            <button onClick={(e) => { e.stopPropagation(); setSelectedCard(card); }}
-                                                className="px-5 py-2.5 bg-blue-600 text-white text-xs font-black uppercase tracking-wider rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2 shadow-sm">
-                                                <ExternalLink size={14} /> View Admit Card
-                                            </button>
-                                        ) : (
-                                            <span className="text-xs text-slate-400 italic">No admit card file uploaded yet</span>
-                                        )}
-                                        {card.additionalInfo && (
-                                            <span className="text-[10px] text-slate-400 ml-2">{card.additionalInfo}</span>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                                    ))}
+                                </>
+                            )}
+                        </div>
                     )}
                 </div>
             </div>
