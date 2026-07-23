@@ -6,7 +6,7 @@ const SEO = ({
     description,
     keywords,
     author = "Zoya Education Center",
-    image = "https://zoyaeducation.com/logo/light-logo.png",
+    image = "https://zoyaeducation.com/logo/dark-logo.png",
     url,
     type = "website",
     noindex = false,
@@ -14,7 +14,11 @@ const SEO = ({
 }) => {
     const siteName = "Zoya Education Center";
     const siteUrl = "https://zoyaeducation.com";
-    const fullTitle = title ? `${title} | ${siteName}` : `${siteName} - Government Jobs, Admit Cards, Results & Admission Updates`;
+    const fullTitle = title
+        ? title === siteName
+            ? siteName
+            : `${title} | ${siteName}`
+        : `${siteName} - Government Jobs, Admit Cards, Results & Admission Updates`;
     const defaultDescription = "Zoya Education Center - Your trusted source for latest government job notifications, admit cards, exam results, answer keys, and university admission updates across India.";
     const metaDescription = description || defaultDescription;
     const canonicalUrl = url || (typeof window !== 'undefined' ? window.location.href : siteUrl);

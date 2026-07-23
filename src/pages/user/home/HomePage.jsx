@@ -18,7 +18,7 @@ const HomePage = () => {
     return (
         <div className="pb-10">
             <SEO
-                title="Home"
+                title="Zoya Education Center"
                 description="Zoya Education Center - Your trusted source for latest government job notifications, admit cards, exam results, answer keys, syllabus, and university admission updates across India. Get real-time alerts."
                 keywords="government jobs, sarkari naukri, admit card 2026, exam results, answer key, university admission, latest news, job notification, Bihar jobs, India jobs, Zoya Education Center, online form, syllabus download"
                 jsonLd={{

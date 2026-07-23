@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { fetchAdmitCardPageBySlug } from '../../../store/thunk/admitCardPageThunk';
 import { searchAdmitCards } from '../../../store/thunk/admitCardThunk';
 import { clearSearchResults } from '../../../store/slice/admitCardSlice';
-import { Search, ChevronRight, Home, FileText, X, ExternalLink, User, Building2, Hash } from 'lucide-react';
+import { Search, ChevronRight, Home, FileText, X, ExternalLink, Download, User, Building2, Hash } from 'lucide-react';
 import { ListItemsSkeleton } from '../../../components/common/Skeleton';
 import AdmitCardSearchSkeleton from '../../../components/common/AdmitCardSearchSkeleton';
 import SEO from '../../../components/common/SEO';
@@ -18,6 +18,8 @@ const AdmitCardSearchPage = () => {
     const { searchResults, loading: searchLoading } = useSelector((state) => state.admitCards);
     const [query, setQuery] = useState('');
     const [selectedCard, setSelectedCard] = useState(null);
+    const [isMobileDevice, setIsMobileDevice] = useState(false);
+    const [downloadLoading, setDownloadLoading] = useState(false);
     const debounceRef = useRef(null);
     const pageIdRef = useRef(null);
 
@@ -40,6 +42,15 @@ const AdmitCardSearchPage = () => {
         }
     }, [currentPage]);
 
+    useEffect(() => {
+        const checkMobile = () => setIsMobileDevice(window.matchMedia('(max-width: 767px)').matches);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    const searchLimit = 20;
+
     const handleSearch = useCallback((value) => {
         setQuery(value);
         if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -50,9 +61,34 @@ const AdmitCardSearchPage = () => {
         const pid = pageIdRef.current;
         if (!pid) return;
         debounceRef.current = setTimeout(() => {
-            dispatch(searchAdmitCards({ pageId: pid, q: value.trim() }));
+            dispatch(searchAdmitCards({ pageId: pid, q: value.trim(), limit: searchLimit, page: 1 }));
         }, 300);
     }, [dispatch]);
+
+    const handleDownload = async () => {
+        if (!selectedCard?.admitCardFile) return;
+        setDownloadLoading(true);
+
+        try {
+            const fileUrl = new URL(selectedCard.admitCardFile, window.location.origin).href;
+            const fileName = fileUrl.split('/').pop().split('?')[0] || 'admit-card.pdf';
+            const response = await fetch(fileUrl, { mode: 'cors' });
+            if (!response.ok) throw new Error('Failed to fetch file');
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = fileName;
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            window.open(selectedCard.admitCardFile, '_blank');
+        } finally {
+            setDownloadLoading(false);
+        }
+    };
 
     useEffect(() => {
         return () => {
@@ -227,9 +263,13 @@ const AdmitCardSearchPage = () => {
                         </div>
 
                         {selectedCard.admitCardFile ? (
-                            <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 aspect-video md:aspect-[1/1.2] relative flex items-center justify-center">
+                            <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-900 relative flex items-center justify-center h-[55vh] md:h-[70vh] min-h-[360px]">
                                 {selectedCard.admitCardFile.toLowerCase().endsWith('.pdf') ? (
-                                    <iframe src={selectedCard.admitCardFile} className="w-full h-full border-0" title="Admit Card PDF" />
+                                    <iframe
+                                        src={isMobileDevice ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(selectedCard.admitCardFile)}` : selectedCard.admitCardFile}
+                                        className="w-full h-full border-0"
+                                        title="Admit Card PDF"
+                                    />
                                 ) : (
                                     <img src={selectedCard.admitCardFile} alt="Admit Card" className="w-full h-full object-contain" />
                                 )}
@@ -241,12 +281,19 @@ const AdmitCardSearchPage = () => {
                             </div>
                         )}
 
-                        <div className="flex justify-end pt-2 gap-2">
-                            {selectedCard.admitCardFile && (
-                                <a href={selectedCard.admitCardFile} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all">
-                                    <ExternalLink size={16} /> Open in New Tab
-                                </a>
-                            )}
+                        <div className="flex flex-col sm:flex-row sm:justify-end gap-2 pt-2">
+                            <div className="flex flex-wrap gap-2 sm:order-1 sm:justify-end">
+                                {selectedCard.admitCardFile && (
+                                    <button onClick={handleDownload} disabled={downloadLoading} className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                                        <Download size={16} /> {downloadLoading ? 'Downloading...' : 'Download'}
+                                    </button>
+                                )}
+                                {selectedCard.admitCardFile && (
+                                    <a href={selectedCard.admitCardFile} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all">
+                                        <ExternalLink size={16} /> Open in New Tab
+                                    </a>
+                                )}
+                            </div>
                             <Button variant="secondary" onClick={() => setSelectedCard(null)}>Close</Button>
                         </div>
                     </div>
