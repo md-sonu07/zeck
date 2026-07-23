@@ -44,7 +44,7 @@
 
     .marquee-track {
         @apply flex w-max;
-        animation: marquee 40s linear infinite;
+        animation: marquee 70s linear infinite;
     }
 
     .marquee-wrap:hover .marquee-track {
