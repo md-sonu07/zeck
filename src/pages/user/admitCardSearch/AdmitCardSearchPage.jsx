@@ -71,6 +71,9 @@ const AdmitCardSearchPage = () => {
 
         const fileUrl = new URL(selectedCard.admitCardFile, window.location.origin).href;
 
+        // Google Docs Viewer URL (useful in some mobile/webview environments)
+        const googleViewer = `https://docs.google.com/viewerng/viewer?url=${encodeURIComponent(fileUrl)}`;
+
         // Detect Android WebView / APK environments where programmatic downloads often fail
         const ua = typeof navigator !== 'undefined' ? (navigator.userAgent || '') : '';
         const isAndroid = /Android/i.test(ua);
@@ -79,22 +82,23 @@ const AdmitCardSearchPage = () => {
             // Try host app bridge methods commonly exposed in Android WebView APKs
             try {
                 if (window.Android && typeof window.Android.downloadFile === 'function') {
-                    window.Android.downloadFile(fileUrl);
+                    // prefer Google Viewer link for better rendering/download handling
+                    window.Android.downloadFile(googleViewer);
                     setDownloadLoading(false);
                     return;
                 }
                 if (window.Android && typeof window.Android.open === 'function') {
-                    window.Android.open(fileUrl);
+                    window.Android.open(googleViewer);
                     setDownloadLoading(false);
                     return;
                 }
                 if (window.ReactNativeWebView && typeof window.ReactNativeWebView.postMessage === 'function') {
-                    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'download', url: fileUrl }));
+                    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'download', url: googleViewer }));
                     setDownloadLoading(false);
                     return;
                 }
                 if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.download) {
-                    window.webkit.messageHandlers.download.postMessage({ url: fileUrl });
+                    window.webkit.messageHandlers.download.postMessage({ url: googleViewer });
                     setDownloadLoading(false);
                     return;
                 }
@@ -106,7 +110,7 @@ const AdmitCardSearchPage = () => {
             try {
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
-                iframe.src = fileUrl;
+                iframe.src = googleViewer;
                 document.body.appendChild(iframe);
                 setTimeout(() => {
                     try { document.body.removeChild(iframe); } catch (e) {}
@@ -115,7 +119,7 @@ const AdmitCardSearchPage = () => {
                 // ignore
             }
 
-            try { window.location.assign(fileUrl); } catch (e) { /* ignore */ }
+            try { window.location.assign(googleViewer); } catch (e) { /* ignore */ }
             setDownloadLoading(false);
             return;
         }
