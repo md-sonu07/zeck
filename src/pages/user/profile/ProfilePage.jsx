@@ -33,6 +33,16 @@ const ProfilePage = () => {
     const [avatarFile, setAvatarFile] = useState(null);
     const [avatarPreview, setAvatarPreview] = useState(null);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [isWebViewApp, setIsWebViewApp] = useState(false);
+
+    useEffect(() => {
+        if (typeof navigator !== 'undefined') {
+            const ua = navigator.userAgent || '';
+            const isAndroid = /Android/i.test(ua);
+            const isWebView = isAndroid && (/wv|Version\/\d+\.\d+/.test(ua) || !/Chrome/i.test(ua));
+            setIsWebViewApp(isWebView);
+        }
+    }, []);
 
     useEffect(() => {
         if (!userInfo || !userInfo._id) {
@@ -237,7 +247,7 @@ const ProfilePage = () => {
                                         <Shield size={15} className="text-orange-500" />
                                         <span className="text-xs font-black text-slate-500">Role</span>
                                     </div>
-                                    <span className="text-sm font-black text-slate-700 dark:text-slate-200">{userDetails?.isAdmin ? 'Admin' : 'Member'}</span>
+                                    <span className="text-sm font-black text-slate-700 dark:text-slate-200">{userDetails?.isAdmin && !isWebViewApp ? 'Admin' : 'Member'}</span>
                                 </div>
 
 
@@ -245,7 +255,7 @@ const ProfilePage = () => {
 
                             {/* Bottom Buttons */}
                             <div className="border-t border-slate-100 dark:border-slate-800 px-4 md:px-8 py-4 md:py-5 flex flex-col md:flex-row md:items-center gap-3">
-                                {userDetails?.isAdmin && (
+                                {userDetails?.isAdmin && !isWebViewApp && (
                                     <Link to="/admin" className="flex items-center justify-center gap-2.5 px-4 py-4 md:px-5 md:py-2.5 w-full md:w-auto bg-primary text-white rounded-2xl md:rounded-xl text-xs md:text-[10px] font-black uppercase tracking-widest hover:bg-primary-dark transition-all active:scale-95 shadow-lg shadow-primary/25">
                                         <Shield size={18} className="md:hidden" /><Shield size={14} className="hidden md:block" /> Admin Panel
                                     </Link>
