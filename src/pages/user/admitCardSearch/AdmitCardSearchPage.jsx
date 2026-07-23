@@ -75,16 +75,48 @@ const AdmitCardSearchPage = () => {
         const ua = typeof navigator !== 'undefined' ? (navigator.userAgent || '') : '';
         const isAndroid = /Android/i.test(ua);
         const isWebView = isAndroid && (/wv|Version\/\d+\.\d+/.test(ua) || !/Chrome/i.test(ua));
-
         if (isWebView) {
-            // Fallback: navigate to file URL so host app/webview can handle download
+            // Try host app bridge methods commonly exposed in Android WebView APKs
             try {
-                window.open(fileUrl, '_blank');
+                if (window.Android && typeof window.Android.downloadFile === 'function') {
+                    window.Android.downloadFile(fileUrl);
+                    setDownloadLoading(false);
+                    return;
+                }
+                if (window.Android && typeof window.Android.open === 'function') {
+                    window.Android.open(fileUrl);
+                    setDownloadLoading(false);
+                    return;
+                }
+                if (window.ReactNativeWebView && typeof window.ReactNativeWebView.postMessage === 'function') {
+                    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'download', url: fileUrl }));
+                    setDownloadLoading(false);
+                    return;
+                }
+                if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.download) {
+                    window.webkit.messageHandlers.download.postMessage({ url: fileUrl });
+                    setDownloadLoading(false);
+                    return;
+                }
             } catch (e) {
-                window.location.assign(fileUrl);
-            } finally {
-                setDownloadLoading(false);
+                // ignore and fallback
             }
+
+            // Fallback: create an invisible iframe to trigger navigation/download, then navigate as last resort
+            try {
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = fileUrl;
+                document.body.appendChild(iframe);
+                setTimeout(() => {
+                    try { document.body.removeChild(iframe); } catch (e) {}
+                }, 3000);
+            } catch (e) {
+                // ignore
+            }
+
+            try { window.location.assign(fileUrl); } catch (e) { /* ignore */ }
+            setDownloadLoading(false);
             return;
         }
 
