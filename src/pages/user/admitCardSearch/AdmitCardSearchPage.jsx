@@ -69,8 +69,26 @@ const AdmitCardSearchPage = () => {
         if (!selectedCard?.admitCardFile) return;
         setDownloadLoading(true);
 
+        const fileUrl = new URL(selectedCard.admitCardFile, window.location.origin).href;
+
+        // Detect Android WebView / APK environments where programmatic downloads often fail
+        const ua = typeof navigator !== 'undefined' ? (navigator.userAgent || '') : '';
+        const isAndroid = /Android/i.test(ua);
+        const isWebView = isAndroid && (/wv|Version\/\d+\.\d+/.test(ua) || !/Chrome/i.test(ua));
+
+        if (isWebView) {
+            // Fallback: navigate to file URL so host app/webview can handle download
+            try {
+                window.open(fileUrl, '_blank');
+            } catch (e) {
+                window.location.assign(fileUrl);
+            } finally {
+                setDownloadLoading(false);
+            }
+            return;
+        }
+
         try {
-            const fileUrl = new URL(selectedCard.admitCardFile, window.location.origin).href;
             const fileName = fileUrl.split('/').pop().split('?')[0] || 'admit-card.pdf';
             const response = await fetch(fileUrl, { mode: 'cors' });
             if (!response.ok) throw new Error('Failed to fetch file');
@@ -84,7 +102,8 @@ const AdmitCardSearchPage = () => {
             document.body.removeChild(anchor);
             URL.revokeObjectURL(url);
         } catch (error) {
-            window.open(selectedCard.admitCardFile, '_blank');
+            // Final fallback: open the URL in a new tab/window
+            try { window.open(fileUrl, '_blank'); } catch (e) { window.location.assign(fileUrl); }
         } finally {
             setDownloadLoading(false);
         }
@@ -281,20 +300,15 @@ const AdmitCardSearchPage = () => {
                             </div>
                         )}
 
-                        <div className="flex flex-col sm:flex-row sm:justify-end gap-2 pt-2">
-                            <div className="flex flex-wrap gap-2 sm:order-1 sm:justify-end">
+                        <div className="flex flex-col sm:flex-row sm:justify-end gap-2 pt-2 w-full">
+                            <div className="flex gap-2 w-full sm:w-auto sm:order-1 sm:justify-end">
                                 {selectedCard.admitCardFile && (
-                                    <button onClick={handleDownload} disabled={downloadLoading} className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <button onClick={handleDownload} disabled={downloadLoading} className="w-full sm:w-auto cursor-pointer inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                                         <Download size={16} /> {downloadLoading ? 'Downloading...' : 'Download'}
                                     </button>
                                 )}
-                                {selectedCard.admitCardFile && (
-                                    <a href={selectedCard.admitCardFile} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all">
-                                        <ExternalLink size={16} /> Open in New Tab
-                                    </a>
-                                )}
+                                <Button className="w-full sm:w-auto" variant="secondary" onClick={() => setSelectedCard(null)}>Close</Button>
                             </div>
-                            <Button variant="secondary" onClick={() => setSelectedCard(null)}>Close</Button>
                         </div>
                     </div>
                 )}
