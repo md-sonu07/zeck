@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchImportantServices } from '../../../store/thunk/importantServiceThunk';
 import { fetchContactSettings } from '../../../store/thunk/contactThunk';
-import { Home, ChevronRight, Briefcase, CheckCircle2, Send, Sparkles, Loader2, Phone, MapPin } from 'lucide-react';
+import { Home, ChevronRight, Briefcase, CheckCircle2, Send, Sparkles, Loader2, Phone, MapPin, Instagram, Youtube } from 'lucide-react';
 import { ServicesSkeleton } from '../../../components/common/Skeleton';
 import WhatsAppIcon from '../../../components/common/WhatsAppIcon';
 import SEO from '../../../components/common/SEO';
@@ -132,24 +132,50 @@ const ServicesPage = () => {
                                     Need help with any of our services? Join our official community for fast assistance.
                                 </p>
                                 <div className="mt-4 space-y-2">
-                                    <a href="#" className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-primary/30 transition-all group">
-                                        <div className="flex items-center gap-3">
-                                            <div className="size-8 bg-blue-500 rounded-lg flex items-center justify-center text-white">
-                                                <Send size={14} />
+                                    {contactDetail?.telegramLink && (
+                                        <a href={contactDetail.telegramLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-primary/30 transition-all group">
+                                            <div className="flex items-center gap-3">
+                                                <div className="size-8 bg-blue-500 rounded-lg flex items-center justify-center text-white">
+                                                    <Send size={14} />
+                                                </div>
+                                                <span className="text-xs font-bold text-slate-700 dark:text-slate-200">Telegram</span>
                                             </div>
-                                            <span className="text-xs font-bold text-slate-700 dark:text-slate-200">Telegram</span>
-                                        </div>
-                                        <ChevronRight size={14} className="text-slate-300 group-hover:text-primary transition-colors" />
-                                    </a>
-                                    <a href="#" className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-green-500/30 transition-all group">
-                                        <div className="flex items-center gap-3">
-                                            <div className="size-8 bg-green-500 rounded-lg flex items-center justify-center text-white">
-                                                <WhatsAppIcon size={14} />
+                                            <ChevronRight size={14} className="text-slate-300 group-hover:text-primary transition-colors" />
+                                        </a>
+                                    )}
+                                    {contactDetail?.whatsappLink && (
+                                        <a href={contactDetail.whatsappLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-green-500/30 transition-all group">
+                                            <div className="flex items-center gap-3">
+                                                <div className="size-8 bg-green-500 rounded-lg flex items-center justify-center text-white">
+                                                    <WhatsAppIcon size={14} />
+                                                </div>
+                                                <span className="text-xs font-bold text-slate-700 dark:text-slate-200">WhatsApp</span>
                                             </div>
-                                            <span className="text-xs font-bold text-slate-700 dark:text-slate-200">WhatsApp</span>
-                                        </div>
-                                        <ChevronRight size={14} className="text-slate-300 group-hover:text-green-500 transition-colors" />
-                                    </a>
+                                            <ChevronRight size={14} className="text-slate-300 group-hover:text-green-500 transition-colors" />
+                                        </a>
+                                    )}
+                                    {contactDetail?.instagramLink && (
+                                        <a href={contactDetail.instagramLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-pink-500/30 transition-all group">
+                                            <div className="flex items-center gap-3">
+                                                <div className="size-8 bg-pink-600 rounded-lg flex items-center justify-center text-white">
+                                                    <Instagram size={14} />
+                                                </div>
+                                                <span className="text-xs font-bold text-slate-700 dark:text-slate-200">Instagram</span>
+                                            </div>
+                                            <ChevronRight size={14} className="text-slate-300 group-hover:text-pink-500 transition-colors" />
+                                        </a>
+                                    )}
+                                    {contactDetail?.youtubeLink && (
+                                        <a href={contactDetail.youtubeLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl hover:border-red-500/30 transition-all group">
+                                            <div className="flex items-center gap-3">
+                                                <div className="size-8 bg-red-600 rounded-lg flex items-center justify-center text-white">
+                                                    <Youtube size={14} />
+                                                </div>
+                                                <span className="text-xs font-bold text-slate-700 dark:text-slate-200">YouTube</span>
+                                            </div>
+                                            <ChevronRight size={14} className="text-slate-300 group-hover:text-red-500 transition-colors" />
+                                        </a>
+                                    )}
                                 </div>
                             </div>
                         </section>

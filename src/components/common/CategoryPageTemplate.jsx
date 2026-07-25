@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchArticles } from '../../store/thunk/articleThunk';
-import { ChevronRight, Home, MessageCircle, ChevronLeft, Send, MapPin, Calendar, Info } from 'lucide-react';
+import { fetchContactSettings } from '../../store/thunk/contactThunk';
+import { ChevronRight, Home, ChevronLeft, Send, MapPin, Calendar, Info, Instagram, Youtube } from 'lucide-react';
 import { CategorySkeleton } from './Skeleton';
 import FilterStrip from '../PageSection/home/FilterStrip';
 import { Link } from 'react-router-dom';
 import QuickLinksWidget from './QuickLinksWidget';
 import SEO from './SEO';
+import WhatsAppIcon from './WhatsAppIcon';
 
 const isNew = (article) => {
     const date = article?.postDate || article?.createdAt;
@@ -51,6 +53,10 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
 
     // Read from search Redux state
     const { results: searchResults, loading: searchLoading, activeFilters } = useSelector((state) => state.search);
+    const contactDetail = useSelector((state) => state.contact.settings);
+    const contactLoading = useSelector((state) => state.contact.loading);
+
+    useEffect(() => { if (!contactDetail) dispatch(fetchContactSettings()); }, [dispatch, contactDetail]);
 
     useEffect(() => {
         const getArticles = async () => {
@@ -246,7 +252,20 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
                                 <h3 className="text-[10px] font-black text-white uppercase tracking-widest">Community</h3>
                             </div>
                             <div className="p-4 space-y-3">
-                                <a href="https://t.me/zoyacenter" target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-lg p-2 -mx-2 transition-colors group">
+                                {contactLoading ? (
+                                    Array.from({ length: 4 }).map((_, i) => (
+                                        <div key={i} className="flex items-center gap-3 p-2 -mx-2">
+                                            <div className="size-8 rounded-lg bg-slate-200 dark:bg-slate-700 animate-pulse" />
+                                            <div className="flex-1 space-y-1.5">
+                                                <div className="h-3 w-28 bg-slate-200 dark:bg-slate-700 animate-pulse rounded" />
+                                                <div className="h-2 w-16 bg-slate-100 dark:bg-slate-700 animate-pulse rounded" />
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <>
+                                {contactDetail?.telegramLink && (
+                                <a href={contactDetail.telegramLink} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-lg p-2 -mx-2 transition-colors group">
                                     <div className="size-8 bg-[#2CA5E0] rounded-lg flex items-center justify-center text-white shrink-0">
                                         <Send size={14} />
                                     </div>
@@ -255,15 +274,42 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
                                         <p className="text-[10px] text-slate-400">Instant Alerts</p>
                                     </div>
                                 </a>
-                                <a href="#" className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-lg p-2 -mx-2 transition-colors group">
+                                )}
+                                {contactDetail?.whatsappLink && (
+                                <a href={contactDetail.whatsappLink} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-lg p-2 -mx-2 transition-colors group">
                                     <div className="size-8 bg-[#25D366] rounded-lg flex items-center justify-center text-white shrink-0">
-                                        <MessageCircle size={14} />
+                                        <WhatsAppIcon size={14} />
                                     </div>
                                     <div>
                                         <p className="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-primary transition-colors">WhatsApp Group</p>
                                         <p className="text-[10px] text-slate-400">Daily Updates</p>
                                     </div>
                                 </a>
+                                )}
+                                {contactDetail?.instagramLink && (
+                                <a href={contactDetail.instagramLink} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-lg p-2 -mx-2 transition-colors group">
+                                    <div className="size-8 bg-pink-600 rounded-lg flex items-center justify-center text-white shrink-0">
+                                        <Instagram size={14} />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-pink-600 transition-colors">Instagram</p>
+                                        <p className="text-[10px] text-slate-400">Follow Us</p>
+                                    </div>
+                                </a>
+                                )}
+                                {contactDetail?.youtubeLink && (
+                                <a href={contactDetail.youtubeLink} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-lg p-2 -mx-2 transition-colors group">
+                                    <div className="size-8 bg-red-600 rounded-lg flex items-center justify-center text-white shrink-0">
+                                        <Youtube size={14} />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-red-600 transition-colors">YouTube</p>
+                                        <p className="text-[10px] text-slate-400">Subscribe</p>
+                                    </div>
+                                </a>
+                                )}
+                                    </>
+                                )}
                             </div>
                         </div>
                     </aside>

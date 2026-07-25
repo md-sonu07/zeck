@@ -29,12 +29,21 @@ const Footer = () => {
     }, [dispatch, contactSettings, aboutSettings, sections.length]);
 
     const [downloadCount, setDownloadCount] = useState(0);
+    const [isWebView, setIsWebView] = useState(false);
 
     useEffect(() => {
         fetch('https://img.shields.io/github/downloads/md-sonu07/zeck/zoya.v01/total.json')
             .then(res => res.json())
             .then(data => setDownloadCount(Number(data.value) || 0))
             .catch(() => {});
+    }, []);
+
+    useEffect(() => {
+        if (typeof navigator !== 'undefined') {
+            const ua = navigator.userAgent || '';
+            const isAndroid = /Android/i.test(ua);
+            setIsWebView(isAndroid && (/wv|Version\/\d+\.\d+/.test(ua) || !/Chrome/i.test(ua)));
+        }
     }, []);
 
     const socialLinks = [
@@ -73,6 +82,7 @@ const Footer = () => {
                             </a>
                         ))}
                     </div>
+                    {!isWebView && (
                     <a
                         href="https://github.com/md-sonu07/zeck/releases/download/zoya.v01/Zoya.Education.apk"
                         className="mt-10 inline-flex cursor-pointer text-nowrap items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl transition-all duration-300 shadow-lg font-semibold text-sm"
@@ -82,6 +92,7 @@ const Footer = () => {
                         <span>Download Zoya Education App</span>
                         <span className="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold bg-white/20 text-white rounded-full">{downloadCount.toLocaleString()}</span>
                     </a>
+                    )}
                 </div>
 
                 {/* Navigation */}

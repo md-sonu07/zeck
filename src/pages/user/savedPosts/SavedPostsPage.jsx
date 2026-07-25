@@ -3,14 +3,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { setCredentials } from '../../../store/slice/authSlice';
 import { getSavedPostsApi, toggleSavePostApi } from '../../../api/articleapi';
+import { fetchContactSettings } from '../../../store/thunk/contactThunk';
 import { 
     Trash2, ExternalLink, BookmarkX, Sparkles, ChevronRight, 
     MessageSquare, Send, ArrowRight, Home, ArrowLeft, 
     BookmarkCheck, Inbox, MapPin, Calendar, Loader2, 
-    Bookmark, MessageCircle 
+    Bookmark, Instagram, Youtube 
 } from 'lucide-react';
 import QuickLinksWidget from '../../../components/common/QuickLinksWidget';
 import { CategorySkeleton } from '../../../components/common/Skeleton';
+import WhatsAppIcon from '../../../components/common/WhatsAppIcon';
 import toast from 'react-hot-toast';
 import slug from 'slug';
 import SEO from '../../../components/common/SEO';
@@ -19,6 +21,10 @@ const SavedPostsPage = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { userInfo } = useSelector((state) => state.auth);
+    const contactDetail = useSelector((state) => state.contact.settings);
+    const contactLoading = useSelector((state) => state.contact.loading);
+
+    useEffect(() => { if (!contactDetail) dispatch(fetchContactSettings()); }, [dispatch, contactDetail]);
     const [savedPosts, setSavedPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [removingId, setRemovingId] = useState(null);
@@ -248,7 +254,20 @@ const SavedPostsPage = () => {
                                 <h3 className="text-[10px] font-black text-white uppercase tracking-widest">Join Community</h3>
                             </div>
                             <div className="p-4 space-y-3">
-                                <a href="https://t.me/zoyacenter" target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-lg p-2 -mx-2 transition-colors group">
+                                {contactLoading ? (
+                                    Array.from({ length: 4 }).map((_, i) => (
+                                        <div key={i} className="flex items-center gap-3 p-2 -mx-2">
+                                            <div className="size-8 rounded-lg bg-slate-200 dark:bg-slate-700 animate-pulse" />
+                                            <div className="flex-1 space-y-1.5">
+                                                <div className="h-3 w-28 bg-slate-200 dark:bg-slate-700 animate-pulse rounded" />
+                                                <div className="h-2 w-16 bg-slate-100 dark:bg-slate-700 animate-pulse rounded" />
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <>
+                                {contactDetail?.telegramLink && (
+                                <a href={contactDetail.telegramLink} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-lg p-2 -mx-2 transition-colors group">
                                     <div className="size-8 bg-[#2CA5E0] rounded-lg flex items-center justify-center text-white shrink-0">
                                         <Send size={14} />
                                     </div>
@@ -257,15 +276,42 @@ const SavedPostsPage = () => {
                                         <p className="text-[10px] text-slate-400">Instant job alerts</p>
                                     </div>
                                 </a>
-                                <a href="#" className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-lg p-2 -mx-2 transition-colors group">
+                                )}
+                                {contactDetail?.whatsappLink && (
+                                <a href={contactDetail.whatsappLink} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-lg p-2 -mx-2 transition-colors group">
                                     <div className="size-8 bg-[#25D366] rounded-lg flex items-center justify-center text-white shrink-0">
-                                        <MessageCircle size={14} />
+                                        <WhatsAppIcon size={14} />
                                     </div>
                                     <div>
                                         <p className="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-primary transition-colors">WhatsApp Group</p>
                                         <p className="text-[10px] text-slate-400">Fastest response</p>
                                     </div>
                                 </a>
+                                )}
+                                {contactDetail?.instagramLink && (
+                                <a href={contactDetail.instagramLink} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-lg p-2 -mx-2 transition-colors group">
+                                    <div className="size-8 bg-pink-600 rounded-lg flex items-center justify-center text-white shrink-0">
+                                        <Instagram size={14} />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-pink-600 transition-colors">Instagram</p>
+                                        <p className="text-[10px] text-slate-400">Follow Us</p>
+                                    </div>
+                                </a>
+                                )}
+                                {contactDetail?.youtubeLink && (
+                                <a href={contactDetail.youtubeLink} target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/30 rounded-lg p-2 -mx-2 transition-colors group">
+                                    <div className="size-8 bg-red-600 rounded-lg flex items-center justify-center text-white shrink-0">
+                                        <Youtube size={14} />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-red-600 transition-colors">YouTube</p>
+                                        <p className="text-[10px] text-slate-400">Subscribe</p>
+                                    </div>
+                                </a>
+                                )}
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>

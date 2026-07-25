@@ -16,11 +16,20 @@ const steps = [
 
 const AppPage = () => {
   const [downloadCount, setDownloadCount] = useState(0);
+  const [isWebView, setIsWebView] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('zoyaAppDownloadCount');
     if (stored) setDownloadCount(parseInt(stored));
     setDownloadCount(prev => prev + Math.floor(Math.random() * 5));
+  }, []);
+
+  useEffect(() => {
+    if (typeof navigator !== 'undefined') {
+      const ua = navigator.userAgent || '';
+      const isAndroid = /Android/i.test(ua);
+      setIsWebView(isAndroid && (/wv|Version\/\d+\.\d+/.test(ua) || !/Chrome/i.test(ua)));
+    }
   }, []);
 
   return (
@@ -66,13 +75,19 @@ const AppPage = () => {
           <h2 className="text-2xl font-black text-slate-800 dark:text-white mb-2">Download Now</h2>
           <p className="text-slate-500 dark:text-slate-400 mb-6">Get the latest version of the ZOYA Education App</p>
 
-            <a
-              href="https://github.com/md-sonu07/zeck/releases/download/zoya.v01/Zoya.Education.apk"
-              className="inline-flex items-center gap-3 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-bold text-sm rounded-2xl shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
-            >
-              <Download size={20} />
-              Download APK (v1.0)
-            </a>
+            {isWebView ? (
+              <div className="bg-green-50 dark:bg-green-900/20 rounded-2xl border border-green-200 dark:border-green-700/40 p-6">
+                <p className="text-sm text-green-700 dark:text-green-300 font-medium text-center">You already have the ZOYA Education App installed!</p>
+              </div>
+            ) : (
+              <a
+                href="https://github.com/md-sonu07/zeck/releases/download/zoya.v01/Zoya.Education.apk"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-primary hover:bg-primary/90 text-white font-bold text-sm rounded-2xl shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+              >
+                <Download size={20} />
+                Download APK (v1.0)
+              </a>
+            )}
 
           <p className="text-xs text-slate-400 mt-4">
             <CheckCircle size={12} className="inline mr-1" />
