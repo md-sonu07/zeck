@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Newspaper, CheckCircle, IdCard, GraduationCap, ShieldCheck } from 'lucide-react';
+import { Newspaper, CheckCircle, IdCard, GraduationCap, ShieldCheck, Smartphone } from 'lucide-react';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchContactSettings } from '../../../store/thunk/contactThunk';
@@ -93,9 +93,13 @@ const HeroBanner = () => {
                                 <CheckCircle size={14} className="shrink-0" /> RESULTS
                             </Link>
 
-                            <Link to="/admit-cards"
+                            <Link to="/course-admit-cards"
                                 className="flex-1 sm:flex-none flex items-center justify-center gap-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] px-5 py-3 rounded-xl border border-white/20 backdrop-blur-sm transition-all duration-300 uppercase tracking-widest whitespace-nowrap">
-                                <IdCard size={14} className="shrink-0" /> ADMIT CARDS
+                                <IdCard size={14} className="shrink-0" /> Course ADMIT CARDS
+                            </Link>
+                            <Link to="/app"
+                                className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-[11px] px-6 py-3 rounded-xl shadow-lg shadow-green-500/30 transition-all duration-300 uppercase tracking-widest whitespace-nowrap hover:scale-105 active:scale-95">
+                                <Smartphone size={14} className="shrink-0" /> Download App
                             </Link>
                         </div>
                     </div>

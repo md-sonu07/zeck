@@ -31,6 +31,7 @@ import AdmitCardSearchPage from '../pages/user/admitCardSearch/AdmitCardSearchPa
 import CourseDetailsPage from '../pages/user/courses/CourseDetailsPage';
 import ApplyNowPage from '../pages/user/apply/ApplyNowPage';
 import MyApplicationsPage from '../pages/user/myApplications/MyApplicationsPage';
+import AppPage from '../pages/user/app/AppPage';
 
 const AppRoutes = () => {
     return (
@@ -55,6 +56,7 @@ const AppRoutes = () => {
             <Route path="/course-admit-cards/:slug" element={<AdmitCardSearchPage />} />
             <Route path="/courses/:id" element={<CourseDetailsPage />} />
             <Route path="/course-apply/:id" element={<ApplyNowPage />} />
+            <Route path="/app" element={<AppPage />} />
 
             {/* Admin Panel Routes */}
             <Route element={<AdminRoute />}>
