@@ -547,12 +547,66 @@ const CandidatePaymentManagementPage = () => {
 
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/60 overflow-hidden">
             <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
+                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">#</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">Agent Name</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">Mobile</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">University</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Candidates</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Deal Amount</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Collection</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Due</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                  {agentLoading && filteredAgents.length === 0 ? (
+                    Array.from({ length: 3 }).map((_, i) => (
+                      <tr key={i}>{Array.from({ length: 9 }).map((_, j) => <td key={j} className="px-4 py-3.5"><div className="h-4 bg-slate-100 dark:bg-slate-700 animate-pulse rounded" /></td>)}</tr>
+                    ))
+                  ) : filteredAgents.length === 0 ? (
+                    <tr>
+                      <td colSpan="9" className="px-4 py-16 text-center">
+                        <div className="flex flex-col items-center gap-3">
+                          <Building2 size={40} className="text-slate-300 dark:text-slate-600" />
+                          <p className="text-slate-500 dark:text-slate-400 font-medium">No agents found</p>
+                          <button onClick={openAddAgent} className="text-primary text-sm font-bold hover:underline cursor-pointer">Add your first agent</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredAgents.map((a, i) => (
+                      <tr key={a._id} onClick={() => selectAgent(a)} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer">
+                        <td className="px-4 py-3.5 text-sm font-medium text-slate-500">{i + 1}</td>
+                        <td className="px-4 py-3.5">
+                          <p className="font-bold text-slate-800 dark:text-white text-sm">{a.agentName}</p>
+                        </td>
+                        <td className="px-4 py-3.5 text-sm text-slate-600 dark:text-slate-400 font-medium">{a.agentNumber}</td>
+                        <td className="px-4 py-3.5 text-sm text-slate-600 dark:text-slate-400 font-medium">{a.university || '-'}</td>
+                        <td className="px-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white text-right">{a.candidateCount || 0}</td>
+                        <td className="px-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white text-right">₹{((a.dealAmount || 0)).toLocaleString()}</td>
+                        <td className="px-4 py-3.5 text-sm font-bold text-green-600 dark:text-green-400 text-right">₹{((a.totalPaid || 0)).toLocaleString()}</td>
+                        <td className="px-4 py-3.5 text-sm font-bold text-right">
+                          <span className={a.totalDue > 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-500'}>₹{((a.totalDue || 0)).toLocaleString()}</span>
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <div className="flex items-center justify-end gap-1">
+                            <button onClick={(e) => { e.stopPropagation(); openEditAgent(a); }} className="p-1.5 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all cursor-pointer" title="Edit Agent"><Edit size={15} /></button>
+                            <button onClick={(e) => { e.stopPropagation(); setConfirmAgentDelete(a); }} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all cursor-pointer" title="Delete Agent"><Trash2 size={15} /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      </>
+        </>
       )}
 
-      {/* Candidate List (when agent selected) */}
       {/* Candidate List (when agent selected) */}
       {activeAgent && (
         <>
