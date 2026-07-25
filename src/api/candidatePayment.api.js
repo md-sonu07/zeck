@@ -40,18 +40,18 @@ export const deletePaymentApi = async (id, paymentId) => {
   return response.data;
 };
 
-export const getCandidatePaymentStatsApi = async () => {
-  const response = await API.get('/candidate-payments/stats');
+export const getCandidatePaymentStatsApi = async (params = {}) => {
+  const response = await API.get('/candidate-payments/stats', { params });
   return response.data;
 };
 
-export const getCourseRevenueReportApi = async () => {
-  const response = await API.get('/candidate-payments/reports/course-revenue');
+export const getCourseRevenueReportApi = async (params = {}) => {
+  const response = await API.get('/candidate-payments/reports/course-revenue', { params });
   return response.data;
 };
 
-export const getMonthlyCollectionReportApi = async () => {
-  const response = await API.get('/candidate-payments/reports/monthly-collection');
+export const getMonthlyCollectionReportApi = async (params = {}) => {
+  const response = await API.get('/candidate-payments/reports/monthly-collection', { params });
   return response.data;
 };
 

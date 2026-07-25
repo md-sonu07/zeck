@@ -62,6 +62,7 @@ const AdminLayout = () => {
         
         { type: 'divider', label: 'Finance' },
         { path: '/admin/payments', label: 'Online Payments', icon: CreditCard },
+        { path: '/admin/agent-payments', label: 'Agent Payments', icon: Users },
         { path: '/admin/candidate-payments', label: 'Candidate Payments', icon: IndianRupee },
         { path: '/admin/payment-slips', label: 'Payment Slips', icon: FileText },
         

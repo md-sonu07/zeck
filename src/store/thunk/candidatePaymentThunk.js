@@ -41,17 +41,17 @@ export const removePayment = createAsyncThunk('candidatePayment/removePayment', 
   catch (e) { return rejectWithValue(e.response?.data?.message || 'Failed to delete payment'); }
 });
 
-export const fetchStats = createAsyncThunk('candidatePayment/fetchStats', async (_, { rejectWithValue }) => {
-  try { return await api.getCandidatePaymentStatsApi(); }
+export const fetchStats = createAsyncThunk('candidatePayment/fetchStats', async (params, { rejectWithValue }) => {
+  try { return await api.getCandidatePaymentStatsApi(params); }
   catch (e) { return rejectWithValue(e.response?.data?.message || 'Failed to fetch stats'); }
 });
 
-export const fetchCourseRevenueReport = createAsyncThunk('candidatePayment/courseRevenue', async (_, { rejectWithValue }) => {
-  try { return await api.getCourseRevenueReportApi(); }
+export const fetchCourseRevenueReport = createAsyncThunk('candidatePayment/courseRevenue', async (params, { rejectWithValue }) => {
+  try { return await api.getCourseRevenueReportApi(params); }
   catch (e) { return rejectWithValue(e.response?.data?.message || 'Failed to fetch report'); }
 });
 
-export const fetchMonthlyCollectionReport = createAsyncThunk('candidatePayment/monthlyCollection', async (_, { rejectWithValue }) => {
-  try { return await api.getMonthlyCollectionReportApi(); }
+export const fetchMonthlyCollectionReport = createAsyncThunk('candidatePayment/monthlyCollection', async (params, { rejectWithValue }) => {
+  try { return await api.getMonthlyCollectionReportApi(params); }
   catch (e) { return rejectWithValue(e.response?.data?.message || 'Failed to fetch report'); }
 });

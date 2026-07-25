@@ -14,6 +14,7 @@ import RecentActivityPage from '../pages/admin/activities/RecentActivityPage';
 import GalleryManagementPage from '../pages/admin/gallery/GalleryManagementPage';
 import PaymentManagementPage from '../pages/admin/payment/PaymentManagementPage';
 import CandidatePaymentManagementPage from '../pages/admin/candidatePayment/CandidatePaymentManagementPage';
+import CandidateOnlyPaymentPage from '../pages/admin/candidatePayment/CandidateOnlyPaymentPage';
 import AdmitCardPagesManagement from '../pages/admin/admitCardPages/AdmitCardPagesManagement';
 import AdmitCardsManagement from '../pages/admin/admitCards/AdmitCardsManagement';
 import CourseCategoriesManagementPage from '../pages/admin/courseCategories/CourseCategoriesManagementPage';
@@ -70,7 +71,8 @@ const AdminRoutes = () => {
                 <Route path="payment-slips/create" element={<CreatePaymentSlipPage />} />
 
                 <Route path="payments" element={<PaymentManagementPage />} />
-                <Route path="candidate-payments" element={<CandidatePaymentManagementPage />} />
+                <Route path="agent-payments" element={<CandidatePaymentManagementPage />} />
+                <Route path="candidate-payments" element={<CandidateOnlyPaymentPage />} />
 
                 <Route path="courses" element={<CourseCategoriesManagementPage />} />
                 <Route path="courses/:categoryId" element={<CoursesManagementPage />} />

@@ -341,7 +341,7 @@ const CandidatePaymentManagementPage = () => {
           <div><div class="label">Due Amount</div><div class="amount" style="color:#dc2626;">₹${Math.max(printCandidate.dueAmount || 0, 0).toLocaleString()}</div></div>
           <div><div class="label">Status</div><div class="amount"><span class="status-badge ${printCandidate.paymentStatus === 'Extra Paid' ? 'Extra' : printCandidate.paymentStatus}">${printCandidate.paymentStatus}</span></div></div>
         </div>
-        <div class="footer">Generated on ${new Date().toLocaleString('en-IN')} | ZOYA Education Center</div>
+        <div class="footer">Generated on ${new Date().toLocaleString('en-IN')} | ZOYA Education Center | License: Q2A-2026-0330T117681</div>
       </body></html>
     `);
     printWindow.document.close();
