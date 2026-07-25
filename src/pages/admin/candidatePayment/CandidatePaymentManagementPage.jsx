@@ -4,7 +4,8 @@ import toast from 'react-hot-toast';
 import {
   Users, DollarSign, CreditCard, AlertTriangle, CheckCircle, Clock,
   Plus, Search, X, Eye, Edit, Trash2, Printer,
-  ArrowUpDown, BarChart3, TrendingUp, Calendar, FileSpreadsheet
+  ArrowUpDown, BarChart3, TrendingUp, Calendar, FileSpreadsheet,
+  ArrowLeft, Building2, UserPlus
 } from 'lucide-react';
 import {
   fetchCandidates, createCandidate, updateCandidate,
@@ -12,6 +13,9 @@ import {
   fetchStats, fetchCourseRevenueReport, fetchMonthlyCollectionReport,
   fetchCandidateById
 } from '../../../store/thunk/candidatePaymentThunk';
+import {
+  fetchAgents, createAgent, updateAgent, deleteAgent, fetchAgentStats
+} from '../../../store/thunk/agentThunk';
 
 const StatCard = ({ title, value, icon: iconComponent, color, isLoading }) => (
   <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-100 dark:border-slate-700/60 flex items-start justify-between group">
@@ -39,18 +43,23 @@ const formatDate = (d) => {
   return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
 };
 
+const initialAgentForm = { agentName: '', agentNumber: '', university: '', dealAmount: '' };
 const initialCandidateForm = {
   candidateName: '', mobileNumber: '', course: '', university: '', session: '',
   dealAmount: '', admissionDate: new Date().toISOString().split('T')[0], notes: ''
 };
-
 const initialPaymentForm = {
   amount: '', paymentDate: new Date().toISOString().split('T')[0], paymentMethod: 'Cash', transactionId: '', remark: ''
 };
 
 const CandidatePaymentManagementPage = () => {
   const dispatch = useDispatch();
-  const { candidates, page, pages, courses, stats, loading } = useSelector((s) => s.candidatePayment);
+  const { candidates, page, pages, courses, stats: candStats, loading: candLoading } = useSelector((s) => s.candidatePayment);
+  const { agents, stats: agentStats, loading: agentLoading } = useSelector((s) => s.agent);
+  const { courseRevenueReport, monthlyCollectionReport } = useSelector((s) => s.candidatePayment);
+
+  const [activeAgent, setActiveAgent] = useState(null);
+  const [agentSearch, setAgentSearch] = useState('');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [courseFilter, setCourseFilter] = useState('');
@@ -58,6 +67,10 @@ const CandidatePaymentManagementPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState('createdAt');
   const [sortDir, setSortDir] = useState(-1);
+
+  const [showAgentModal, setShowAgentModal] = useState(false);
+  const [editingAgent, setEditingAgent] = useState(null);
+  const [agentForm, setAgentForm] = useState(initialAgentForm);
 
   const [showCandidateModal, setShowCandidateModal] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState(null);
@@ -73,11 +86,11 @@ const CandidatePaymentManagementPage = () => {
 
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [confirmPaymentDelete, setConfirmPaymentDelete] = useState(null);
+  const [confirmAgentDelete, setConfirmAgentDelete] = useState(null);
 
   const [showPrintModal, setShowPrintModal] = useState(false);
   const [printCandidate, setPrintCandidate] = useState(null);
 
-  const { courseRevenueReport, monthlyCollectionReport } = useSelector((s) => s.candidatePayment);
   const [showReports, setShowReports] = useState(false);
 
   const handleSort = (field) => {
@@ -85,17 +98,73 @@ const CandidatePaymentManagementPage = () => {
     else { setSortField(field); setSortDir(-1); }
   };
 
+  // Fetch candidates based on filters
   const fetchData = useCallback(() => {
     const params = { page: currentPage, limit: 50, sort: sortField, order: sortDir };
     if (searchQuery) params.search = searchQuery;
     if (courseFilter) params.course = courseFilter;
     if (statusFilter) params.status = statusFilter;
+    if (activeAgent) params.agent = activeAgent._id;
     dispatch(fetchCandidates(params));
-  }, [dispatch, currentPage, searchQuery, courseFilter, statusFilter, sortField, sortDir]);
+  }, [dispatch, currentPage, searchQuery, courseFilter, statusFilter, sortField, sortDir, activeAgent]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
-  useEffect(() => { dispatch(fetchStats()); }, [dispatch]);
+  useEffect(() => { dispatch(fetchAgents()); dispatch(fetchAgentStats()); dispatch(fetchStats()); }, [dispatch]);
 
+  const selectAgent = (agent) => {
+    setActiveAgent(agent);
+    setCurrentPage(1);
+    setSearchQuery('');
+    setCourseFilter('');
+    setStatusFilter('');
+  };
+
+  const backToAgents = () => {
+    setActiveAgent(null);
+    setCurrentPage(1);
+  };
+
+  // Agent CRUD
+  const openAddAgent = () => {
+    setEditingAgent(null);
+    setAgentForm(initialAgentForm);
+    setShowAgentModal(true);
+  };
+
+  const openEditAgent = (a) => {
+    setEditingAgent(a);
+    setAgentForm({ agentName: a.agentName, agentNumber: a.agentNumber, university: a.university || '', dealAmount: a.dealAmount || '' });
+    setShowAgentModal(true);
+  };
+
+  const handleAgentSubmit = async (e) => {
+    e.preventDefault();
+    const data = { ...agentForm, dealAmount: Number(agentForm.dealAmount) || 0 };
+    try {
+      if (editingAgent) {
+        await dispatch(updateAgent({ id: editingAgent._id, data })).unwrap();
+        toast.success('Agent updated');
+      } else {
+        await dispatch(createAgent(data)).unwrap();
+        toast.success('Agent created');
+      }
+      setShowAgentModal(false);
+      dispatch(fetchAgentStats());
+    } catch { toast.error('Operation failed'); }
+  };
+
+  const handleDeleteAgent = async () => {
+    if (!confirmAgentDelete) return;
+    try {
+      await dispatch(deleteAgent(confirmAgentDelete._id)).unwrap();
+      toast.success('Agent deleted');
+      setConfirmAgentDelete(null);
+      if (activeAgent?._id === confirmAgentDelete._id) setActiveAgent(null);
+      dispatch(fetchAgentStats());
+    } catch { toast.error('Delete failed'); }
+  };
+
+  // Candidate CRUD
   const openAddCandidate = () => {
     setEditingCandidate(null);
     setCandidateForm(initialCandidateForm);
@@ -116,19 +185,18 @@ const CandidatePaymentManagementPage = () => {
   const handleCandidateSubmit = async (e) => {
     e.preventDefault();
     const data = { ...candidateForm, dealAmount: Number(candidateForm.dealAmount) };
+    if (activeAgent) data.agent = activeAgent._id;
     try {
       if (editingCandidate) {
         await dispatch(updateCandidate({ id: editingCandidate._id, data })).unwrap();
-        toast.success('Candidate updated successfully');
+        toast.success('Candidate updated');
       } else {
         await dispatch(createCandidate(data)).unwrap();
-        toast.success('Candidate created successfully');
+        toast.success('Candidate created');
       }
       setShowCandidateModal(false);
       dispatch(fetchStats());
-    } catch {
-      toast.error('Operation failed');
-    }
+    } catch { toast.error('Operation failed'); }
   };
 
   const confirmDeleteCandidate = (c) => setConfirmDelete(c);
@@ -137,12 +205,13 @@ const CandidatePaymentManagementPage = () => {
     if (!confirmDelete) return;
     try {
       await dispatch(deleteCandidate(confirmDelete._id)).unwrap();
-      toast.success('Candidate deleted successfully');
+      toast.success('Candidate deleted');
       setConfirmDelete(null);
       dispatch(fetchStats());
     } catch { toast.error('Delete failed'); }
   };
 
+  // Payment CRUD
   const openAddPayment = (candidateId) => {
     setEditingPayment(null);
     setPaymentForm(initialPaymentForm);
@@ -166,10 +235,10 @@ const CandidatePaymentManagementPage = () => {
     try {
       if (editingPayment) {
         await dispatch(editPayment({ id: paymentCandidateId, data: { ...data, paymentId: editingPayment._id } })).unwrap();
-        toast.success('Payment updated successfully');
+        toast.success('Payment updated');
       } else {
         await dispatch(addPayment({ id: paymentCandidateId, data })).unwrap();
-        toast.success('Payment added successfully');
+        toast.success('Payment added');
       }
       setShowPaymentModal(false);
       dispatch(fetchStats());
@@ -184,7 +253,7 @@ const CandidatePaymentManagementPage = () => {
     if (!confirmPaymentDelete) return;
     try {
       const result = await dispatch(removePayment(confirmPaymentDelete)).unwrap();
-      toast.success('Payment deleted successfully');
+      toast.success('Payment deleted');
       setConfirmPaymentDelete(null);
       setDetailCandidate(result.candidate);
       dispatch(fetchStats());
@@ -207,21 +276,6 @@ const CandidatePaymentManagementPage = () => {
     } catch { toast.error('Failed to load details'); }
   };
 
-  const handleExportCSV = () => {
-    if (!candidates.length) { toast.error('No records to export'); return; }
-    const header = 'S.No,Candidate Name,Mobile,Course,Deal Amount,Total Paid,Due Amount,Status,Candidate ID';
-    const rows = candidates.map((c, i) =>
-      `${i + 1},"${c.candidateName}","${c.mobileNumber}","${c.course}",${c.dealAmount},${c.totalPaid},${c.dueAmount},"${c.paymentStatus}","${c.candidateId}"`
-    );
-    const csv = [header, ...rows].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `candidate_payments_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click(); URL.revokeObjectURL(url);
-    toast.success('Exported successfully');
-  };
-
   const printCandidateReport = () => {
     if (!printCandidate) return;
     const printWindow = window.open('', '_blank');
@@ -235,7 +289,6 @@ const CandidatePaymentManagementPage = () => {
         <td>${p.remark || '-'}</td>
       </tr>
     `).join('');
-
     printWindow.document.write(`
       <html><head><title>Payment Report - ${printCandidate.candidateName}</title>
       <style>
@@ -265,7 +318,8 @@ const CandidatePaymentManagementPage = () => {
       </style></head><body>
         <div class="header">
           <img src="/logo/light-logo.png" alt="ZOYA Education Center" />
-          <h1>ZOYA Education Center</h1>
+          <h1>ZOYA EDUCATION CENTER & TRUST</h1>
+          <p style="color:#64748b;font-size:12px;font-weight:600;margin:4px 0 8px;">AN ISO 9001:2015 Certified Organization</p>
           <h2>Candidate Payment Report</h2>
         </div>
         <div class="info-grid">
@@ -295,6 +349,21 @@ const CandidatePaymentManagementPage = () => {
     setShowPrintModal(false);
   };
 
+  const handleExportCSV = () => {
+    if (!candidates.length) { toast.error('No records to export'); return; }
+    const header = 'S.No,Candidate Name,Mobile,Course,Deal Amount,Total Paid,Due Amount,Status,Candidate ID';
+    const rows = candidates.map((c, i) =>
+      `${i + 1},"${c.candidateName}","${c.mobileNumber}","${c.course}",${c.dealAmount},${c.totalPaid},${c.dueAmount},"${c.paymentStatus}","${c.candidateId}"`
+    );
+    const csv = [header, ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `candidate_payments_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+    toast.success('Exported successfully');
+  };
+
   const getStatusBadge = (status) => {
     const styles = {
       Paid: 'bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400',
@@ -311,77 +380,124 @@ const CandidatePaymentManagementPage = () => {
     );
   };
 
+  // Filter agents by search
+  const filteredAgents = agents.filter(a =>
+    !agentSearch || a.agentName?.toLowerCase().includes(agentSearch.toLowerCase()) ||
+    a.agentNumber?.includes(agentSearch)
+  );
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
-            <CreditCard className="text-primary" /> Candidate Payment Management
+            {activeAgent ? (
+              <button onClick={backToAgents} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer" title="Back to Agents">
+                <ArrowLeft size={20} className="text-primary" />
+              </button>
+            ) : <Building2 className="text-primary" />}
+            <CreditCard className="text-primary" /> {activeAgent ? activeAgent.agentName : 'Agent & Candidate Payments'}
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">Manage candidate payments, dues, and reports</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
+            {activeAgent ? `Manage candidates and payments under ${activeAgent.agentName}` : 'Manage agents, candidate payments, dues, and reports'}
+          </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <button onClick={() => { setShowReports(!showReports); if (!showReports) { dispatch(fetchCourseRevenueReport()); dispatch(fetchMonthlyCollectionReport()); } }}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer">
-            <BarChart3 size={16} /> {showReports ? 'Hide Reports' : 'Reports'}
-          </button>
-          <button onClick={handleExportCSV}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer">
-            <FileSpreadsheet size={16} /> Export
-          </button>
-          <button onClick={openAddCandidate}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-95 cursor-pointer">
-            <Plus size={16} /> Add Candidate
-          </button>
+          {activeAgent ? (
+            <button onClick={openAddCandidate}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-95 cursor-pointer">
+              <Plus size={16} /> Add Candidate
+            </button>
+          ) : (
+            <>
+              <button onClick={() => { setShowReports(!showReports); if (!showReports) { dispatch(fetchCourseRevenueReport()); dispatch(fetchMonthlyCollectionReport()); } }}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer">
+                <BarChart3 size={16} /> {showReports ? 'Hide Reports' : 'Reports'}
+              </button>
+              <button onClick={openAddAgent}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all active:scale-95 cursor-pointer">
+                <UserPlus size={16} /> Add Agent
+              </button>
+            </>
+          )}
         </div>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard title="Total Candidates" value={stats?.totalCandidates || 0} icon={Users} color="bg-linear-to-br from-primary to-blue-600" isLoading={false} />
-        <StatCard title="Total Deal Amount" value={`₹${(stats?.totalDealAmount || 0).toLocaleString()}`} icon={DollarSign} color="bg-linear-to-br from-amber-500 to-orange-600" isLoading={false} />
-        <StatCard title="Total Collection" value={`₹${(stats?.totalCollection || 0).toLocaleString()}`} icon={TrendingUp} color="bg-linear-to-br from-green-500 to-emerald-600" isLoading={false} />
-        <StatCard title="Total Due Amount" value={`₹${(stats?.totalDueAmount || 0).toLocaleString()}`} icon={AlertTriangle} color="bg-linear-to-br from-red-500 to-rose-600" isLoading={false} />
-        <StatCard title="Paid Candidates" value={stats?.totalPaidCandidates || 0} icon={CheckCircle} color="bg-linear-to-br from-teal-500 to-cyan-600" isLoading={false} />
-        <StatCard title="Pending Candidates" value={stats?.totalPendingCandidates || 0} icon={Clock} color="bg-linear-to-br from-purple-500 to-indigo-600" isLoading={false} />
+        {activeAgent ? (
+          <>
+            <StatCard title="Total Candidates" value={candidates?.length || 0} icon={Users} color="bg-linear-to-br from-primary to-blue-600" isLoading={candLoading} />
+            <StatCard title="Deal Amount" value={`₹${(candidates?.reduce((s, c) => s + (c.dealAmount || 0), 0) || 0).toLocaleString()}`} icon={DollarSign} color="bg-linear-to-br from-amber-500 to-orange-600" isLoading={candLoading} />
+            <StatCard title="Total Collection" value={`₹${(candidates?.reduce((s, c) => s + (c.totalPaid || 0), 0) || 0).toLocaleString()}`} icon={TrendingUp} color="bg-linear-to-br from-green-500 to-emerald-600" isLoading={candLoading} />
+            <StatCard title="Total Due" value={`₹${(candidates?.reduce((s, c) => s + Math.max(c.dueAmount || 0, 0), 0) || 0).toLocaleString()}`} icon={AlertTriangle} color="bg-linear-to-br from-red-500 to-rose-600" isLoading={candLoading} />
+            <StatCard title="Paid" value={candidates?.filter(c => c.paymentStatus === 'Paid').length || 0} icon={CheckCircle} color="bg-linear-to-br from-teal-500 to-cyan-600" isLoading={candLoading} />
+            <StatCard title="Pending" value={candidates?.filter(c => c.paymentStatus === 'Pending').length || 0} icon={Clock} color="bg-linear-to-br from-purple-500 to-indigo-600" isLoading={candLoading} />
+          </>
+        ) : (
+          <>
+            <StatCard title="Total Agents" value={agentStats?.totalAgents || 0} icon={Building2} color="bg-linear-to-br from-primary to-blue-600" isLoading={agentLoading} />
+            <StatCard title="Total Deal Amount" value={`₹${(agentStats?.totalDealAmount || 0).toLocaleString()}`} icon={DollarSign} color="bg-linear-to-br from-amber-500 to-orange-600" isLoading={agentLoading} />
+            <StatCard title="Total Collection" value={`₹${(agentStats?.totalCollection || 0).toLocaleString()}`} icon={TrendingUp} color="bg-linear-to-br from-green-500 to-emerald-600" isLoading={agentLoading} />
+            <StatCard title="Total Due Amount" value={`₹${(agentStats?.totalDueAmount || 0).toLocaleString()}`} icon={AlertTriangle} color="bg-linear-to-br from-red-500 to-rose-600" isLoading={agentLoading} />
+            <StatCard title="Paid Candidates" value={candStats?.totalPaidCandidates || 0} icon={CheckCircle} color="bg-linear-to-br from-teal-500 to-cyan-600" isLoading={candLoading} />
+            <StatCard title="Pending Candidates" value={candStats?.totalPendingCandidates || 0} icon={Clock} color="bg-linear-to-br from-purple-500 to-indigo-600" isLoading={candLoading} />
+          </>
+        )}
       </div>
 
+      {/* Agent Detail Banner */}
+      {activeAgent && (
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/60 p-4 sm:p-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Agent Name</p>
+              <p className="text-lg font-black text-slate-800 dark:text-white mt-1">{activeAgent.agentName}</p>
+            </div>
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Mobile Number</p>
+              <p className="text-lg font-black text-slate-800 dark:text-white mt-1">{activeAgent.agentNumber}</p>
+            </div>
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">University / Board</p>
+              <p className="text-lg font-black text-slate-800 dark:text-white mt-1">{activeAgent.university || '-'}</p>
+            </div>
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Deal Amount</p>
+              <p className="text-lg font-black text-slate-800 dark:text-white mt-1">₹{(activeAgent.dealAmount || 0).toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Reports Section */}
-      {showReports && (
+      {showReports && !activeAgent && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in duration-200">
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/60 overflow-hidden">
             <div className="p-4 border-b border-slate-100 dark:border-slate-700/60">
               <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2"><BarChart3 size={16} className="text-primary" /> Course-wise Revenue</h3>
             </div>
             <div className="p-4">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                      <th className="pb-3 pr-3">Course</th>
-                      <th className="pb-3 pr-3 text-right">Candidates</th>
-                      <th className="pb-3 pr-3 text-right">Total Deal</th>
-                      <th className="pb-3 pr-3 text-right">Total Paid</th>
-                      <th className="pb-3 text-right">Due</th>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <th className="pb-3 pr-3">Course</th><th className="pb-3 pr-3 text-right">Candidates</th><th className="pb-3 pr-3 text-right">Total Deal</th><th className="pb-3 pr-3 text-right">Total Paid</th><th className="pb-3 text-right">Due</th>
+                  </tr>
+                </thead>
+                <tbody className="text-slate-700 dark:text-slate-300">
+                  {courseRevenueReport?.map((r, i) => (
+                    <tr key={i} className="border-t border-slate-100 dark:border-slate-700/60">
+                      <td className="py-3 pr-3 font-semibold">{r.course}</td>
+                      <td className="py-3 pr-3 text-right">{r.count}</td>
+                      <td className="py-3 pr-3 text-right">₹{r.totalDeal.toLocaleString()}</td>
+                      <td className="py-3 pr-3 text-right text-green-600 font-semibold">₹{r.totalPaid.toLocaleString()}</td>
+                      <td className="py-3 text-right text-red-600 font-semibold">₹{r.totalDue.toLocaleString()}</td>
                     </tr>
-                  </thead>
-                  <tbody className="text-slate-700 dark:text-slate-300">
-                    {courseRevenueReport?.map((r, i) => (
-                      <tr key={i} className="border-t border-slate-100 dark:border-slate-700/60">
-                        <td className="py-3 pr-3 font-semibold">{r.course}</td>
-                        <td className="py-3 pr-3 text-right">{r.count}</td>
-                        <td className="py-3 pr-3 text-right">₹{r.totalDeal.toLocaleString()}</td>
-                        <td className="py-3 pr-3 text-right text-green-600 font-semibold">₹{r.totalPaid.toLocaleString()}</td>
-                        <td className="py-3 text-right text-red-600 font-semibold">₹{r.totalDue.toLocaleString()}</td>
-                      </tr>
-                    )) || null}
-                    {(!courseRevenueReport?.length) && (
-                      <tr><td colSpan="5" className="py-8 text-center text-slate-400">No data available</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                  )) || null}
+                  {(!courseRevenueReport?.length) && <tr><td colSpan="5" className="py-8 text-center text-slate-400">No data</td></tr>}
+                </tbody>
+              </table>
             </div>
           </div>
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/60 overflow-hidden">
@@ -389,162 +505,272 @@ const CandidatePaymentManagementPage = () => {
               <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2"><Calendar size={16} className="text-primary" /> Monthly Collection</h3>
             </div>
             <div className="p-4">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                      <th className="pb-3 pr-3">Month</th>
-                      <th className="pb-3 pr-3 text-right">Transactions</th>
-                      <th className="pb-3 text-right">Total Collected</th>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <th className="pb-3 pr-3">Month</th><th className="pb-3 pr-3 text-right">Transactions</th><th className="pb-3 text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody className="text-slate-700 dark:text-slate-300">
+                  {monthlyCollectionReport?.map((r, i) => (
+                    <tr key={i} className="border-t border-slate-100 dark:border-slate-700/60">
+                      <td className="py-3 pr-3 font-semibold">{r.month}</td>
+                      <td className="py-3 pr-3 text-right">{r.count}</td>
+                      <td className="py-3 text-right text-green-600 font-semibold">₹{r.total.toLocaleString()}</td>
                     </tr>
-                  </thead>
-                  <tbody className="text-slate-700 dark:text-slate-300">
-                    {monthlyCollectionReport?.map((r, i) => (
-                      <tr key={i} className="border-t border-slate-100 dark:border-slate-700/60">
-                        <td className="py-3 pr-3 font-semibold">{r.month}</td>
-                        <td className="py-3 pr-3 text-right">{r.count}</td>
-                        <td className="py-3 text-right text-green-600 font-semibold">₹{r.total.toLocaleString()}</td>
-                      </tr>
-                    )) || null}
-                    {(!monthlyCollectionReport?.length) && (
-                      <tr><td colSpan="3" className="py-8 text-center text-slate-400">No data available</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                  )) || null}
+                  {(!monthlyCollectionReport?.length) && <tr><td colSpan="3" className="py-8 text-center text-slate-400">No data</td></tr>}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       )}
 
-      {/* Search & Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
-        <div className="relative flex-1 min-w-[200px]">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-            placeholder="Search by name, mobile, or ID..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer">
-              <X size={16} />
-            </button>
-          )}
-        </div>
-        <select value={courseFilter} onChange={(e) => { setCourseFilter(e.target.value); setCurrentPage(1); }}
-          className="px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 appearance-none">
-          <option value="">All Courses</option>
-          {courses.map((c, i) => <option key={i} value={c}>{c}</option>)}
-        </select>
-        <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
-          className="px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 appearance-none">
-          <option value="">All Status</option>
-          <option value="Paid">Paid</option>
-          <option value="Pending">Pending</option>
-          <option value="Extra Paid">Extra Paid</option>
-        </select>
-      </div>
-
-      {/* Candidates Table */}
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/60 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
-                <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">#</th>
-                <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer select-none" onClick={() => handleSort('candidateName')}>
-                  <span className="flex items-center gap-1">Candidate <SortIcon field="candidateName" sortField={sortField} sortDir={sortDir} /></span>
-                </th>
-                <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Mobile</th>
-                <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Course</th>
-                <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer select-none" onClick={() => handleSort('dealAmount')}>
-                  <span className="flex items-center justify-end gap-1">Deal <SortIcon field="dealAmount" sortField={sortField} sortDir={sortDir} /></span>
-                </th>
-                <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Paid</th>
-                <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Due</th>
-                <th className="sticky top-0 px-4 py-3.5 text-center text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
-              {loading && candidates.length === 0 ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i}>
-                    {Array.from({ length: 9 }).map((_, j) => (
-                      <td key={j} className="px-4 py-3.5"><div className="h-4 bg-slate-100 dark:bg-slate-700 animate-pulse rounded" /></td>
-                    ))}
-                  </tr>
-                ))
-              ) : candidates.length === 0 ? (
-                <tr>
-                  <td colSpan="9" className="px-4 py-16 text-center">
-                    <div className="flex flex-col items-center gap-3">
-                      <Users size={40} className="text-slate-300 dark:text-slate-600" />
-                      <p className="text-slate-500 dark:text-slate-400 font-medium">No candidates found</p>
-                      <button onClick={openAddCandidate} className="text-primary text-sm font-bold hover:underline cursor-pointer">Add your first candidate</button>
-                    </div>
-                  </td>
-                </tr>
-              ) : (
-                candidates.map((c, i) => (
-                  <tr key={c._id} onClick={() => openDetail(c)} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer">
-                    <td className="px-4 py-3.5 text-sm font-medium text-slate-500">{(currentPage - 1) * 50 + i + 1}</td>
-                    <td className="px-4 py-3.5">
-                      <div>
-                        <p className="font-bold text-slate-800 dark:text-white text-sm">{c.candidateName}</p>
-                        <p className="text-[11px] text-slate-400 font-medium">{c.candidateId || ''}</p>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3.5 text-sm text-slate-600 dark:text-slate-400 font-medium">{c.mobileNumber}</td>
-                    <td className="px-4 py-3.5 text-sm text-slate-600 dark:text-slate-400 font-medium">{c.course}</td>
-                    <td className="px-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white text-right">₹{c.dealAmount?.toLocaleString()}</td>
-                    <td className="px-4 py-3.5 text-sm font-bold text-green-600 dark:text-green-400 text-right">₹{c.totalPaid?.toLocaleString()}</td>
-                    <td className="px-4 py-3.5 text-sm font-bold text-right">
-                      <span className={c.dueAmount > 0 ? 'text-red-600 dark:text-red-400' : c.dueAmount < 0 ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500'}>
-                        ₹{Math.abs(c.dueAmount || 0).toLocaleString()}{c.dueAmount < 0 ? ' (Excess)' : ''}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3.5 text-center">{getStatusBadge(c.paymentStatus)}</td>
-                    <td className="px-4 py-3.5">
-                      <div className="flex items-center justify-end gap-1">
-                        <button onClick={(e) => { e.stopPropagation(); openDetail(c); }} className="p-1.5 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 transition-all cursor-pointer" title="View Details"><Eye size={15} /></button>
-                        <button onClick={(e) => { e.stopPropagation(); openEditCandidate(c); }} className="p-1.5 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all cursor-pointer" title="Edit"><Edit size={15} /></button>
-                        <button onClick={(e) => { e.stopPropagation(); confirmDeleteCandidate(c); }} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all cursor-pointer" title="Delete"><Trash2 size={15} /></button>
-                        <button onClick={(e) => { e.stopPropagation(); openAddPayment(c._id); }} className="p-1.5 rounded-lg text-slate-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-500/10 transition-all cursor-pointer" title="Add Payment"><Plus size={15} /></button>
-                        <button onClick={(e) => { e.stopPropagation(); openPrint(c); }} className="p-1.5 rounded-lg text-slate-400 hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-500/10 transition-all cursor-pointer" title="Print Report"><Printer size={15} /></button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+      {/* Agent List View */}
+      {!activeAgent && (
+        <>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1 min-w-[200px]">
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input value={agentSearch} onChange={(e) => setAgentSearch(e.target.value)}
+                placeholder="Search agents by name or number..."
+                className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+              {agentSearch && (
+                <button onClick={() => setAgentSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer">
+                  <X size={16} />
+                </button>
               )}
-            </tbody>
-          </table>
-        </div>
-        {/* Pagination */}
-        {pages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-700/60">
-            <p className="text-sm text-slate-500 font-medium">Page {page} of {pages}</p>
-            <div className="flex gap-2">
-              <button disabled={currentPage <= 1} onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                className="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 disabled:opacity-40 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">Previous</button>
-              <button disabled={currentPage >= pages} onClick={() => setCurrentPage(p => Math.min(pages, p + 1))}
-                className="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 disabled:opacity-40 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">Next</button>
             </div>
           </div>
-        )}
-      </div>
 
-      {/* Add/Edit Candidate Modal */}
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/60 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
+                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">#</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">Agent Name</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">Mobile</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">University</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Candidates</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Deal Amount</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Collection</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Due</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                  {agentLoading && filteredAgents.length === 0 ? (
+                    Array.from({ length: 3 }).map((_, i) => (
+                      <tr key={i}>{Array.from({ length: 9 }).map((_, j) => <td key={j} className="px-4 py-3.5"><div className="h-4 bg-slate-100 dark:bg-slate-700 animate-pulse rounded" /></td>)}</tr>
+                    ))
+                  ) : filteredAgents.length === 0 ? (
+                    <tr>
+                      <td colSpan="9" className="px-4 py-16 text-center">
+                        <div className="flex flex-col items-center gap-3">
+                          <Building2 size={40} className="text-slate-300 dark:text-slate-600" />
+                          <p className="text-slate-500 dark:text-slate-400 font-medium">No agents found</p>
+                          <button onClick={openAddAgent} className="text-primary text-sm font-bold hover:underline cursor-pointer">Add your first agent</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredAgents.map((a, i) => (
+                      <tr key={a._id} onClick={() => selectAgent(a)} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer">
+                        <td className="px-4 py-3.5 text-sm font-medium text-slate-500">{i + 1}</td>
+                        <td className="px-4 py-3.5">
+                          <p className="font-bold text-slate-800 dark:text-white text-sm">{a.agentName}</p>
+                        </td>
+                        <td className="px-4 py-3.5 text-sm text-slate-600 dark:text-slate-400 font-medium">{a.agentNumber}</td>
+                        <td className="px-4 py-3.5 text-sm text-slate-600 dark:text-slate-400 font-medium">{a.university || '-'}</td>
+                        <td className="px-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white text-right">{a.candidateCount || 0}</td>
+                        <td className="px-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white text-right">₹{((a.dealAmount || 0)).toLocaleString()}</td>
+                        <td className="px-4 py-3.5 text-sm font-bold text-green-600 dark:text-green-400 text-right">₹{((a.totalPaid || 0)).toLocaleString()}</td>
+                        <td className="px-4 py-3.5 text-sm font-bold text-right">
+                          <span className={a.totalDue > 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-500'}>₹{((a.totalDue || 0)).toLocaleString()}</span>
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <div className="flex items-center justify-end gap-1">
+                            <button onClick={(e) => { e.stopPropagation(); openEditAgent(a); }} className="p-1.5 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all cursor-pointer" title="Edit Agent"><Edit size={15} /></button>
+                            <button onClick={(e) => { e.stopPropagation(); setConfirmAgentDelete(a); }} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all cursor-pointer" title="Delete Agent"><Trash2 size={15} /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Candidate List (when agent selected) */}
+      {activeAgent && (
+        <>
+          <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+            <div className="relative flex-1 min-w-[200px]">
+              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                placeholder="Search by name, mobile, or ID..."
+                className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"><X size={16} /></button>
+              )}
+            </div>
+            <select value={courseFilter} onChange={(e) => { setCourseFilter(e.target.value); setCurrentPage(1); }}
+              className="px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 appearance-none">
+              <option value="">All Courses</option>
+              {courses.map((c, i) => <option key={i} value={c}>{c}</option>)}
+            </select>
+            <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+              className="px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-primary/20 appearance-none">
+              <option value="">All Status</option>
+              <option value="Paid">Paid</option>
+              <option value="Pending">Pending</option>
+              <option value="Extra Paid">Extra Paid</option>
+            </select>
+            <button onClick={handleExportCSV}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer">
+              <FileSpreadsheet size={16} /> Export
+            </button>
+          </div>
+
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/60 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
+                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">#</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer select-none" onClick={() => handleSort('candidateName')}>
+                      <span className="flex items-center gap-1">Candidate <SortIcon field="candidateName" sortField={sortField} sortDir={sortDir} /></span>
+                    </th>
+                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Mobile</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Course</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer select-none" onClick={() => handleSort('dealAmount')}>
+                      <span className="flex items-center justify-end gap-1">Deal <SortIcon field="dealAmount" sortField={sortField} sortDir={sortDir} /></span>
+                    </th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Paid</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Due</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-center text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
+                  {candLoading && candidates.length === 0 ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <tr key={i}>{Array.from({ length: 9 }).map((_, j) => <td key={j} className="px-4 py-3.5"><div className="h-4 bg-slate-100 dark:bg-slate-700 animate-pulse rounded" /></td>)}</tr>
+                    ))
+                  ) : candidates.length === 0 ? (
+                    <tr>
+                      <td colSpan="9" className="px-4 py-16 text-center">
+                        <div className="flex flex-col items-center gap-3">
+                          <Users size={40} className="text-slate-300 dark:text-slate-600" />
+                          <p className="text-slate-500 dark:text-slate-400 font-medium">No candidates under this agent</p>
+                          <button onClick={openAddCandidate} className="text-primary text-sm font-bold hover:underline cursor-pointer">Add first candidate</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    candidates.map((c, i) => (
+                      <tr key={c._id} onClick={() => openDetail(c)} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer">
+                        <td className="px-4 py-3.5 text-sm font-medium text-slate-500">{(currentPage - 1) * 50 + i + 1}</td>
+                        <td className="px-4 py-3.5">
+                          <p className="font-bold text-slate-800 dark:text-white text-sm">{c.candidateName}</p>
+                          <p className="text-[11px] text-slate-400 font-medium">{c.candidateId || ''}</p>
+                        </td>
+                        <td className="px-4 py-3.5 text-sm text-slate-600 dark:text-slate-400 font-medium">{c.mobileNumber}</td>
+                        <td className="px-4 py-3.5 text-sm text-slate-600 dark:text-slate-400 font-medium">{c.course}</td>
+                        <td className="px-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white text-right">₹{c.dealAmount?.toLocaleString()}</td>
+                        <td className="px-4 py-3.5 text-sm font-bold text-green-600 dark:text-green-400 text-right">₹{c.totalPaid?.toLocaleString()}</td>
+                        <td className="px-4 py-3.5 text-sm font-bold text-right">
+                          <span className={c.dueAmount > 0 ? 'text-red-600 dark:text-red-400' : c.dueAmount < 0 ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500'}>
+                            ₹{Math.abs(c.dueAmount || 0).toLocaleString()}{c.dueAmount < 0 ? ' (Excess)' : ''}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3.5 text-center">{getStatusBadge(c.paymentStatus)}</td>
+                        <td className="px-4 py-3.5">
+                          <div className="flex items-center justify-end gap-1">
+                            <button onClick={(e) => { e.stopPropagation(); openDetail(c); }} className="p-1.5 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/5 transition-all cursor-pointer" title="View"><Eye size={15} /></button>
+                            <button onClick={(e) => { e.stopPropagation(); openEditCandidate(c); }} className="p-1.5 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all cursor-pointer" title="Edit"><Edit size={15} /></button>
+                            <button onClick={(e) => { e.stopPropagation(); confirmDeleteCandidate(c); }} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all cursor-pointer" title="Delete"><Trash2 size={15} /></button>
+                            <button onClick={(e) => { e.stopPropagation(); openAddPayment(c._id); }} className="p-1.5 rounded-lg text-slate-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-500/10 transition-all cursor-pointer" title="Add Payment"><Plus size={15} /></button>
+                            <button onClick={(e) => { e.stopPropagation(); openPrint(c); }} className="p-1.5 rounded-lg text-slate-400 hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-500/10 transition-all cursor-pointer" title="Print"><Printer size={15} /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+            {pages > 1 && (
+              <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 dark:border-slate-700/60">
+                <p className="text-sm text-slate-500 font-medium">Page {page} of {pages}</p>
+                <div className="flex gap-2">
+                  <button disabled={currentPage <= 1} onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    className="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 disabled:opacity-40 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">Previous</button>
+                  <button disabled={currentPage >= pages} onClick={() => setCurrentPage(p => Math.min(pages, p + 1))}
+                    className="px-3 py-1.5 text-xs font-bold rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 disabled:opacity-40 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">Next</button>
+                </div>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* Agent Modal */}
+      {showAgentModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowAgentModal(false)} />
+          <div className="relative bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700">
+            <div className="sticky top-0 bg-white dark:bg-slate-800 z-10 p-6 pb-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
+              <h2 className="text-lg font-black text-slate-800 dark:text-white">{editingAgent ? 'Edit Agent' : 'Add Agent'}</h2>
+              <button onClick={() => setShowAgentModal(false)} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer"><X size={18} /></button>
+            </div>
+            <form onSubmit={handleAgentSubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Agent Name <span className="text-red-500">*</span></label>
+                <input required placeholder="Enter agent name" value={agentForm.agentName} onChange={(e) => setAgentForm(f => ({ ...f, agentName: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-800 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Agent Number <span className="text-red-500">*</span></label>
+                <input required placeholder="Enter mobile number" value={agentForm.agentNumber} onChange={(e) => setAgentForm(f => ({ ...f, agentNumber: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-800 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">University / Board</label>
+                <input placeholder="Enter university or board name" value={agentForm.university} onChange={(e) => setAgentForm(f => ({ ...f, university: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-800 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Deal Amount (₹)</label>
+                <input type="number" min="0" placeholder="Enter deal amount" value={agentForm.dealAmount} onChange={(e) => setAgentForm(f => ({ ...f, dealAmount: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-800 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+              </div>
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
+                <button type="button" onClick={() => setShowAgentModal(false)}
+                  className="px-6 py-2.5 rounded-xl font-bold text-sm bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">Cancel</button>
+                <button type="submit" disabled={agentLoading}
+                  className="px-6 py-2.5 rounded-xl font-bold text-sm bg-primary text-white hover:bg-primary/90 shadow-lg transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
+                  {agentLoading ? 'Saving...' : editingAgent ? 'Update Agent' : 'Add Agent'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Candidate Modal */}
       {showCandidateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowCandidateModal(false)} />
           <div className="relative bg-white dark:bg-slate-800 w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white dark:bg-slate-800 z-10 p-6 pb-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-              <h2 className="text-lg font-black text-slate-800 dark:text-white">{editingCandidate ? 'Edit Candidate' : 'Add New Candidate'}</h2>
-              <button onClick={() => setShowCandidateModal(false)} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer">
-                <X size={18} />
-              </button>
+              <h2 className="text-lg font-black text-slate-800 dark:text-white">{editingCandidate ? 'Edit Candidate' : 'Add Candidate'} {activeAgent && <span className="text-sm font-medium text-primary ml-2">for {activeAgent.agentName}</span>}</h2>
+              <button onClick={() => setShowCandidateModal(false)} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer"><X size={18} /></button>
             </div>
             <form onSubmit={handleCandidateSubmit} className="p-6 space-y-6">
               <div>
@@ -605,9 +831,9 @@ const CandidatePaymentManagementPage = () => {
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
                 <button type="button" onClick={() => setShowCandidateModal(false)}
                   className="px-6 py-2.5 rounded-xl font-bold text-sm bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">Cancel</button>
-                <button type="submit" disabled={loading}
+                <button type="submit" disabled={candLoading}
                   className="px-6 py-2.5 rounded-xl font-bold text-sm bg-primary text-white hover:bg-primary/90 shadow-lg transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
-                  {loading ? 'Saving...' : editingCandidate ? 'Update Candidate' : 'Add Candidate'}
+                  {candLoading ? 'Saving...' : editingCandidate ? 'Update Candidate' : 'Add Candidate'}
                 </button>
               </div>
             </form>
@@ -615,16 +841,14 @@ const CandidatePaymentManagementPage = () => {
         </div>
       )}
 
-      {/* Add/Edit Payment Modal */}
+      {/* Payment Modal */}
       {showPaymentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setShowPaymentModal(false)} />
           <div className="relative bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700">
             <div className="p-6 pb-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
               <h2 className="text-lg font-black text-slate-800 dark:text-white">{editingPayment ? 'Edit Payment' : 'Add Payment'}</h2>
-              <button onClick={() => setShowPaymentModal(false)} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer">
-                <X size={18} />
-              </button>
+              <button onClick={() => setShowPaymentModal(false)} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer"><X size={18} /></button>
             </div>
             <form onSubmit={handlePaymentSubmit} className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -643,10 +867,7 @@ const CandidatePaymentManagementPage = () => {
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Payment Method <span className="text-red-500">*</span></label>
                 <select required value={paymentForm.paymentMethod} onChange={(e) => setPaymentForm(f => ({ ...f, paymentMethod: e.target.value }))}
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-800 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none">
-                  <option value="Cash">Cash</option>
-                  <option value="UPI">UPI</option>
-                  <option value="Bank Transfer">Bank Transfer</option>
-                  <option value="Cheque">Cheque</option>
+                  <option value="Cash">Cash</option><option value="UPI">UPI</option><option value="Bank Transfer">Bank Transfer</option><option value="Cheque">Cheque</option>
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -664,9 +885,9 @@ const CandidatePaymentManagementPage = () => {
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-700">
                 <button type="button" onClick={() => setShowPaymentModal(false)}
                   className="px-6 py-2.5 rounded-xl font-bold text-sm bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">Cancel</button>
-                <button type="submit" disabled={loading}
+                <button type="submit" disabled={candLoading}
                   className="px-6 py-2.5 rounded-xl font-bold text-sm bg-primary text-white hover:bg-primary/90 shadow-lg transition-all active:scale-95 disabled:opacity-50 cursor-pointer">
-                  {loading ? 'Saving...' : editingPayment ? 'Update Payment' : 'Add Payment'}
+                  {candLoading ? 'Saving...' : editingPayment ? 'Update Payment' : 'Add Payment'}
                 </button>
               </div>
             </form>
@@ -674,7 +895,7 @@ const CandidatePaymentManagementPage = () => {
         </div>
       )}
 
-      {/* Candidate Detail Modal */}
+      {/* Detail Modal */}
       {showDetailModal && detailCandidate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => { setShowDetailModal(false); setDetailCandidate(null); }} />
@@ -682,16 +903,11 @@ const CandidatePaymentManagementPage = () => {
             <div className="sticky top-0 bg-white dark:bg-slate-800 z-10 p-6 pb-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
               <h2 className="text-lg font-black text-slate-800 dark:text-white">Candidate Payment Ledger</h2>
               <div className="flex items-center gap-2">
-                <button onClick={() => { setShowDetailModal(false); openPrint(detailCandidate); }} className="p-2 rounded-lg text-slate-400 hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-500/10 transition-all cursor-pointer" title="Print">
-                  <Printer size={16} />
-                </button>
-                <button onClick={() => { setShowDetailModal(false); setDetailCandidate(null); }} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer">
-                  <X size={18} />
-                </button>
+                <button onClick={() => { setShowDetailModal(false); openPrint(detailCandidate); }} className="p-2 rounded-lg text-slate-400 hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-500/10 transition-all cursor-pointer" title="Print"><Printer size={16} /></button>
+                <button onClick={() => { setShowDetailModal(false); setDetailCandidate(null); }} className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-all cursor-pointer"><X size={18} /></button>
               </div>
             </div>
             <div className="p-6 space-y-6">
-              {/* Summary Card */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="col-span-2 md:col-span-4 p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700/60">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -722,14 +938,11 @@ const CandidatePaymentManagementPage = () => {
                 </div>
               </div>
 
-              {/* Payment History */}
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-bold text-slate-800 dark:text-white">Payment History</h3>
                   <button onClick={() => { setShowDetailModal(false); openAddPayment(detailCandidate._id); }}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg font-bold text-xs bg-primary text-white hover:bg-primary/90 transition-all cursor-pointer">
-                    <Plus size={14} /> Add Payment
-                  </button>
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg font-bold text-xs bg-primary text-white hover:bg-primary/90 transition-all cursor-pointer"><Plus size={14} /> Add Payment</button>
                 </div>
                 <div className="overflow-x-auto border border-slate-200 dark:border-slate-700 rounded-xl">
                   <table className="w-full">
@@ -754,22 +967,16 @@ const CandidatePaymentManagementPage = () => {
                             <td className="px-4 py-3 text-sm font-bold text-slate-800 dark:text-white">₹{p.amount?.toLocaleString()}</td>
                             <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{formatDate(p.paymentDate)}</td>
                             <td className="px-4 py-3">
-                              <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-                                {p.paymentMethod}
-                              </span>
+                              <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">{p.paymentMethod}</span>
                             </td>
                             <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{p.transactionId || '-'}</td>
                             <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{p.remark || '-'}</td>
                             <td className="px-4 py-3 text-right">
                               <div className="flex items-center justify-end gap-1">
                                 <button onClick={() => { setShowDetailModal(false); openEditPayment(detailCandidate._id, p); }}
-                                  className="p-1.5 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all cursor-pointer" title="Edit Payment">
-                                  <Edit size={14} />
-                                </button>
+                                  className="p-1.5 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all cursor-pointer" title="Edit Payment"><Edit size={14} /></button>
                                 <button onClick={() => confirmDeletePayment(detailCandidate._id, p)}
-                                  className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all cursor-pointer" title="Delete Payment">
-                                  <Trash2 size={14} />
-                                </button>
+                                  className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all cursor-pointer" title="Delete Payment"><Trash2 size={14} /></button>
                               </div>
                             </td>
                           </tr>
@@ -780,7 +987,6 @@ const CandidatePaymentManagementPage = () => {
                 </div>
               </div>
 
-              {/* Payment Timeline */}
               {detailCandidate.payments?.length > 0 && (
                 <div>
                   <h3 className="font-bold text-slate-800 dark:text-white mb-4">Payment Timeline</h3>
@@ -790,9 +996,7 @@ const CandidatePaymentManagementPage = () => {
                         {i < detailCandidate.payments.length - 1 && (
                           <div className="absolute top-5 left-[15px] bottom-0 w-0.5 bg-slate-200 dark:bg-slate-700" />
                         )}
-                        <div className={`size-8 rounded-full flex items-center justify-center shrink-0 z-10 ${
-                          p.amount >= 0 ? 'bg-green-100 dark:bg-green-500/10 text-green-600' : 'bg-red-100 dark:bg-red-500/10 text-red-600'
-                        }`}>
+                        <div className={`size-8 rounded-full flex items-center justify-center shrink-0 z-10 ${p.amount >= 0 ? 'bg-green-100 dark:bg-green-500/10 text-green-600' : 'bg-red-100 dark:bg-red-500/10 text-red-600'}`}>
                           <TrendingUp size={14} />
                         </div>
                         <div className="flex-1 mt-0.5">
@@ -800,9 +1004,7 @@ const CandidatePaymentManagementPage = () => {
                             <p className="font-bold text-slate-800 dark:text-white">₹{p.amount?.toLocaleString()}</p>
                             <p className="text-xs text-slate-400 font-medium">{formatDate(p.paymentDate)}</p>
                           </div>
-                          <p className="text-xs text-slate-500 mt-0.5">
-                            {p.paymentMethod}{p.transactionId ? ` • ${p.transactionId}` : ''}
-                          </p>
+                          <p className="text-xs text-slate-500 mt-0.5">{p.paymentMethod}{p.transactionId ? ` • ${p.transactionId}` : ''}</p>
                           {p.remark && <p className="text-xs text-slate-400 mt-0.5 italic">"{p.remark}"</p>}
                         </div>
                       </div>
@@ -827,49 +1029,53 @@ const CandidatePaymentManagementPage = () => {
               <button onClick={() => { setShowPrintModal(false); setPrintCandidate(null); }}
                 className="px-6 py-2.5 rounded-xl font-bold text-sm bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">Cancel</button>
               <button onClick={printCandidateReport}
-                className="px-6 py-2.5 rounded-xl font-bold text-sm bg-primary text-white hover:bg-primary/90 shadow-lg transition-all active:scale-95 cursor-pointer">
-                <Printer size={16} className="inline mr-1.5" /> Print
-              </button>
+                className="px-6 py-2.5 rounded-xl font-bold text-sm bg-primary text-white hover:bg-primary/90 shadow-lg transition-all active:scale-95 cursor-pointer"><Printer size={16} className="inline mr-1.5" /> Print</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Delete Confirm Modal */}
+      {/* Delete Confirm Modals */}
+      {confirmAgentDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setConfirmAgentDelete(null)} />
+          <div className="relative bg-white dark:bg-slate-800 w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-8 text-center">
+            <div className="size-16 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-6"><Trash2 size={32} className="text-red-500" /></div>
+            <h3 className="text-xl font-black text-slate-800 dark:text-white">Delete Agent?</h3>
+            <p className="text-sm font-medium text-slate-500 mt-2">This will unlink all candidates under <strong>{confirmAgentDelete.agentName}</strong>.</p>
+            <div className="grid grid-cols-2 gap-3 mt-8">
+              <button onClick={() => setConfirmAgentDelete(null)} className="px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">Cancel</button>
+              <button onClick={handleDeleteAgent} className="px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 transition-all cursor-pointer">Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {confirmDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setConfirmDelete(null)} />
           <div className="relative bg-white dark:bg-slate-800 w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-8 text-center">
-            <div className="size-16 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-6">
-              <Trash2 size={32} className="text-red-500" />
-            </div>
+            <div className="size-16 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-6"><Trash2 size={32} className="text-red-500" /></div>
             <h3 className="text-xl font-black text-slate-800 dark:text-white">Delete Candidate?</h3>
-            <p className="text-sm font-medium text-slate-500 mt-2">Are you sure you want to delete <strong>{confirmDelete.candidateName}</strong>? This will also remove all payment records.</p>
+            <p className="text-sm font-medium text-slate-500 mt-2">Are you sure you want to delete <strong>{confirmDelete.candidateName}</strong>?</p>
             <div className="grid grid-cols-2 gap-3 mt-8">
-              <button onClick={() => setConfirmDelete(null)}
-                className="px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">Cancel</button>
-              <button onClick={handleDeleteCandidate}
-                className="px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 transition-all cursor-pointer">Delete</button>
+              <button onClick={() => setConfirmDelete(null)} className="px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">Cancel</button>
+              <button onClick={handleDeleteCandidate} className="px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 transition-all cursor-pointer">Delete</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Payment Delete Confirm */}
       {confirmPaymentDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setConfirmPaymentDelete(null)} />
           <div className="relative bg-white dark:bg-slate-800 w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-8 text-center">
-            <div className="size-16 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-6">
-              <Trash2 size={32} className="text-red-500" />
-            </div>
+            <div className="size-16 rounded-full bg-red-100 dark:bg-red-500/10 flex items-center justify-center mx-auto mb-6"><Trash2 size={32} className="text-red-500" /></div>
             <h3 className="text-xl font-black text-slate-800 dark:text-white">Delete Payment?</h3>
             <p className="text-sm font-medium text-slate-500 mt-2">This payment record will be permanently removed.</p>
             <div className="grid grid-cols-2 gap-3 mt-8">
-              <button onClick={() => setConfirmPaymentDelete(null)}
-                className="px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">Cancel</button>
-              <button onClick={handleDeletePayment}
-                className="px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 transition-all cursor-pointer">Delete</button>
+              <button onClick={() => setConfirmPaymentDelete(null)} className="px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all cursor-pointer">Cancel</button>
+              <button onClick={handleDeletePayment} className="px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-500/10 dark:text-red-400 transition-all cursor-pointer">Delete</button>
             </div>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchContactSettings } from '../../store/thunk/contactThunk';
@@ -27,6 +27,15 @@ const Footer = () => {
         if (!aboutSettings) dispatch(fetchAboutSettings());
         if (sections.length === 0) dispatch(fetchPageSections());
     }, [dispatch, contactSettings, aboutSettings, sections.length]);
+
+    const [downloadCount, setDownloadCount] = useState(0);
+
+    useEffect(() => {
+        fetch('https://img.shields.io/github/downloads/md-sonu07/zeck/zoya.v01/total.json')
+            .then(res => res.json())
+            .then(data => setDownloadCount(Number(data.value) || 0))
+            .catch(() => {});
+    }, []);
 
     const socialLinks = [
         { icon: <WhatsAppIcon size={18} />, url: contactSettings?.whatsappLink, hoverBg: 'hover:bg-[#25D366]' },
@@ -66,12 +75,12 @@ const Footer = () => {
                     </div>
                     <a
                         href="https://github.com/md-sonu07/zeck/releases/download/zoya.v01/Zoya.Education.apk"
-                        download="Zoya Education.apk"
-                        className="mt-10 hidden inli ne-flex cursor-pointer text-nowrap items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl transition-all duration-300 shadow-lg font-semibold text-sm"
+                        className="mt-10 inline-flex cursor-pointer text-nowrap items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl transition-all duration-300 shadow-lg font-semibold text-sm"
                         aria-label="Download app"
                     >
                         <Download size={18} />
                         <span>Download Zoya Education App</span>
+                        <span className="ml-1 inline-flex items-center justify-center px-1.5 py-0.5 text-[10px] font-bold bg-white/20 text-white rounded-full">{downloadCount.toLocaleString()}</span>
                     </a>
                 </div>
 

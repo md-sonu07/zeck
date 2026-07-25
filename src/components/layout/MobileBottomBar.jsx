@@ -17,6 +17,8 @@ import {
     Newspaper 
 } from 'lucide-react';
 
+const isWebView = typeof navigator !== 'undefined' && navigator.userAgent.includes('wv');
+
 const MobileBottomBar = () => {
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,7 +46,7 @@ const MobileBottomBar = () => {
         { name: 'Gallery', path: '/gallery', icon: ImageIcon },
         { name: 'About Us', path: '/about', icon: Info },
         { name: 'Contact Us', path: '/contact', icon: Mail },
-        // { name: 'Download App', path: '#download-app', icon: Download, isDownload: true },
+        ...(!isWebView ? [{ name: 'Download App', path: '#download-app', icon: Download, isDownload: true }] : []),
     ];
 
     return (
@@ -84,7 +86,6 @@ const MobileBottomBar = () => {
                                     <a
                                         key={link.name}
                                         href="https://github.com/md-sonu07/zeck/releases/download/zoya.v01/Zoya.Education.apk"
-                                        download="Zoya Education.apk"
                                         onClick={() => setIsMenuOpen(false)}
                                         className="flex flex-col items-center justify-center p-3 rounded-2xl border transition-all active:scale-95 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 hover:border-emerald-400"
                                     >
