@@ -45,7 +45,7 @@ const formatDate = (d) => {
 
 const initialAgentForm = { agentName: '', agentNumber: '', university: '', dealAmount: '' };
 const initialCandidateForm = {
-  candidateName: '', mobileNumber: '', course: '', university: '', session: '',
+  candidateName: '', mobileNumber: '', course: '', university: '', session: '', type: 'Student',
   dealAmount: '', admissionDate: new Date().toISOString().split('T')[0], notes: ''
 };
 const initialPaymentForm = {
@@ -75,6 +75,7 @@ const CandidatePaymentManagementPage = () => {
   const [showCandidateModal, setShowCandidateModal] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState(null);
   const [candidateForm, setCandidateForm] = useState(initialCandidateForm);
+  const [showAgentTable, setShowAgentTable] = useState(false);
 
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentCandidateId, setPaymentCandidateId] = useState(null);
@@ -100,13 +101,13 @@ const CandidatePaymentManagementPage = () => {
 
   // Fetch candidates based on filters
   const fetchData = useCallback(() => {
-    const params = { page: currentPage, limit: 50, sort: sortField, order: sortDir };
+    const params = { page: currentPage, limit: 50, sort: sortField, order: sortDir, type: showAgentTable ? 'Agent' : 'Student' };
     if (searchQuery) params.search = searchQuery;
     if (courseFilter) params.course = courseFilter;
     if (statusFilter) params.status = statusFilter;
     if (activeAgent) params.agent = activeAgent._id;
     dispatch(fetchCandidates(params));
-  }, [dispatch, currentPage, searchQuery, courseFilter, statusFilter, sortField, sortDir, activeAgent]);
+  }, [dispatch, currentPage, searchQuery, courseFilter, statusFilter, sortField, sortDir, showAgentTable, activeAgent]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
   useEffect(() => { dispatch(fetchAgents()); dispatch(fetchAgentStats()); dispatch(fetchStats()); }, [dispatch]);
@@ -175,7 +176,7 @@ const CandidatePaymentManagementPage = () => {
     setEditingCandidate(c);
     setCandidateForm({
       candidateName: c.candidateName, mobileNumber: c.mobileNumber, course: c.course,
-      university: c.university || '', session: c.session || '',
+      university: c.university || '', session: c.session || '', type: c.type || 'Student',
       dealAmount: c.dealAmount, admissionDate: c.admissionDate ? new Date(c.admissionDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       notes: c.notes || ''
     });
@@ -546,66 +547,12 @@ const CandidatePaymentManagementPage = () => {
 
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/60 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
-                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">#</th>
-                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">Agent Name</th>
-                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">Mobile</th>
-                    <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider">University</th>
-                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Candidates</th>
-                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Deal Amount</th>
-                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Collection</th>
-                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Due</th>
-                    <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-700/60">
-                  {agentLoading && filteredAgents.length === 0 ? (
-                    Array.from({ length: 3 }).map((_, i) => (
-                      <tr key={i}>{Array.from({ length: 9 }).map((_, j) => <td key={j} className="px-4 py-3.5"><div className="h-4 bg-slate-100 dark:bg-slate-700 animate-pulse rounded" /></td>)}</tr>
-                    ))
-                  ) : filteredAgents.length === 0 ? (
-                    <tr>
-                      <td colSpan="9" className="px-4 py-16 text-center">
-                        <div className="flex flex-col items-center gap-3">
-                          <Building2 size={40} className="text-slate-300 dark:text-slate-600" />
-                          <p className="text-slate-500 dark:text-slate-400 font-medium">No agents found</p>
-                          <button onClick={openAddAgent} className="text-primary text-sm font-bold hover:underline cursor-pointer">Add your first agent</button>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredAgents.map((a, i) => (
-                      <tr key={a._id} onClick={() => selectAgent(a)} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors cursor-pointer">
-                        <td className="px-4 py-3.5 text-sm font-medium text-slate-500">{i + 1}</td>
-                        <td className="px-4 py-3.5">
-                          <p className="font-bold text-slate-800 dark:text-white text-sm">{a.agentName}</p>
-                        </td>
-                        <td className="px-4 py-3.5 text-sm text-slate-600 dark:text-slate-400 font-medium">{a.agentNumber}</td>
-                        <td className="px-4 py-3.5 text-sm text-slate-600 dark:text-slate-400 font-medium">{a.university || '-'}</td>
-                        <td className="px-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white text-right">{a.candidateCount || 0}</td>
-                        <td className="px-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white text-right">₹{((a.dealAmount || 0)).toLocaleString()}</td>
-                        <td className="px-4 py-3.5 text-sm font-bold text-green-600 dark:text-green-400 text-right">₹{((a.totalPaid || 0)).toLocaleString()}</td>
-                        <td className="px-4 py-3.5 text-sm font-bold text-right">
-                          <span className={a.totalDue > 0 ? 'text-red-600 dark:text-red-400' : 'text-slate-500'}>₹{((a.totalDue || 0)).toLocaleString()}</span>
-                        </td>
-                        <td className="px-4 py-3.5">
-                          <div className="flex items-center justify-end gap-1">
-                            <button onClick={(e) => { e.stopPropagation(); openEditAgent(a); }} className="p-1.5 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all cursor-pointer" title="Edit Agent"><Edit size={15} /></button>
-                            <button onClick={(e) => { e.stopPropagation(); setConfirmAgentDelete(a); }} className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all cursor-pointer" title="Delete Agent"><Trash2 size={15} /></button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
           </div>
-        </>
+        </div>
+      </>
       )}
 
+      {/* Candidate List (when agent selected) */}
       {/* Candidate List (when agent selected) */}
       {activeAgent && (
         <>
@@ -790,6 +737,14 @@ const CandidatePaymentManagementPage = () => {
                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Course <span className="text-red-500">*</span></label>
                     <input required placeholder="Enter course name" value={candidateForm.course} onChange={(e) => setCandidateForm(f => ({ ...f, course: e.target.value }))}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-800 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Type <span className="text-red-500">*</span></label>
+                    <select required value={candidateForm.type} onChange={(e) => setCandidateForm(f => ({ ...f, type: e.target.value }))}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-800 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none">
+                      <option value="Student">Student</option>
+                      <option value="Agent">Agent</option>
+                    </select>
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">University / Board</label>
