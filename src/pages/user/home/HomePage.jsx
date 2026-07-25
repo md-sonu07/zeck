@@ -71,7 +71,7 @@ const HomePage = () => {
                     {/* Left Column */}
                     <div className="lg:col-span-9 space-y-8">
                         {/* Section Label */}
-                        <div className="section-label mt-4">
+                        <div className="section-label mt-2">
                             <GraduationCap className="text-slate-500" size={10} /> Study Resources
                         </div>          
 
@@ -98,11 +98,11 @@ const HomePage = () => {
                     </div>
 
                     {/* Right Column (Sidebar) */}
-                    <div className="lg:col-span-3">
+                    <div className="lg:col-span-3 space-y-6 mt-4">
                         <Sidebar />
                         <MobileQuickMenu />
                         {!isWebView && (
-                            <div className="mt-6 bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/60 shadow-sm">
+                            <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700/60 shadow-sm">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                                         <Download size={20} className="text-primary" />

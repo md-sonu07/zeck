@@ -36,19 +36,19 @@ const HomeCoursesSection = ({ hideViewAll = false }) => {
     };
 
     return (
-        <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-md shadow-slate-200/60 dark:shadow-black/20 card-lift mb-8">
+        <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-md shadow-slate-200/60 dark:shadow-black/20 mb-8">
             <div className="bg-linear-to-r from-purple-700 to-indigo-800 px-5 py-3 flex items-center justify-between">
                 <h2 className="text-base font-bold text-white flex items-center gap-2">
                     <BookOpen size={15} /> Courses, Universities & Colleges
                 </h2>
                 {!hideViewAll && (
-                    <Link to="/university-cources" className="text-[10px] font-black bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition-colors uppercase tracking-widest cursor-pointer">
+                    <Link to="/university-cources" className="text-[10px] text-nowrap font-black bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg transition-colors uppercase tracking-widest cursor-pointer">
                         View All
                     </Link>
                 )}
             </div>
 
-            <div className="p-6">
+            <div className="sm:p-6 py-2">
                 {loading ? (
                     <div className="p-0">
                         <ListItemsSkeleton count={3} />
@@ -63,7 +63,7 @@ const HomeCoursesSection = ({ hideViewAll = false }) => {
                             if (categoryCourses.length === 0) return null;
 
                             return (
-                                <div key={category._id} className="border border-slate-100 dark:border-slate-700 rounded-xl overflow-hidden shadow-xs">
+                                <div key={category._id} className="border border-slate-100 dark:border-slate-700 sm:rounded-xl overflow-hidden shadow-xs">
                                     <div className="bg-slate-50 dark:bg-slate-900 px-4 py-3 border-b border-slate-100 dark:border-slate-700">
                                         <h3 className="font-bold text-slate-800 dark:text-white uppercase tracking-wider text-sm flex items-center gap-2">
                                             <GraduationCap size={16} className="text-purple-600" />

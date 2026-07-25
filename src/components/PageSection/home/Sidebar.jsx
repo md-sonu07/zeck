@@ -106,7 +106,7 @@ const Sidebar = () => {
         <aside className="space-y-6">
 
             {/* ── Quick Links ────────────────────────────────── */}
-            <div className="section-label mb-6">
+            <div className="section-label ">
                 <Bolt className="text-yellow-500" size={10} /> Quick Actions
             </div>
             <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm">
