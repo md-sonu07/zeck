@@ -44,7 +44,7 @@ const MobileBottomBar = () => {
         { name: 'Gallery', path: '/gallery', icon: ImageIcon },
         { name: 'About Us', path: '/about', icon: Info },
         { name: 'Contact Us', path: '/contact', icon: Mail },
-        // { name: 'Download App', path: '#download-app', icon: Download, isDownload: true },
+        { name: 'Download App', path: '#download-app', icon: Download, isDownload: true },
     ];
 
     return (

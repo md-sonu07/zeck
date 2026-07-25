@@ -40,7 +40,7 @@ const formatDate = (d) => {
 };
 
 const initialCandidateForm = {
-  candidateName: '', mobileNumber: '', course: '', university: '', session: '',
+  candidateName: '', mobileNumber: '', course: '', university: '', session: '', type: 'Student',
   dealAmount: '', admissionDate: new Date().toISOString().split('T')[0], notes: ''
 };
 
@@ -62,6 +62,7 @@ const CandidatePaymentManagementPage = () => {
   const [showCandidateModal, setShowCandidateModal] = useState(false);
   const [editingCandidate, setEditingCandidate] = useState(null);
   const [candidateForm, setCandidateForm] = useState(initialCandidateForm);
+  const [showAgentTable, setShowAgentTable] = useState(false);
 
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentCandidateId, setPaymentCandidateId] = useState(null);
@@ -86,12 +87,12 @@ const CandidatePaymentManagementPage = () => {
   };
 
   const fetchData = useCallback(() => {
-    const params = { page: currentPage, limit: 50, sort: sortField, order: sortDir };
+    const params = { page: currentPage, limit: 50, sort: sortField, order: sortDir, type: showAgentTable ? 'Agent' : 'Student' };
     if (searchQuery) params.search = searchQuery;
     if (courseFilter) params.course = courseFilter;
     if (statusFilter) params.status = statusFilter;
     dispatch(fetchCandidates(params));
-  }, [dispatch, currentPage, searchQuery, courseFilter, statusFilter, sortField, sortDir]);
+  }, [dispatch, currentPage, searchQuery, courseFilter, statusFilter, sortField, sortDir, showAgentTable]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
   useEffect(() => { dispatch(fetchStats()); }, [dispatch]);
@@ -106,7 +107,7 @@ const CandidatePaymentManagementPage = () => {
     setEditingCandidate(c);
     setCandidateForm({
       candidateName: c.candidateName, mobileNumber: c.mobileNumber, course: c.course,
-      university: c.university || '', session: c.session || '',
+      university: c.university || '', session: c.session || '', type: c.type || 'Student',
       dealAmount: c.dealAmount, admissionDate: c.admissionDate ? new Date(c.admissionDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       notes: c.notes || ''
     });
@@ -319,12 +320,16 @@ const CandidatePaymentManagementPage = () => {
           <h1 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
             <CreditCard className="text-primary" /> Candidate Payment Management
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">Manage candidate payments, dues, and reports</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">Manage candidate payments, dues, and reports. Showing <strong className="text-slate-900 dark:text-white">{showAgentTable ? 'Agent' : 'Student'}</strong> records.</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <button onClick={() => { setShowReports(!showReports); if (!showReports) { dispatch(fetchCourseRevenueReport()); dispatch(fetchMonthlyCollectionReport()); } }}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer">
             <BarChart3 size={16} /> {showReports ? 'Hide Reports' : 'Reports'}
+          </button>
+          <button onClick={() => { setShowAgentTable(prev => !prev); setCurrentPage(1); }}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm ${showAgentTable ? 'bg-primary text-white' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'} hover:bg-primary/90 hover:text-white transition-all cursor-pointer`}>
+            <Users size={16} /> {showAgentTable ? 'Student Table' : 'Agent Table'}
           </button>
           <button onClick={handleExportCSV}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer">
@@ -339,8 +344,8 @@ const CandidatePaymentManagementPage = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard title="Total Candidates" value={stats?.totalCandidates || 0} icon={Users} color="bg-linear-to-br from-primary to-blue-600" isLoading={false} />
-        <StatCard title="Total Deal Amount" value={`₹${(stats?.totalDealAmount || 0).toLocaleString()}`} icon={DollarSign} color="bg-linear-to-br from-amber-500 to-orange-600" isLoading={false} />
+        {/* <StatCard title="Total Candidates" value={stats?.totalCandidates || 0} icon={Users} color="bg-linear-to-br from-primary to-blue-600" isLoading={false} />
+        <StatCard title="Total Deal Amount" value={`₹${(stats?.totalDealAmount || 0).toLocaleString()}`} icon={DollarSign} color="bg-linear-to-br from-amber-500 to-orange-600" isLoading={false} /> */}
         <StatCard title="Total Collection" value={`₹${(stats?.totalCollection || 0).toLocaleString()}`} icon={TrendingUp} color="bg-linear-to-br from-green-500 to-emerald-600" isLoading={false} />
         <StatCard title="Total Due Amount" value={`₹${(stats?.totalDueAmount || 0).toLocaleString()}`} icon={AlertTriangle} color="bg-linear-to-br from-red-500 to-rose-600" isLoading={false} />
         <StatCard title="Paid Candidates" value={stats?.totalPaidCandidates || 0} icon={CheckCircle} color="bg-linear-to-br from-teal-500 to-cyan-600" isLoading={false} />
@@ -448,6 +453,11 @@ const CandidatePaymentManagementPage = () => {
 
       {/* Candidates Table */}
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/60 overflow-hidden">
+        <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700/60">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-[0.12em] text-slate-700 bg-slate-100 dark:text-slate-300 dark:bg-slate-700">
+            {showAgentTable ? 'Agent Table' : 'Student Table'}
+          </span>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -458,6 +468,7 @@ const CandidatePaymentManagementPage = () => {
                 </th>
                 <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Mobile</th>
                 <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Course</th>
+                <th className="sticky top-0 px-4 py-3.5 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Type</th>
                 <th className="sticky top-0 px-4 py-3.5 text-right text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider cursor-pointer select-none" onClick={() => handleSort('dealAmount')}>
                   <span className="flex items-center justify-end gap-1">Deal <SortIcon field="dealAmount" sortField={sortField} sortDir={sortDir} /></span>
                 </th>
@@ -498,6 +509,7 @@ const CandidatePaymentManagementPage = () => {
                     </td>
                     <td className="px-4 py-3.5 text-sm text-slate-600 dark:text-slate-400 font-medium">{c.mobileNumber}</td>
                     <td className="px-4 py-3.5 text-sm text-slate-600 dark:text-slate-400 font-medium">{c.course}</td>
+                    <td className="px-4 py-3.5 text-sm text-slate-600 dark:text-slate-400 font-medium">{c.type || 'Student'}</td>
                     <td className="px-4 py-3.5 text-sm font-bold text-slate-800 dark:text-white text-right">₹{c.dealAmount?.toLocaleString()}</td>
                     <td className="px-4 py-3.5 text-sm font-bold text-green-600 dark:text-green-400 text-right">₹{c.totalPaid?.toLocaleString()}</td>
                     <td className="px-4 py-3.5 text-sm font-bold text-right">
@@ -564,6 +576,14 @@ const CandidatePaymentManagementPage = () => {
                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Course <span className="text-red-500">*</span></label>
                     <input required placeholder="Enter course name" value={candidateForm.course} onChange={(e) => setCandidateForm(f => ({ ...f, course: e.target.value }))}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-800 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Type <span className="text-red-500">*</span></label>
+                    <select required value={candidateForm.type} onChange={(e) => setCandidateForm(f => ({ ...f, type: e.target.value }))}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-800 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all appearance-none">
+                      <option value="Student">Student</option>
+                      <option value="Agent">Agent</option>
+                    </select>
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">University / Board</label>
