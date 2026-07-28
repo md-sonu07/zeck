@@ -6,6 +6,7 @@ import { Home, ChevronRight, Briefcase, CheckCircle2, Send, Sparkles, Loader2, P
 import { ServicesSkeleton } from '../../../components/common/Skeleton';
 import WhatsAppIcon from '../../../components/common/WhatsAppIcon';
 import SEO from '../../../components/common/SEO';
+import AdSlot from '../../../components/common/AdSlot';
 
 const ServicesPage = () => {
     const dispatch = useDispatch();
@@ -122,6 +123,7 @@ const ServicesPage = () => {
 
                     {/* Sidebar - Remains as requested */}
                     <div className="w-full lg:w-80 shrink-0 space-y-6">
+                        <AdSlot adSlot="7576013317" className="min-h-[250px]" />
                         <section className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm">
                             <div className="sec-bar px-4 py-2.5 flex items-center gap-2">
                                 <Briefcase size={14} className="text-white" />

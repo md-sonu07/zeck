@@ -12,6 +12,7 @@ import './quill-content.css';
 import SEO from '../../../components/common/SEO';
 import { ArticleSkeleton } from '../../../components/common/Skeleton';
 import QuickLinksWidget from '../../../components/common/QuickLinksWidget';
+import AdSlot from '../../../components/common/AdSlot';
 
 const ArticleDetailPage = () => {
     const { slug, category: routeCategory } = useParams();
@@ -392,6 +393,8 @@ const ArticleDetailPage = () => {
                                     )}
                                 </div>
                             </div>
+
+                            <AdSlot adSlot="2787821144" className="min-h-[250px]" />
 
                             {/* Share & Bookmark Actions */}
                             <div className="flex gap-3">

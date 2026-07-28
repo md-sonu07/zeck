@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { CheckCircle, XCircle } from 'lucide-react';
 import { fetchCourseById, clearCurrentCourse } from '../../../store/slice/courseSlice.js';
 import SEO from '../../../components/common/SEO';
+import AdSlot from '../../../components/common/AdSlot';
 
 const CourseDetailsPage = () => {
     const { id } = useParams();
@@ -67,6 +68,8 @@ const CourseDetailsPage = () => {
                         <h2 className="text-xl font-semibold mb-3">Eligibility</h2>
                         <p className="text-gray-600 dark:text-gray-400">{course.eligibility}</p>
                     </div>
+
+                    <AdSlot adSlot="6052132940" className="min-h-[90px] my-6" />
 
                     <div className="mt-6">
                         <h2 className="text-xl font-semibold mb-3">Fee Structure</h2>

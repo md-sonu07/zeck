@@ -4,6 +4,7 @@ import { fetchGallery } from '../../../store/thunk/galleryThunk';
 import { Image as ImageIcon, X, ChevronLeft, ChevronRight, LayoutGrid, Users } from 'lucide-react';
 import SEO from '../../../components/common/SEO';
 import { GallerySkeleton } from '../../../components/common/Skeleton';
+import AdSlot from '../../../components/common/AdSlot';
 
 const getOptimizedUrl = (url, width, height, quality = 80) => {
     if (!url) return '';
@@ -154,6 +155,8 @@ const GalleryPage = () => {
                         </div>
                     </section>
                 )}
+
+                <AdSlot adSlot="6727066150" className="min-h-[90px] my-8" />
 
                 {/* Row 2: Highlights & Moments (wider) */}
                 {otherItems.length > 0 && (

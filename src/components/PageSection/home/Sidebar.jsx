@@ -23,6 +23,7 @@ import WhatsAppIcon from '../../common/WhatsAppIcon';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchImportantServices } from '../../../store/thunk/importantServiceThunk';
 import { fetchContactSettings } from '../../../store/thunk/contactThunk';
+import AdSlot from '../../common/AdSlot';
 
 
 const Sidebar = () => {
@@ -151,6 +152,9 @@ const Sidebar = () => {
                     )}
                 </ul>
             </section>
+
+            {/* ── Ad Slot ─────────────────────────────────────── */}
+            <AdSlot adSlot="7137149754" className="min-h-[250px]" />
 
             {/* ── Help & Support ──────────────────────────────── */}
             <div className="section-label mb-2">

@@ -15,7 +15,7 @@ const TopBar = () => {
 
     const email = contactSettings?.email || 'zoyaeductioncenter@gmail.com';
     const workingHours = contactSettings?.workingHours || '9AM – 6PM';
-    const phoneNo = contactSettings?.phoneNo || '+91 8092288344';
+    const phoneNo = contactSettings?.phoneNo || '+91 9162653235';
 
     return (
         <div className="bg-primary text-white/90 text-[11px] py-1.5 px-4 border-b border-primary-dark/20">

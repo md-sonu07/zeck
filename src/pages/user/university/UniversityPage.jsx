@@ -5,6 +5,7 @@ import HomeCoursesSection from '../../../components/PageSection/home/linkSection
 import QuickLinksWidget from '../../../components/common/QuickLinksWidget';
 import SEO from '../../../components/common/SEO';
 import WhatsAppIcon from '../../../components/common/WhatsAppIcon';
+import AdSlot from '../../../components/common/AdSlot';
 import { fetchContactSettings } from '../../../store/thunk/contactThunk';
 
 const UniversityPage = () => {
@@ -48,6 +49,7 @@ const UniversityPage = () => {
                             Quick Links
                         </p>
                         <QuickLinksWidget />
+                        <AdSlot adSlot="7576013317" className="min-h-[250px]" />
                         <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm">
                             <div className="bg-indigo-600 px-4 py-3 flex items-center gap-2">
                                 <School size={14} className="text-white" />

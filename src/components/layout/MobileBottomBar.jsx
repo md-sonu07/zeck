@@ -16,6 +16,7 @@ import {
     Mail, 
     Newspaper 
 } from 'lucide-react';
+import AdSlot from '../common/AdSlot';
 
 const isWebView = typeof navigator !== 'undefined' && navigator.userAgent.includes('wv');
 
@@ -61,7 +62,7 @@ const MobileBottomBar = () => {
 
             {/* Menu Drawer */}
             <div 
-                className={`md:hidden fixed bottom-16 left-0 w-full bg-white dark:bg-slate-900 border-t-2 border-primary/20 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-50 transition-transform duration-300 ease-spring ${
+                className={`md:hidden fixed bottom-[140px] left-0 w-full bg-white dark:bg-slate-900 border-t-2 border-primary/20 rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-50 transition-transform duration-300 ease-spring ${
                     isMenuOpen ? 'translate-y-0' : 'translate-y-[120%]'
                 }`}
             >
@@ -113,6 +114,11 @@ const MobileBottomBar = () => {
                         })}
                     </div>
                 </div>
+            </div>
+
+            {/* Mobile Ad Banner */}
+            <div className="md:hidden fixed bottom-20 left-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-t border-slate-100 dark:border-slate-800">
+                <AdSlot adSlot="7384441629" className="min-h-[50px] max-h-[60px]" />
             </div>
 
             {/* Bottom Bar */}

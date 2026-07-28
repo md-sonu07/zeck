@@ -6,6 +6,7 @@ import { clearSearchResults } from '../../../store/slice/searchSlice';
 import { Search, ChevronRight, Home, Loader2, FileX2 } from 'lucide-react';
 import { CategorySkeleton } from '../../../components/common/Skeleton';
 import SEO from '../../../components/common/SEO';
+import AdSlot from '../../../components/common/AdSlot';
 
 const isNew = (article) => {
     const date = article?.postDate || article?.createdAt;
@@ -59,8 +60,8 @@ const SearchResultsPage = () => {
                 </div>
             </div>
 
-            {/* Results */}
             <div className="max-w-[1200px] mx-auto px-4 mt-6">
+                <AdSlot adSlot="6727066150" className="min-h-[90px] mb-4" />
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">
                     {loading ? 'Searching...' : `${results.length} result${results.length !== 1 ? 's' : ''} found`}
                 </p>

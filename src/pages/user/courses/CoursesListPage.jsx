@@ -5,6 +5,7 @@ import { Search, Filter, BookOpen, Clock, Users, IndianRupee } from 'lucide-reac
 import { fetchCourses } from '../../../store/slice/courseSlice.js';
 import { fetchActiveCourseCategories } from '../../../store/slice/courseCategorySlice.js';
 import SEO from '../../../components/common/SEO.jsx';
+import AdSlot from '../../../components/common/AdSlot.jsx';
 
 const CoursesListPage = () => {
     const dispatch = useDispatch();
@@ -47,6 +48,8 @@ const CoursesListPage = () => {
                     {categories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
                 </select>
             </div>
+
+            <AdSlot adSlot="6727066150" className="min-h-[90px] mb-6" />
 
             {loading ? (
                 <div className="text-center py-12">Loading courses...</div>

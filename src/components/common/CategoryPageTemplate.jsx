@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import QuickLinksWidget from './QuickLinksWidget';
 import SEO from './SEO';
 import WhatsAppIcon from './WhatsAppIcon';
+import AdSlot from './AdSlot';
 
 const isNew = (article) => {
     const date = article?.postDate || article?.createdAt;
@@ -245,6 +246,7 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
                             Quick Links
                         </p>
                         <QuickLinksWidget />
+                        <AdSlot adSlot="7576013317" className="min-h-[250px]" />
                         <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm">
                             <div className={`${bgClass} px-4 py-3 flex items-center gap-2`}>
 

@@ -13,6 +13,7 @@ import HomeCoursesSection from '../../../components/PageSection/home/linkSection
 import Sidebar from '../../../components/PageSection/home/Sidebar';
 import MobileQuickMenu from '../../../components/PageSection/home/MobileQuickMenu';
 import SEO from '../../../components/common/SEO';
+import AdSlot from '../../../components/common/AdSlot';
 
 const HomePage = () => {
     const [isWebView, setIsWebView] = useState(false);
@@ -67,37 +68,15 @@ const HomePage = () => {
             <FilterStrip />
 
             <main className="max-w-[1200px] mx-auto px-4 py-8">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                    {/* Left Column */}
+                {/* Top section: Study Resources + Sidebar */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">
                     <div className="lg:col-span-9 space-y-8">
-                        {/* Section Label */}
                         <div className="section-label mt-2">
                             <GraduationCap className="text-slate-500" size={10} /> Study Resources
                         </div>          
-
-                        {/* Courses Section */}
                         <HomeCoursesSection />
                         <AdmitCardBEdDElEdSection />
-
-                        {/* Latest News */}
-                        <div className="section-label">
-                            <Flame className="text-accent" size={10} /> Latest News & Updates
-                        </div>
-                        <LatestNewsSection />
-
-                        <div className="section-label mt-4">
-                            <IdCard className="text-blue-500" size={10} /> Examination Portal
-                        </div>
-
-                        <AdmitCardSection />
-                        <ResultsSection />
-                        {/* <AnswerKeySyllabus /> */}
-
-                        {/* Student Feedback */}
-                        <StudentFeedbackSection />
                     </div>
-
-                    {/* Right Column (Sidebar) */}
                     <div className="lg:col-span-3 space-y-6 mt-4">
                         <Sidebar />
                         <MobileQuickMenu />
@@ -121,6 +100,25 @@ const HomePage = () => {
                             </div>
                         )}
                     </div>
+                </div>
+
+                {/* Selected sections - full width, no sidebar */}
+                <div className="space-y-8">
+                    <div className="section-label">
+                        <Flame className="text-accent" size={10} /> Latest News & Updates
+                    </div>
+                    <LatestNewsSection />
+
+                    <AdSlot adSlot="6862797527" className="min-h-[90px]" />
+
+                    <div className="section-label mt-4">
+                        <IdCard className="text-blue-500" size={10} /> Examination Portal
+                    </div>
+
+                    <AdmitCardSection />
+                    <ResultsSection />
+
+                    <StudentFeedbackSection />
                 </div>
             </main>
         </div>
