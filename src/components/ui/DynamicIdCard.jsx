@@ -13,6 +13,7 @@ const DynamicIdCard = ({ person }) => {
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
         const d = new Date(dateString);
+        if (Number.isNaN(d.getTime())) return 'N/A';
         return `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
     };
 
