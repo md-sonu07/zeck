@@ -7,39 +7,33 @@ const api = axios.create({
     withCredentials: true,
 });
 
-// Request interceptor to include the Bearer token
-api.interceptors.request.use(
-    (config) => {
-        const userInfo = localStorage.getItem('userInfo');
-        if (userInfo) {
-            try {
-                const parsedInfo = JSON.parse(userInfo);
-                if (parsedInfo.token) {
-                    config.headers.Authorization = `Bearer ${parsedInfo.token}`;
-                }
-            } catch (e) {
-                // Ignore parse errors
-            }
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
 // Response interceptor for handling 401 Unauthorized errors
 api.interceptors.response.use(
     (response) => response,
-    (error) => {
-        const isLoginRequest = error.config && error.config.url && error.config.url.includes('/auth/login');
+    async (error) => {
+        const originalRequest = error.config;
+        
+        const isLoginRequest = originalRequest.url && originalRequest.url.includes('/auth/login');
+        const isRefreshRequest = originalRequest.url && originalRequest.url.includes('/auth/refresh');
 
-        if (error.response && error.response.status === 401 && !isLoginRequest) {
-            // Clear local storage and state if session expires
+        if (error.response && error.response.status === 401 && !isLoginRequest && !isRefreshRequest && !originalRequest._retry) {
+            originalRequest._retry = true;
+            
+            try {
+                await axios.post(`${apiBaseUrl}/api/auth/refresh`, {}, { withCredentials: true });
+                return api(originalRequest);
+            } catch (refreshError) {
+                localStorage.removeItem('userInfo');
+                window.location.href = '/login';
+                return Promise.reject(refreshError);
+            }
+        }
+        
+        if (error.response && error.response.status === 401 && !isLoginRequest && !isRefreshRequest) {
             localStorage.removeItem('userInfo');
-            // Force a reload to clear all state and trigger redirects
             window.location.href = '/login';
         }
+
         return Promise.reject(error);
     }
 );

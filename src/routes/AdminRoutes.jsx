@@ -21,6 +21,7 @@ import CourseCategoriesManagementPage from '../pages/admin/courseCategories/Cour
 import CoursesManagementPage from '../pages/admin/courses/CoursesManagementPage';
 import ApplicationsManagementPage from '../pages/admin/applications/ApplicationsManagementPage';
 import ApplicationDetailPage from '../pages/admin/applications/ApplicationDetailPage';
+import IdCardsManagementPage from '../pages/admin/idcards/IdCardsManagementPage';
 
 import PaymentSlipsPage from '../pages/admin/paymentSlip/PaymentSlipsPage';
 import CreatePaymentSlipPage from '../pages/admin/paymentSlip/CreatePaymentSlipPage';
@@ -78,6 +79,7 @@ const AdminRoutes = () => {
                 <Route path="courses/:categoryId" element={<CoursesManagementPage />} />
                 <Route path="applications" element={<ApplicationsManagementPage />} />
                 <Route path="applications/:id" element={<ApplicationDetailPage />} />
+                <Route path="id-cards" element={<IdCardsManagementPage />} />
                 <Route path="settings" element={<DashboardPage />} />
 
             </Route>

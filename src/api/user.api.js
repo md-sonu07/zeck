@@ -34,3 +34,8 @@ export const updateUserProfileApi = async (data) => {
     const response = await api.put('/users/profile', data);
     return response.data;
 };
+
+export const toggleUserGenerateIdCardApi = async (id) => {
+    const response = await api.put(`/users/${id}/toggle-idcard`);
+    return response.data;
+};

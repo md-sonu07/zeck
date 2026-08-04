@@ -29,7 +29,8 @@ import {
     BookOpen,
     BookMarked,
     ClipboardList,
-    IndianRupee
+    IndianRupee,
+    IdCard
 } from 'lucide-react';
 import { logout as logoutUser } from '../../store/thunk/authThunk';
 
@@ -52,6 +53,7 @@ const AdminLayout = () => {
         { type: 'divider', label: 'Core Management' },
         { path: '/admin/courses', label: 'Add Courses', icon: BookMarked },
         { path: '/admin/applications', label: 'Courses Applications', icon: ClipboardList },
+        { path: '/admin/id-cards', label: 'ID Cards', icon: IdCard },
         
         { type: 'divider', label: 'Content Management' },
         { path: '/admin/categories', label: 'Categories', icon: ListTree },

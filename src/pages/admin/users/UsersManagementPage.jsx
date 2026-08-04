@@ -161,6 +161,8 @@ const UsersManagementPage = () => {
         });
     };
 
+
+
     const closeConfirmModal = () => {
         setConfirmModal({
             isOpen: false,
@@ -327,7 +329,11 @@ const UsersManagementPage = () => {
                                 </tr>
                             ) : (
                                 currentUsers.map((user) => (
-                                    <tr key={user._id} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors group">
+                                    <tr
+                                        key={user._id}
+                                        onClick={() => handleViewUser(user)}
+                                        className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors group cursor-pointer"
+                                    >
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="size-10 rounded-full bg-linear-to-br from-primary to-blue-600 text-white flex items-center justify-center font-bold shadow-sm overflow-hidden">
@@ -364,27 +370,27 @@ const UsersManagementPage = () => {
                                         <td className="p-4 text-right">
                                             <div className="flex items-center justify-end gap-2 transition-opacity">
                                                 <button
-                                                    onClick={() => handleViewUser(user)}
+                                                    onClick={(e) => { e.stopPropagation(); handleViewUser(user); }}
                                                     className="p-1.5 text-slate-400 hover:text-blue-500 bg-slate-100 hover:bg-blue-50 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-md transition-colors" title="View">
                                                     <Eye size={16} />
                                                 </button>
 
                                                 {!user.isAdmin ? (
                                                     <button
-                                                        onClick={() => handleMakeAdmin(user._id)}
+                                                        onClick={(e) => { e.stopPropagation(); handleMakeAdmin(user._id); }}
                                                         className="p-1.5 text-slate-400 hover:text-green-500 bg-slate-100 hover:bg-green-50 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-md transition-colors" title="Make Admin">
                                                         <ShieldAlert size={16} />
                                                     </button>
                                                 ) : (
                                                     <button
-                                                        onClick={() => handleRemoveAdmin(user._id)}
+                                                        onClick={(e) => { e.stopPropagation(); handleRemoveAdmin(user._id); }}
                                                         className="p-1.5 text-slate-400 hover:text-orange-500 bg-slate-100 hover:bg-orange-50 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-md transition-colors" title="Remove Admin">
                                                         <Shield size={16} />
                                                     </button>
                                                 )}
 
                                                 <button
-                                                    onClick={() => handleDeleteUser(user._id)}
+                                                    onClick={(e) => { e.stopPropagation(); handleDeleteUser(user._id); }}
                                                     className="p-1.5 text-slate-400 hover:text-red-500 bg-slate-100 hover:bg-red-50 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-md transition-colors" title="Delete">
                                                     <Trash2 size={16} />
                                                 </button>
@@ -481,7 +487,8 @@ const UsersManagementPage = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
+                        <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center">
+
                             <button
                                 onClick={closeViewModal}
                                 className="px-6 py-2.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
