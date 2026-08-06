@@ -111,7 +111,7 @@ const DynamicIdCard = ({ person }) => {
                 </div>
 
                 {/* Signature at bottom left */}
-                <img src="/signature.png" alt="Signature" crossOrigin="anonymous" style={{ position: 'absolute', bottom: '0px', right: '8px', width: '100px', height: 'auto', zIndex: 2 }} />
+                {/* <img src="/signature.png" alt="Signature" crossOrigin="anonymous" style={{ position: 'absolute', bottom: '0px', right: '8px', width: '100px', height: 'auto', zIndex: 2 }} /> */}
 
                 {/* Shop Address at bottom next to map pin */}
                 <div style={{ position: 'absolute', bottom: '29px', left: '60px', right: '20px', color: 'white', fontSize: '12px', fontWeight: 'bold', letterSpacing: '0.4px', lineHeight: '14px', zIndex: 1 }}>
@@ -177,7 +177,7 @@ const DynamicIdCard = ({ person }) => {
             </div>
 
             {/* Signature at bottom left */}
-            <img src="/signature.png" alt="Signature" crossOrigin="anonymous" style={{ position: 'absolute', bottom: '0px', right: '8px', width: '100px', height: 'auto', zIndex: 2 }} />
+            {/* <img src="/signature.png" alt="Signature" crossOrigin="anonymous" style={{ position: 'absolute', bottom: '0px', right: '8px', width: '100px', height: 'auto', zIndex: 2 }} /> */}
 
             {/* Shop Address at bottom next to map pin */}
             <div style={{ position: 'absolute', bottom: '29px', left: '60px', right: '20px', color: 'white', fontSize: '12px', fontWeight: 'bold', letterSpacing: '0.4px', lineHeight: '14px', zIndex: 1 }}>
