@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../../api/axios';
-import { Search, Loader2, Download, X, ChevronDown } from 'lucide-react';
+import { Search, Loader2, Download, X, ChevronDown, Trash2 } from 'lucide-react';
 import DynamicIdCard from '../../../components/ui/DynamicIdCard';
 import * as htmlToImage from 'html-to-image';
 
 const IdCardsManagementPage = () => {
     const [staff, setStaff] = useState([]);
     const [students, setStudents] = useState([]);
+    const [savedCards, setSavedCards] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('students');
     const [searchTerm, setSearchTerm] = useState('');
@@ -26,8 +27,48 @@ const IdCardsManagementPage = () => {
     });
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+    const resetManualForm = () => {
+        setManualFormData({
+            type: 'student',
+            fullName: '',
+            mobile: '',
+            roleOrCourse: '',
+            dob: '',
+            address: '',
+            college: '',
+            session: '',
+            profileImage: null,
+            file: null,
+            _id: null,
+            originalType: undefined,
+        });
+        setIsDropdownOpen(false);
+    };
+
+    const isManualCard = (p) => Boolean(p?.roleOrCourse) || p?.originalType === 'manual';
+
+    const displayName = (tab, p) => {
+        if (isManualCard(p)) return p.fullName;
+        return tab === 'staff' ? p.name : p.personalInfo?.fullName;
+    };
+    const displayPhone = (tab, p) => {
+        if (isManualCard(p)) return p.mobile || 'N/A';
+        return tab === 'staff' ? (p.phone || 'N/A') : (p.contactInfo?.mobile || 'N/A');
+    };
+    const displayCourse = (tab, p) => {
+        if (isManualCard(p)) return p.roleOrCourse || 'Course';
+        return tab === 'staff' ? 'Admin/Staff' : (p.customCourse || p.course?.title || 'Course');
+    };
+    const displayAvatar = (tab, p) => {
+        const fallback = (n) => `https://ui-avatars.com/api/?name=${encodeURIComponent(n || 'S')}&background=0D8ABC&color=fff`;
+        if (isManualCard(p)) return p.profileImage || fallback(p.fullName);
+        return tab === 'staff'
+            ? (p.profileImageUrl || fallback(p.name))
+            : (p.personalInfo?.profileImageUrl || fallback(p.personalInfo?.fullName));
+    };
+
     const openEditForm = (type, data) => {
-        const isManual = type === 'manual';
+        const isManual = type === 'manual' || isManualCard(data);
 
         const formatDateForInput = (dateString) => {
             if (!dateString) return '';
@@ -43,7 +84,7 @@ const IdCardsManagementPage = () => {
 
         setManualFormData({
             _id: isManual ? data._id : data._id,
-            originalType: isManual ? data.originalType : type,
+            originalType: isManual ? (data.originalType || 'manual') : type,
             type: type === 'staff' || (isManual && data.type === 'staff') ? 'staff' : 'student',
             fullName: isManual ? data.fullName : (type === 'staff' ? data.name : data.personalInfo?.fullName || ''),
             mobile: isManual ? data.mobile : (type === 'staff' ? (data.phone || '') : (data.contactInfo?.mobile || '')),
@@ -66,9 +107,10 @@ const IdCardsManagementPage = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [usersRes, admissionsRes] = await Promise.all([
+            const [usersRes, admissionsRes, idCardsRes] = await Promise.all([
                 api.get('/users'),
-                api.get('/admissions/all')
+                api.get('/admissions/all'),
+                api.get('/id-cards').catch(() => ({ data: [] })),
             ]);
 
             // Filter admins/staff or users with ID card generation enabled
@@ -76,6 +118,8 @@ const IdCardsManagementPage = () => {
             // Filter approved students
             const admissionsData = Array.isArray(admissionsRes.data) ? admissionsRes.data : (admissionsRes.data.data || []);
             setStudents(admissionsData);
+            // Saved manual ID cards
+            setSavedCards(Array.isArray(idCardsRes.data) ? idCardsRes.data : []);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -94,7 +138,8 @@ const IdCardsManagementPage = () => {
                 pixelRatio: 2,
             });
             const link = document.createElement('a');
-            link.download = `ID_Card_${selectedPerson.name || selectedPerson.personalInfo?.fullName || 'Generated'}.png`;
+            const cardName = selectedPerson.name || selectedPerson.data?.fullName || selectedPerson.personalInfo?.fullName || 'Generated';
+            link.download = `ID_Card_${cardName}.png`;
             link.href = dataUrl;
             link.click();
         } catch (error) {
@@ -106,14 +151,43 @@ const IdCardsManagementPage = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const [deletingId, setDeletingId] = useState(null);
+
+    const handleDelete = async (person) => {
+        const name = displayName(activeTab, person);
+        if (!window.confirm(`Delete ID card for "${name}"? This cannot be undone.`)) return;
+
+        setDeletingId(person._id);
+        try {
+            let endpoint;
+            if (isManualCard(person)) {
+                endpoint = `/id-cards/${person._id}`;
+            } else if (activeTab === 'students') {
+                endpoint = `/admissions/${person._id}`;
+            } else {
+                endpoint = `/users/${person._id}`;
+            }
+            await api.delete(endpoint);
+            setSelectedPerson(null);
+            await fetchData();
+        } catch (error) {
+            console.error('Error deleting ID card:', error);
+            alert('Failed to delete. Please try again.');
+        } finally {
+            setDeletingId(null);
+        }
+    };
 
     useEffect(() => {
         setCurrentPage(1);
     }, [activeTab, searchTerm]);
 
+    const manualStudents = savedCards.filter(c => c.type !== 'staff');
+    const manualStaff = savedCards.filter(c => c.type === 'staff');
+
     const filteredData = activeTab === 'staff'
-        ? staff.filter(s => s.name?.toLowerCase().includes(searchTerm.toLowerCase()))
-        : students.filter(s => s.personalInfo?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()));
+        ? [...staff, ...manualStaff].filter(p => displayName('staff', p)?.toLowerCase().includes(searchTerm.toLowerCase()))
+        : [...students, ...manualStudents].filter(p => displayName('students', p)?.toLowerCase().includes(searchTerm.toLowerCase()));
 
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
     const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -126,7 +200,10 @@ const IdCardsManagementPage = () => {
                     <p className="text-slate-500 dark:text-slate-400">Generate ID cards for Staff and Students</p>
                 </div>
                 <button
-                    onClick={() => setShowManualForm(true)}
+                    onClick={() => {
+                        resetManualForm();
+                        setShowManualForm(true);
+                    }}
                     className="px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors shadow-sm flex items-center gap-2"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -141,13 +218,13 @@ const IdCardsManagementPage = () => {
                             onClick={() => setActiveTab('students')}
                             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'students' ? 'bg-white dark:bg-slate-800 text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
                         >
-                            Students ({students.length})
+                            Students ({students.length + savedCards.filter(c => c.type !== 'staff').length})
                         </button>
                         <button
                             onClick={() => setActiveTab('staff')}
                             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'staff' ? 'bg-white dark:bg-slate-800 text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
                         >
-                            Staff ({staff.length})
+                            Staff ({staff.length + savedCards.filter(c => c.type === 'staff').length})
                         </button>
                     </div>
 
@@ -179,34 +256,41 @@ const IdCardsManagementPage = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                                {paginatedData.map((person, index) => (
+                                {paginatedData.map((person, index) => {
+                                    const personType = isManualCard(person) ? 'manual' : activeTab;
+                                    const name = displayName(activeTab, person);
+                                    const phone = displayPhone(activeTab, person);
+                                    const course = displayCourse(activeTab, person);
+                                    const avatarSrc = displayAvatar(activeTab, person);
+
+                                    return (
                                     <tr
                                         key={person._id || index}
                                         className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer group"
-                                        onClick={() => setSelectedPerson({ type: activeTab, data: person })}
+                                        onClick={() => setSelectedPerson({ type: personType, data: person })}
                                     >
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden border-2 border-white dark:border-slate-800 shadow-sm flex-shrink-0">
                                                     <img
-                                                        src={activeTab === 'staff' ? (person.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(person.name || 'S')}&background=0D8ABC&color=fff`) : (person.personalInfo?.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(person.personalInfo?.fullName || 'S')}&background=0D8ABC&color=fff`)}
+                                                        src={avatarSrc}
                                                         alt="Profile"
                                                         className="w-full h-full object-cover"
                                                     />
                                                 </div>
                                                 <div>
                                                     <div className="font-semibold text-slate-900 dark:text-white">
-                                                        {activeTab === 'staff' ? person.name : person.personalInfo?.fullName}
+                                                        {name}
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-slate-600 dark:text-slate-300 font-medium">
-                                            {activeTab === 'staff' ? person.phone || 'N/A' : person.contactInfo?.mobile || 'N/A'}
+                                            {phone}
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50">
-                                                {activeTab === 'staff' ? 'Admin/Staff' : person.customCourse || person.course?.title || 'Course'}
+                                                {course}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
@@ -224,17 +308,33 @@ const IdCardsManagementPage = () => {
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        setSelectedPerson({ type: activeTab, data: person });
+                                                        setSelectedPerson({ type: personType, data: person });
                                                     }}
                                                     className="px-3 py-1.5 text-xs font-semibold bg-primary text-white hover:bg-primary/90 rounded-lg shadow-sm transition-all shadow-primary/20 flex items-center gap-1.5"
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                                                     Card
                                                 </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDelete(person);
+                                                    }}
+                                                    disabled={deletingId === person._id}
+                                                    className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    title="Delete ID Card"
+                                                >
+                                                    {deletingId === person._id ? (
+                                                        <Loader2 size={16} className="animate-spin" />
+                                                    ) : (
+                                                        <Trash2 size={16} />
+                                                    )}
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
-                                ))}
+                                    );
+                                })}
                                 {paginatedData.length === 0 && (
                                     <tr>
                                         <td colSpan="4" className="px-6 py-8 text-center text-slate-500">
@@ -296,12 +396,6 @@ const IdCardsManagementPage = () => {
                             </div>
                         </div>
                         <div className="p-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 bg-white dark:bg-slate-800">
-                            <button
-                                onClick={() => setSelectedPerson(null)}
-                                className="px-4 cursor-pointer py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
-                            >
-                                Close
-                            </button>
                             <button
                                 onClick={() => {
                                     openEditForm(selectedPerson.type, selectedPerson.data);
@@ -373,6 +467,12 @@ const IdCardsManagementPage = () => {
                                     <Download size={16} />
                                 )}
                                 {generating ? 'Generating...' : 'Download PNG'}
+                            </button>
+                            <button
+                                onClick={() => setSelectedPerson(null)}
+                                className="px-4 cursor-pointer py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                            >
+                                Save
                             </button>
                         </div>
                     </div>
@@ -557,15 +657,34 @@ const IdCardsManagementPage = () => {
                                 onClick={async () => {
                                     try {
                                         setLoading(true);
-                                        const type = manualFormData.originalType || manualFormData.type;
                                         const id = manualFormData._id;
+                                        const isManualCard = manualFormData.originalType === 'manual' || !manualFormData._id;
+                                        const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+                                        const formData = new FormData();
+                                        formData.append('fullName', manualFormData.fullName);
+                                        formData.append('mobile', manualFormData.mobile);
+                                        formData.append('dob', manualFormData.dob);
+                                        formData.append('address', manualFormData.address);
 
-                                        if (id) {
-                                            const formData = new FormData();
-                                            formData.append('fullName', manualFormData.fullName);
-                                            formData.append('mobile', manualFormData.mobile);
-                                            formData.append('dob', manualFormData.dob);
-                                            formData.append('address', manualFormData.address);
+                                        let savedCard = null;
+
+                                        if (isManualCard) {
+                                            formData.append('type', manualFormData.type);
+                                            formData.append('roleOrCourse', manualFormData.roleOrCourse);
+                                            formData.append('college', manualFormData.type === 'student' ? manualFormData.college : '');
+                                            formData.append('session', manualFormData.type === 'student' ? manualFormData.session : '');
+
+                                            if (manualFormData.file) {
+                                                formData.append('profileImage', manualFormData.file);
+                                            }
+
+                                            if (id) {
+                                                savedCard = (await api.put(`/id-cards/${id}`, formData, config)).data;
+                                            } else {
+                                                savedCard = (await api.post('/id-cards', formData, config)).data;
+                                            }
+                                        } else {
+                                            const type = manualFormData.originalType || manualFormData.type;
 
                                             if (type === 'student' || type === 'students') {
                                                 formData.append('college', manualFormData.college);
@@ -581,20 +700,22 @@ const IdCardsManagementPage = () => {
                                                 formData.append('profileImage', manualFormData.file);
                                             }
 
-                                            const config = { headers: { 'Content-Type': 'multipart/form-data' } };
-
-                                            if (type === 'student' || type === 'students') {
-                                                await api.put(`/admissions/${id}/details`, formData, config);
-                                            } else {
-                                                await api.put(`/users/${id}/details`, formData, config);
+                                            if (id) {
+                                                if (type === 'student' || type === 'students') {
+                                                    await api.put(`/admissions/${id}/details`, formData, config);
+                                                } else {
+                                                    await api.put(`/users/${id}/details`, formData, config);
+                                                }
                                             }
                                         }
 
+                                        const wasNewManual = isManualCard && !id;
                                         setShowManualForm(false);
-                                        setSelectedPerson({ type: 'manual', data: manualFormData });
+                                        setSelectedPerson({ type: 'manual', data: savedCard || manualFormData });
 
                                         // Refetch data to show updated lists
                                         await fetchData();
+                                        if (wasNewManual) setActiveTab(savedCard?.type === 'staff' ? 'staff' : 'students');
 
                                     } catch (error) {
                                         console.error('Error updating details:', error);
@@ -605,7 +726,7 @@ const IdCardsManagementPage = () => {
                                         setLoading(false);
                                     }
                                 }}
-                                disabled={!manualFormData.fullName || !manualFormData.roleOrCourse || (!manualFormData.file && !manualFormData.profileImage) || loading}
+                                disabled={!manualFormData.fullName || !manualFormData.roleOrCourse || loading}
                                 className="py-3 cursor-pointer flex items-center justify-center bg-primary text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/30 hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {loading ? <Loader2 className="animate-spin" size={18} /> : 'Save & Generate Card'}

@@ -6,7 +6,7 @@ const DynamicIdCard = ({ person }) => {
     const { type, data } = person;
 
     // Format data based on type
-    const isManual = type === 'manual';
+    const isManual = type === 'manual' || type === 'saved' || type === 'custom';
 
     const name = isManual ? data.fullName : (type === 'staff' ? data.name : data.personalInfo?.fullName);
 
@@ -18,7 +18,6 @@ const DynamicIdCard = ({ person }) => {
     };
 
     const dob = isManual ? formatDate(data.dob) : (type === 'staff' ? 'N/A' : formatDate(data.personalInfo?.dateOfBirth));
-    const roleLabel = isManual ? (data.type === 'staff' ? 'DESIGNATION' : 'COURSE') : (type === 'staff' ? 'DESIGNATION' : 'COURSE');
     const roleValue = isManual ? data.roleOrCourse : (type === 'staff' ? 'Admin/Staff' : (data.customCourse || data.course?.title || 'N/A'));
     const mobile = isManual ? data.mobile : (type === 'staff' ? (data.phone || 'N/A') : (data.contactInfo?.mobile || 'N/A'));
 
@@ -38,7 +37,7 @@ const DynamicIdCard = ({ person }) => {
             ? (data.avatar || defaultAvatar)
             : (data.documents?.find(d => d.name === 'Passport Size Photo')?.files[0] || defaultAvatar));
 
-    const isStudent = (isManual && data.type === 'student') || (!isManual && type !== 'staff');
+    const isStudent = (isManual && data.type !== 'staff') || (!isManual && type !== 'staff');
 
     if (isStudent) {
         return (
@@ -111,6 +110,9 @@ const DynamicIdCard = ({ person }) => {
                     </div>
                 </div>
 
+                {/* Signature at bottom left */}
+                <img src="/signature.png" alt="Signature" crossOrigin="anonymous" style={{ position: 'absolute', bottom: '0px', right: '8px', width: '100px', height: 'auto', zIndex: 2 }} />
+
                 {/* Shop Address at bottom next to map pin */}
                 <div style={{ position: 'absolute', bottom: '29px', left: '60px', right: '20px', color: 'white', fontSize: '12px', fontWeight: 'bold', letterSpacing: '0.4px', lineHeight: '14px', zIndex: 1 }}>
                     Zoya Education Centre & Trust <br /> Kursakanta Main Road, Araria
@@ -173,6 +175,9 @@ const DynamicIdCard = ({ person }) => {
                     <div style={{ flex: 1, fontWeight: 'bold', fontSize: '12px', color: '#0B3A7B', lineHeight: '1.2' }}>{addressInfo}</div>
                 </div>
             </div>
+
+            {/* Signature at bottom left */}
+            <img src="/signature.png" alt="Signature" crossOrigin="anonymous" style={{ position: 'absolute', bottom: '0px', right: '8px', width: '100px', height: 'auto', zIndex: 2 }} />
 
             {/* Shop Address at bottom next to map pin */}
             <div style={{ position: 'absolute', bottom: '29px', left: '60px', right: '20px', color: 'white', fontSize: '12px', fontWeight: 'bold', letterSpacing: '0.4px', lineHeight: '14px', zIndex: 1 }}>
