@@ -368,13 +368,17 @@ const CandidateOnlyPaymentPage = () => {
               <table className="w-full text-sm">
                 <thead><tr className="border-b border-slate-200 dark:border-slate-700"><th className="py-2 pr-3 text-left font-bold text-slate-500">Course</th><th className="py-2 pr-3 text-right font-bold text-slate-500">Count</th><th className="py-2 text-right font-bold text-slate-500">Revenue</th></tr></thead>
                 <tbody>
-                  {courseRevenueReport?.map((r, i) => (
+                  {courseRevenueReport?.map((r, i) => {
+                    const courseName = r.course ?? r._id ?? '-';
+                    const revenue = r.totalRevenue ?? r.totalPaid ?? r.totalDeal ?? 0;
+                    return (
                     <tr key={i} className="border-t border-slate-100 dark:border-slate-700/60">
-                      <td className="py-3 pr-3 font-semibold">{r._id}</td>
-                      <td className="py-3 pr-3 text-right">{r.count}</td>
-                      <td className="py-3 text-right text-green-600 font-semibold">₹{r.totalRevenue.toLocaleString()}</td>
+                      <td className="py-3 pr-3 font-semibold">{courseName}</td>
+                      <td className="py-3 pr-3 text-right">{r.count ?? 0}</td>
+                      <td className="py-3 text-right text-green-600 font-semibold">₹{Number(revenue).toLocaleString()}</td>
                     </tr>
-                  )) || null}
+                    );
+                  }) || null}
                   {(!courseRevenueReport?.length) && <tr><td colSpan="3" className="py-8 text-center text-slate-400">No data</td></tr>}
                 </tbody>
               </table>
@@ -386,9 +390,9 @@ const CandidateOnlyPaymentPage = () => {
                 <tbody>
                   {monthlyCollectionReport?.map((r, i) => (
                     <tr key={i} className="border-t border-slate-100 dark:border-slate-700/60">
-                      <td className="py-3 pr-3 font-semibold">{r.month}</td>
-                      <td className="py-3 pr-3 text-right">{r.count}</td>
-                      <td className="py-3 text-right text-green-600 font-semibold">₹{r.total.toLocaleString()}</td>
+                      <td className="py-3 pr-3 font-semibold">{r.month ?? '-'}</td>
+                      <td className="py-3 pr-3 text-right">{r.count ?? 0}</td>
+                      <td className="py-3 text-right text-green-600 font-semibold">₹{Number(r.total ?? 0).toLocaleString()}</td>
                     </tr>
                   )) || null}
                   {(!monthlyCollectionReport?.length) && <tr><td colSpan="3" className="py-8 text-center text-slate-400">No data</td></tr>}

@@ -507,11 +507,11 @@ const CandidatePaymentManagementPage = () => {
                 <tbody className="text-slate-700 dark:text-slate-300">
                   {courseRevenueReport?.map((r, i) => (
                     <tr key={i} className="border-t border-slate-100 dark:border-slate-700/60">
-                      <td className="py-3 pr-3 font-semibold">{r.course}</td>
-                      <td className="py-3 pr-3 text-right">{r.count}</td>
-                      <td className="py-3 pr-3 text-right">₹{r.totalDeal.toLocaleString()}</td>
-                      <td className="py-3 pr-3 text-right text-green-600 font-semibold">₹{r.totalPaid.toLocaleString()}</td>
-                      <td className="py-3 text-right text-red-600 font-semibold">₹{r.totalDue.toLocaleString()}</td>
+                      <td className="py-3 pr-3 font-semibold">{r.course ?? r._id ?? '-'}</td>
+                      <td className="py-3 pr-3 text-right">{r.count ?? 0}</td>
+                      <td className="py-3 pr-3 text-right">₹{Number(r.totalDeal ?? r.totalRevenue ?? 0).toLocaleString()}</td>
+                      <td className="py-3 pr-3 text-right text-green-600 font-semibold">₹{Number(r.totalPaid ?? 0).toLocaleString()}</td>
+                      <td className="py-3 text-right text-red-600 font-semibold">₹{Number(r.totalDue ?? 0).toLocaleString()}</td>
                     </tr>
                   )) || null}
                   {(!courseRevenueReport?.length) && <tr><td colSpan="5" className="py-8 text-center text-slate-400">No data</td></tr>}
@@ -533,9 +533,9 @@ const CandidatePaymentManagementPage = () => {
                 <tbody className="text-slate-700 dark:text-slate-300">
                   {monthlyCollectionReport?.map((r, i) => (
                     <tr key={i} className="border-t border-slate-100 dark:border-slate-700/60">
-                      <td className="py-3 pr-3 font-semibold">{r.month}</td>
-                      <td className="py-3 pr-3 text-right">{r.count}</td>
-                      <td className="py-3 text-right text-green-600 font-semibold">₹{r.total.toLocaleString()}</td>
+                      <td className="py-3 pr-3 font-semibold">{r.month ?? '-'}</td>
+                      <td className="py-3 pr-3 text-right">{r.count ?? 0}</td>
+                      <td className="py-3 text-right text-green-600 font-semibold">₹{Number(r.total ?? 0).toLocaleString()}</td>
                     </tr>
                   )) || null}
                   {(!monthlyCollectionReport?.length) && <tr><td colSpan="3" className="py-8 text-center text-slate-400">No data</td></tr>}
