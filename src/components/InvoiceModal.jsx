@@ -248,8 +248,18 @@ const InvoiceModal = ({ application, onClose }) => {
                             </div>
                         </div>
 
+                        {/* Important Notice - Admission Cancellation & Refund Policy */}
+                        <div className="mt-6 border-2 border-red-600 rounded-lg bg-red-50 px-3 py-2.5">
+                            <h4 className="text-center text-[11px] font-black text-red-700 leading-none">★ महत्वपूर्ण सूचना ★</h4>
+                            <h5 className="text-center text-[10px] font-extrabold text-slate-800 mt-1 leading-none">Admission Cancellation एवं Fee Refund Policy</h5>
+                            <p className="text-[9px] leading-snug text-slate-700 mt-1.5 text-justify">
+                                सभी विद्यार्थियों एवं अभिभावकों को सूचित किया जाता है कि <span className="font-bold text-slate-800">Admission/नामांकन</span> हो जाने के बाद यदि कोई विद्यार्थी किसी भी कारणवश अपना <span className="font-bold text-red-700">Admission Cancel</span> कराता है या संस्था/कॉलेज छोड़ता है, तो जमा की गई <span className="font-bold">Admission Fee, Course Fee</span> अथवा अन्य किसी भी प्रकार की भुगतान राशि <span className="font-bold text-red-700">Refund/वापस नहीं की जाएगी।</span>
+                            </p>
+                            <p className="text-[9px] font-bold text-slate-800 text-right mt-1 leading-tight">धन्यवाद।<br/>प्रबंधन — ZOYA EDUCATION CENTRE & TRUST</p>
+                        </div>
+
                         {/* Signature Footer */}
-                        <div className="mt-12 flex justify-between items-end px-2 pb-1">
+                        <div className="mt-6 flex justify-between items-end px-2 pb-1">
                             <div className="text-left space-y-1">
                                 <p className="text-[10px] font-black text-slate-500 uppercase">Admission Drictor</p>
                                 <p className="font-black text-lg text-blue-900 tracking-tight">Mr. Ashfak</p>

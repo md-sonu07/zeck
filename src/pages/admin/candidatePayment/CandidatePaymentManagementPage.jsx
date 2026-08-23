@@ -319,7 +319,12 @@ const CandidatePaymentManagementPage = () => {
         .Paid { background: #dcfce7; color: #166534; }
         .Pending { background: #fef3c7; color: #92400e; }
         .Extra { background: #dbeafe; color: #1e40af; }
-        .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+        .notice-box { margin-top: 24px; border: 2px solid #b91c1c; border-radius: 8px; background: #fef2f2; padding: 14px 16px; text-align: center; }
+        .notice-box h4 { margin: 0 0 4px; font-size: 14px; font-weight: 900; color: #b91c1c; }
+        .notice-box h5 { margin: 0 0 8px; font-size: 12px; font-weight: 800; color: #1e293b; }
+        .notice-box p { margin: 0; font-size: 11px; line-height: 1.6; color: #334155; text-align: justify; }
+        .notice-box .sign { margin-top: 8px; font-size: 11px; font-weight: 700; color: #1e293b; text-align: right; }
+        .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 20px; }
         @media print { body { margin: 20px; } }
       </style></head><body>
         <div class="header">
@@ -332,8 +337,10 @@ const CandidatePaymentManagementPage = () => {
           <div class="info-item"><label>Candidate Name</label><div class="value">${printCandidate.candidateName}</div></div>
           <div class="info-item"><label>Mobile Number</label><div class="value">${printCandidate.mobileNumber}</div></div>
           <div class="info-item"><label>Course</label><div class="value">${printCandidate.course}</div></div>
-          <div class="info-item"><label>Candidate ID</label><div class="value">${printCandidate.candidateId || '-'}</div></div>
           <div class="info-item"><label>Admission Date</label><div class="value">${formatDate(printCandidate.admissionDate)}</div></div>
+          <div class="info-item"><label>University / Board</label><div class="value">${printCandidate.university || '-'}</div></div>
+          <div class="info-item"><label>Session</label><div class="value">${printCandidate.session || '-'}</div></div>
+          <div class="info-item"><label>Candidate ID</label><div class="value">${printCandidate.candidateId || '-'}</div></div>
           <div class="info-item"><label>Deal Amount</label><div class="value">₹${printCandidate.dealAmount?.toLocaleString()}</div></div>
         </div>
         <h3 style="margin-bottom: 10px;">Payment History</h3>
@@ -345,6 +352,12 @@ const CandidatePaymentManagementPage = () => {
           <div><div class="label">Total Paid</div><div class="amount" style="color:#166534;">₹${printCandidate.totalPaid?.toLocaleString()}</div></div>
           <div><div class="label">Due Amount</div><div class="amount" style="color:#dc2626;">₹${Math.max(printCandidate.dueAmount || 0, 0).toLocaleString()}</div></div>
           <div><div class="label">Status</div><div class="amount"><span class="status-badge ${printCandidate.paymentStatus === 'Extra Paid' ? 'Extra' : printCandidate.paymentStatus}">${printCandidate.paymentStatus}</span></div></div>
+        </div>
+        <div class="notice-box">
+          <h4>★ महत्वपूर्ण सूचना ★</h4>
+          <h5>Admission Cancellation एवं Fee Refund Policy</h5>
+          <p>सभी विद्यार्थियों एवं अभिभावकों को सूचित किया जाता है कि <b>Admission/नामांकन</b> हो जाने के बाद यदि कोई विद्यार्थी किसी भी कारणवश अपना <b>Admission Cancel</b> कराता है या संस्था/कॉलेज छोड़ता है, तो जमा की गई <b>Admission Fee, Course Fee</b> अथवा अन्य किसी भी प्रकार की भुगतान राशि <b>Refund/वापस नहीं की जाएगी।</b></p>
+          <div class="sign">धन्यवाद।<br/>प्रबंधन<br/><b>ZOYA EDUCATION CENTRE & TRUST</b></div>
         </div>
         <div class="footer">Generated on ${new Date().toLocaleString('en-IN')} | ZOYA Education Center | License: Q2A-2026-0330T117681</div>
       </body></html>

@@ -314,9 +314,9 @@ const ProfilePage = () => {
                                                                 app.status === 'rejected' ? <XCircle size={20} /> :
                                                                     <Clock size={20} />}
                                                         </div>
-                                                        <div className="min-w-0">
+                                                        <div className="min-w-0 py-4">
                                                             <div className="flex items-center gap-2">
-                                                                <h3 className="text-sm font-bold text-slate-800 dark:text-white truncate group-hover:text-primary transition-colors">
+                                                                <h3 className="text-md font-bold text-slate-800 dark:text-white truncate group-hover:text-primary transition-colors">
                                                                     {app.title}
                                                                 </h3>
                                                                 <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded sm:hidden ${app.status === 'approved' ? 'text-emerald-500 bg-emerald-50' :

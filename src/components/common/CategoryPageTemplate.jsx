@@ -131,7 +131,7 @@ const CategoryPageTemplate = ({ category, theme = 'primary', icon: Icon = Info, 
                 </div>
             </div>
 
-            <FilterStrip />
+            {/* <FilterStrip /> */}
 
             <div className="max-w-[1200px] mx-auto px-4 mt-4">
                 <div className="flex flex-col lg:flex-row gap-6">

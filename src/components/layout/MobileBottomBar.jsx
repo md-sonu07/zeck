@@ -5,6 +5,7 @@ import {
     Download,
     BookOpen, 
     FileCheck, 
+    FileText,
     User, 
     Menu, 
     X, 
@@ -47,6 +48,7 @@ const MobileBottomBar = () => {
         { name: 'About Us', path: '/about', icon: Info },
         { name: 'Contact Us', path: '/contact', icon: Mail },
         ...(!isWebView ? [{ name: 'Download App', path: '#download-app', icon: Download, isDownload: true }] : []),
+        { name: 'My Applications', path: '/my-applications', icon: FileText },
     ];
 
     return (

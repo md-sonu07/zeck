@@ -9,6 +9,7 @@ import AdmitCardBEdDElEdSection from '../../../components/PageSection/home/linkS
 import ResultsSection from '../../../components/PageSection/home/linkSection/ResultsSection';
 import AnswerKeySyllabus from '../../../components/PageSection/home/linkSection/AnswerKeySyllabus';
 import StudentFeedbackSection from '../../../components/PageSection/home/StudentFeedbackSection';
+import RefundPolicyNotice from '../../../components/PageSection/home/RefundPolicyNotice';
 import HomeCoursesSection from '../../../components/PageSection/home/linkSection/HomeCoursesSection';
 import Sidebar from '../../../components/PageSection/home/Sidebar';
 import MobileQuickMenu from '../../../components/PageSection/home/MobileQuickMenu';
@@ -64,7 +65,7 @@ const HomePage = () => {
             />
             <HeroBanner />
             <NoticeMarquee />
-            <FilterStrip />
+            {/* <FilterStrip /> */}
 
             <main className="max-w-[1200px] mx-auto px-4 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -95,6 +96,10 @@ const HomePage = () => {
 
                         {/* Student Feedback */}
                         <StudentFeedbackSection />
+
+                        {/* Admission Cancellation & Refund Policy Notice */}
+                        <RefundPolicyNotice />
+                        
                     </div>
 
                     {/* Right Column (Sidebar) */}
