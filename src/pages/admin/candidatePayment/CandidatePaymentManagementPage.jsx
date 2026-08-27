@@ -50,7 +50,7 @@ const formatDate = (d) => {
 
 const initialAgentForm = { agentName: '', agentNumber: '', university: '', dealAmount: '' };
 const initialCandidateForm = {
-  candidateName: '', mobileNumber: '', course: '', university: '', session: '', type: 'Student',
+  candidateName: '', mobileNumber: '', course: '', university: '', college: '', session: '', type: 'Student',
   dealAmount: '', admissionDate: new Date().toISOString().split('T')[0], notes: ''
 };
 const initialPaymentForm = {
@@ -181,7 +181,7 @@ const CandidatePaymentManagementPage = () => {
     setEditingCandidate(c);
     setCandidateForm({
       candidateName: c.candidateName, mobileNumber: c.mobileNumber, course: c.course,
-      university: c.university || '', session: c.session || '', type: c.type || 'Student',
+      university: c.university || '', college: c.college || '', session: c.session || '', type: c.type || 'Student',
       dealAmount: c.dealAmount, admissionDate: c.admissionDate ? new Date(c.admissionDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       notes: c.notes || ''
     });
@@ -339,6 +339,7 @@ const CandidatePaymentManagementPage = () => {
           <div class="info-item"><label>Course</label><div class="value">${printCandidate.course}</div></div>
           <div class="info-item"><label>Admission Date</label><div class="value">${formatDate(printCandidate.admissionDate)}</div></div>
           <div class="info-item"><label>University / Board</label><div class="value">${printCandidate.university || '-'}</div></div>
+          <div class="info-item"><label>College</label><div class="value">${printCandidate.college || '-'}</div></div>
           <div class="info-item"><label>Session</label><div class="value">${printCandidate.session || '-'}</div></div>
           <div class="info-item"><label>Candidate ID</label><div class="value">${printCandidate.candidateId || '-'}</div></div>
           <div class="info-item"><label>Deal Amount</label><div class="value">₹${printCandidate.dealAmount?.toLocaleString()}</div></div>
@@ -824,6 +825,11 @@ const CandidatePaymentManagementPage = () => {
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-800 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
                   </div>
                   <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">College</label>
+                    <input placeholder="Enter college name" value={candidateForm.college} onChange={(e) => setCandidateForm(f => ({ ...f, college: e.target.value }))}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-800 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
+                  </div>
+                  <div>
                     <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 ml-1">Session</label>
                     <input placeholder="e.g. 2024-2025" value={candidateForm.session} onChange={(e) => setCandidateForm(f => ({ ...f, session: e.target.value }))}
                       className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 text-slate-800 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" />
@@ -943,6 +949,7 @@ const CandidatePaymentManagementPage = () => {
                     <div><p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Course</p><p className="font-bold text-slate-800 dark:text-white mt-1">{detailCandidate.course}</p></div>
                     <div><p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Admission Date</p><p className="font-bold text-slate-800 dark:text-white mt-1">{formatDate(detailCandidate.admissionDate)}</p></div>
                     <div><p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">University / Board</p><p className="font-bold text-slate-800 dark:text-white mt-1">{detailCandidate.university || '-'}</p></div>
+                    <div><p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">College</p><p className="font-bold text-slate-800 dark:text-white mt-1">{detailCandidate.college || '-'}</p></div>
                     <div><p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Session</p><p className="font-bold text-slate-800 dark:text-white mt-1">{detailCandidate.session || '-'}</p></div>
                     <div><p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Candidate ID</p><p className="font-bold text-slate-800 dark:text-white mt-1">{detailCandidate.candidateId || '-'}</p></div>
                   </div>

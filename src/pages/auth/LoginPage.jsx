@@ -88,9 +88,9 @@ const LoginPage = () => {
                                     <label className="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">
                                         Password
                                     </label>
-                                    <Link to="/forgot-password" size={18} className="text-[10px] font-black text-primary hover:text-primary-dark uppercase tracking-widest">
+                                    {/* <Link to="/forgot-password" size={18} className="text-[10px] font-black text-primary hover:text-primary-dark uppercase tracking-widest">
                                         Forgot?
-                                    </Link>
+                                    </Link> */}
                                 </div>
                                 <div className="group relative transition-all duration-300">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-primary transition-colors">

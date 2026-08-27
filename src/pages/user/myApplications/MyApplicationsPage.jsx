@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Eye, Download, XCircle, FileText, User, Mail, Phone, MapPin, BookOpen, GraduationCap, Calendar, CheckCircle2, X } from 'lucide-react';
+import { Eye, Download, XCircle, FileText, User, Mail, Phone, MapPin, BookOpen, GraduationCap, Calendar, CheckCircle2, X, Printer } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { fetchMyAdmissions, updateAdmissionStatus } from '../../../store/slice/admissionSlice.js';
 import SEO from '../../../components/common/SEO.jsx';
@@ -26,6 +26,174 @@ const MyApplicationsPage = () => {
     useEffect(() => {
         dispatch(fetchMyAdmissions());
     }, [dispatch]);
+
+    const handlePrint = (app) => {
+        const printWindow = window.open('', '_blank');
+        
+        const educationHTML = app.educationInfo && app.educationInfo.length > 0 
+            ? app.educationInfo.map(edu => `
+                <div class="edu-item">
+                    <div><strong>Level:</strong> ${edu.level}</div>
+                    <div><strong>Board:</strong> ${edu.board}</div>
+                    <div><strong>Year:</strong> ${edu.passingYear}</div>
+                    <div><strong>Marks:</strong> ${edu.marks}</div>
+                </div>
+            `).join('')
+            : '<p>No educational details provided.</p>';
+            
+        const customAnswersHTML = app.customAnswers && app.customAnswers.length > 0
+            ? app.customAnswers.map(ans => `
+                <div class="info-item">
+                    <label>${ans.questionLabel}</label>
+                    <div class="value">${ans.answer}</div>
+                </div>
+            `).join('')
+            : '';
+
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>Application Form - ${app.personalInfo?.fullName}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.3; color: #333; margin: 0; padding: 10px; font-size: 12px; }
+                        .header { text-align: center; border-bottom: 2px solid #00196a; padding-bottom: 10px; margin-bottom: 15px; }
+                        .header h1 { color: #00196a; margin: 0 0 5px 0; font-size: 22px; text-transform: uppercase; }
+                        .header p { margin: 2px 0; color: #666; font-size: 11px; }
+                        .section { margin-bottom: 12px; page-break-inside: avoid; }
+                        .section-title { background: #f1f5f9; padding: 6px 10px; font-weight: bold; border-left: 4px solid #00196a; margin-bottom: 8px; font-size: 13px; text-transform: uppercase; }
+                        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+                        .info-item { margin-bottom: 4px; }
+                        .info-item label { font-weight: bold; color: #666; font-size: 10px; display: block; margin-bottom: 2px; }
+                        .info-item .value { font-weight: 600; font-size: 12px; border-bottom: 1px dotted #ccc; padding-bottom: 2px; }
+                        .edu-item { border: 1px solid #e2e8f0; padding: 8px; margin-bottom: 6px; border-radius: 4px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 11px; }
+                        .notice-box { margin-top: 15px; border: 2px solid #dc2626; border-radius: 6px; background-color: #fef2f2; padding: 10px; page-break-inside: avoid; }
+                        .notice-box h4 { text-align: center; color: #b91c1c; margin: 0 0 4px 0; font-size: 13px; }
+                        .notice-box h5 { text-align: center; color: #1e293b; margin: 0 0 6px 0; font-size: 11px; }
+                        .notice-box p { font-size: 10px; color: #334155; margin: 4px 0; text-align: justify; line-height: 1.3; }
+                        .footer-signatures { margin-top: 30px; display: flex; justify-content: space-between; page-break-inside: avoid; }
+                        .signature-line { border-top: 1px solid #000; width: 160px; text-align: center; padding-top: 5px; font-weight: bold; font-size: 12px; }
+                        @page { size: A4; margin: 10mm; }
+                        @media print { body { margin: 0; padding: 0; } button { display: none; } -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>ZOYA EDUCATION CENTRE</h1>
+                        <p>Main Road Kursakanta, Araria (Bihar) 854331</p>
+                        <div style="background: #00196a; color: white; display: inline-block; padding: 5px 20px; border-radius: 4px; margin-top: 10px; font-weight: bold;">
+                            APPLICATION FORM
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold;">
+                        <div>Application ID: ${app.applicationId}</div>
+                        <div>Date: ${new Date(app.submittedAt).toLocaleDateString('en-GB')}</div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Course Information</div>
+                        <div class="grid">
+                            <div class="info-item">
+                                <label>Course Name</label>
+                                <div class="value">${app.course?.name || 'N/A'}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>Status</label>
+                                <div class="value" style="text-transform: capitalize;">${app.status.replace('_', ' ')}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Personal Information</div>
+                        <div class="grid">
+                            <div class="info-item">
+                                <label>Full Name</label>
+                                <div class="value">${app.personalInfo?.fullName || 'N/A'}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>Date of Birth</label>
+                                <div class="value">${app.personalInfo?.dateOfBirth ? new Date(app.personalInfo.dateOfBirth).toLocaleDateString() : 'N/A'}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>Father's Name</label>
+                                <div class="value">${app.personalInfo?.fatherName || 'N/A'}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>Mother's Name</label>
+                                <div class="value">${app.personalInfo?.motherName || 'N/A'}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>Gender</label>
+                                <div class="value" style="text-transform: capitalize;">${app.personalInfo?.gender || 'N/A'}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>Category</label>
+                                <div class="value" style="text-transform: capitalize;">${app.personalInfo?.category || 'N/A'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-title">Contact & Address Information</div>
+                        <div class="grid">
+                            <div class="info-item">
+                                <label>Email Address</label>
+                                <div class="value">${app.contactInfo?.email || 'N/A'}</div>
+                            </div>
+                            <div class="info-item">
+                                <label>Mobile Number</label>
+                                <div class="value">${app.contactInfo?.mobile || 'N/A'}</div>
+                            </div>
+                            <div class="info-item" style="grid-column: span 2;">
+                                <label>Permanent Address</label>
+                                <div class="value">
+                                    ${app.addressInfo?.permanent?.addressLine || ''}, ${app.addressInfo?.permanent?.city || ''}, 
+                                    ${app.addressInfo?.permanent?.district || ''}, ${app.addressInfo?.permanent?.state || ''} - ${app.addressInfo?.permanent?.pincode || ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${customAnswersHTML ? `
+                    <div class="section">
+                        <div class="section-title">Additional Details</div>
+                        <div class="grid">
+                            ${customAnswersHTML}
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <div class="section">
+                        <div class="section-title">Educational Qualifications</div>
+                        ${educationHTML}
+                    </div>
+
+                    <div class="notice-box">
+                        <h4>★ महत्वपूर्ण सूचना ★</h4>
+                        <h5>Admission Cancellation एवं Fee Refund Policy</h5>
+                        <p>
+                            सभी विद्यार्थियों एवं अभिभावकों को सूचित किया जाता है कि <strong>Admission/नामांकन</strong> हो जाने के बाद यदि कोई विद्यार्थी किसी भी कारणवश अपना <strong style="color: #b91c1c;">Admission Cancel</strong> कराता है या संस्था/कॉलेज छोड़ता है, तो जमा की गई <strong>Admission Fee, Course Fee</strong> अथवा अन्य किसी भी प्रकार की भुगतान राशि <strong style="color: #b91c1c;">Refund/वापस नहीं की जाएगी।</strong>
+                        </p>
+                        <p style="text-align: right; font-weight: bold; margin-top: 10px;">धन्यवाद।<br/>प्रबंधन — ZOYA EDUCATION CENTRE & TRUST</p>
+                    </div>
+
+                    <div class="footer-signatures">
+                        <div class="signature-line">Student's Signature</div>
+                        <div class="signature-line">Authorized Signatory</div>
+                    </div>
+                </body>
+            </html>
+        `);
+        
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 500);
+    };
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-12 px-4 sm:px-6 lg:px-8">
@@ -88,6 +256,9 @@ const MyApplicationsPage = () => {
                                                 <Calendar size={14} /> Submitted on {new Date(app.submittedAt).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                                             </p>
                                         </div>
+                                        <button onClick={() => handlePrint(app)} className="flex items-center gap-2 bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-xl text-xs font-bold transition border border-slate-200 dark:border-slate-600 shadow-sm self-start md:self-center">
+                                            <Printer size={16} /> Print Application
+                                        </button>
                                     </div>
                                 </div>
 
